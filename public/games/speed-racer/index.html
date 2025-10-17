@@ -21,6 +21,13 @@
     --status-bad-bg: rgba(248, 113, 113, 0.18);
     --status-bad-border: rgba(248, 113, 113, 0.35);
     --status-bad-color: #7f1d1d;
+    --status-badge-size: 34px;
+    --status-badge-bg: rgba(99, 102, 241, 0.2);
+    --status-badge-color: #312e81;
+    --status-ok-badge-bg: var(--status-ok-bg);
+    --status-ok-badge-color: #ffffff;
+    --status-bad-badge-bg: var(--status-bad-bg);
+    --status-bad-badge-color: #ffffff;
   }
 
   html,
@@ -62,6 +69,15 @@
     display: grid;
     gap: 0.75rem;
     justify-items: center;
+  }
+
+  .game-hero h1 {
+    margin: 0;
+  }
+
+  .game-hero p {
+    margin: 0;
+    max-width: 40rem;
   }
 
   .game-card {
@@ -110,11 +126,22 @@
   .status-badge {
     display: inline-grid;
     place-items: center;
-    width: 34px;
-    height: 34px;
+    width: var(--status-badge-size);
+    height: var(--status-badge-size);
     border-radius: 50%;
     font-weight: 700;
-    background: rgba(99, 102, 241, 0.2);
+    background: var(--status-badge-bg);
+    color: var(--status-badge-color);
+  }
+
+  .status-banner.ok .status-badge {
+    background: var(--status-ok-badge-bg);
+    color: var(--status-ok-badge-color);
+  }
+
+  .status-banner.bad .status-badge {
+    background: var(--status-bad-badge-bg);
+    color: var(--status-bad-badge-color);
   }
 
   .touch-input {
@@ -158,12 +185,24 @@
         radial-gradient(950px circle at 80% -240px, rgba(96,165,250,0.55), transparent 62%),
         radial-gradient(850px circle at 20% 125%, rgba(251,191,36,0.35), transparent 58%),
         linear-gradient(180deg, #f5f3ff, #fef3c7 55%, #f8fafc);
+      --card-bg: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(237,248,255,0.56));
+      --card-border: rgba(59,130,246,0.18);
+      --card-shadow: 0 32px 95px rgba(96,165,250,0.2);
+      --status-border: rgba(59,130,246,0.2);
+      --status-bg: rgba(59,130,246,0.08);
+      --status-color: #0f172a;
       --status-ok-bg: rgba(34,197,94,0.15);
       --status-ok-border: rgba(34,197,94,0.35);
       --status-ok-color: #047857;
       --status-bad-bg: rgba(248,113,113,0.15);
       --status-bad-border: rgba(248,113,113,0.35);
       --status-bad-color: #b91c1c;
+      --status-badge-bg: rgba(59,130,246,0.22);
+      --status-badge-color: #1d4ed8;
+      --status-ok-badge-bg: rgba(34,197,94,0.85);
+      --status-ok-badge-color: #fff;
+      --status-bad-badge-bg: rgba(248,113,113,0.85);
+      --status-bad-badge-color: #fff;
     }
     .game-speed-racer::before {
       content: '';
@@ -188,11 +227,9 @@
       z-index: 0;
     }
     .game-speed-racer .status-badge {
-      background: var(--indigo);
-      color: #fff;
+      background: var(--status-badge-bg);
+      color: var(--status-badge-color);
     }
-    .game-speed-racer .status-banner.ok .status-badge { background: var(--green); }
-    .game-speed-racer .status-banner.bad .status-badge { background: #ef4444; }
     .race-track {
       position: relative;
       height: clamp(160px, 24vw, 220px);

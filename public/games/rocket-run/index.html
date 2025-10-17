@@ -21,6 +21,13 @@
     --status-bad-bg: rgba(248, 113, 113, 0.18);
     --status-bad-border: rgba(248, 113, 113, 0.35);
     --status-bad-color: #7f1d1d;
+    --status-badge-size: 34px;
+    --status-badge-bg: rgba(99, 102, 241, 0.2);
+    --status-badge-color: #312e81;
+    --status-ok-badge-bg: var(--status-ok-bg);
+    --status-ok-badge-color: #ffffff;
+    --status-bad-badge-bg: var(--status-bad-bg);
+    --status-bad-badge-color: #ffffff;
   }
 
   html,
@@ -62,6 +69,15 @@
     display: grid;
     gap: 0.75rem;
     justify-items: center;
+  }
+
+  .game-hero h1 {
+    margin: 0;
+  }
+
+  .game-hero p {
+    margin: 0;
+    max-width: 40rem;
   }
 
   .game-card {
@@ -110,11 +126,22 @@
   .status-badge {
     display: inline-grid;
     place-items: center;
-    width: 34px;
-    height: 34px;
+    width: var(--status-badge-size);
+    height: var(--status-badge-size);
     border-radius: 50%;
     font-weight: 700;
-    background: rgba(99, 102, 241, 0.2);
+    background: var(--status-badge-bg);
+    color: var(--status-badge-color);
+  }
+
+  .status-banner.ok .status-badge {
+    background: var(--status-ok-badge-bg);
+    color: var(--status-ok-badge-color);
+  }
+
+  .status-banner.bad .status-badge {
+    background: var(--status-bad-badge-bg);
+    color: var(--status-bad-badge-color);
   }
 
   .touch-input {
@@ -154,44 +181,27 @@
       --good: #22c55e;
       --bad: #f87171;
     }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+    .game-rocket-run {
       background: radial-gradient(circle at 50% -20%, rgba(56,189,248,0.25), transparent 55%), linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
       color: #f8fafc;
-      position: relative;
-      overflow-x: hidden;
+      --card-bg: rgba(15,23,42,0.65);
+      --card-border: rgba(148,163,184,0.25);
+      --card-shadow: 0 25px 90px rgba(15,23,42,0.45);
+      --card-blur: blur(12px);
+      --status-border: rgba(148,163,184,0.35);
+      --status-bg: rgba(15,23,42,0.6);
+      --status-color: #e2e8f0;
+      --status-ok-bg: rgba(16,185,129,0.2);
+      --status-ok-border: rgba(34,197,94,0.4);
+      --status-bad-bg: rgba(248,113,113,0.2);
+      --status-bad-border: rgba(248,113,113,0.4);
+      --status-badge-bg: var(--accent);
+      --status-badge-color: #0f172a;
+      --status-ok-badge-bg: var(--good);
+      --status-bad-badge-bg: var(--bad);
+      --status-bad-badge-color: #ffffff;
     }
-    .status-banner {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      border-radius: 20px;
-      border: 2px solid rgba(148,163,184,0.35);
-      background: rgba(15,23,42,0.6);
-      color: #e2e8f0;
-      font-size: 1rem;
-    }
-    .status-banner.ok { border-color: rgba(34,197,94,0.4); background: rgba(16,185,129,0.2); }
-    .status-banner.bad { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.2); }
-    .status-badge {
-      display: inline-grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #0f172a;
-      font-weight: 700;
-    }
-    .status-banner.ok .status-badge { background: var(--good); }
-    .status-banner.bad .status-badge { background: var(--bad); color: #fff; }
-    .pad-card {
-      background: rgba(15,23,42,0.65);
-      border-radius: 32px;
-      border: 1px solid rgba(148,163,184,0.25);
-      box-shadow: 0 25px 90px rgba(15,23,42,0.45);
+    .game-rocket-run .game-card {
       overflow: hidden;
     }
     .launch-grid {
@@ -366,10 +376,10 @@
   </style>
 
 </head>
-<body class="min-h-screen text-slate-100">
+<body class="min-h-screen game-page game-rocket-run text-slate-100">
   
-  <div class="max-w-5xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
-    <header class="text-center space-y-2">
+  <div class="game-shell text-slate-100">
+    <header class="game-hero">
       <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-100 sm:text-5xl">
         <span aria-hidden="true">🚀</span>
         <span>Rocket Launch</span>
@@ -377,7 +387,7 @@
       <p class="text-sm text-slate-200 sm:text-base">Launch each rocket by typing its word. Launch all seven rockets to light up the sky!</p>
     </header>
 
-    <section class="pad-card p-6 sm:p-7 space-y-5">
+    <section class="game-card space-y-5">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
         <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-blue-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-blue-900/40 transition hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300">Light the fuse</button>
         <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-amber-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-amber-900/40 transition hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300" style="display:none;">Race again</button>
@@ -388,7 +398,7 @@
       </div>
     </section>
 
-    <section id="gameArea" class="pad-card p-6 sm:p-8 space-y-8" style="display:none;" aria-live="polite">
+    <section id="gameArea" class="game-card space-y-8" style="display:none;" aria-live="polite">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="rounded-3xl bg-blue-500/20 px-5 py-4 text-center text-sm font-semibold text-blue-100 shadow-inner shadow-blue-900/40 border border-blue-400/30">
           <div class="uppercase tracking-[0.3em] text-xs text-blue-200">Rocket</div>

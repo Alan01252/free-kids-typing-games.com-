@@ -12,12 +12,24 @@
         radial-gradient(950px circle at 80% -240px, rgba(96,165,250,0.55), transparent 62%),
         radial-gradient(850px circle at 20% 125%, rgba(251,191,36,0.35), transparent 58%),
         linear-gradient(180deg, #f5f3ff, #fef3c7 55%, #f8fafc);
+      --card-bg: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(237,248,255,0.56));
+      --card-border: rgba(59,130,246,0.18);
+      --card-shadow: 0 32px 95px rgba(96,165,250,0.2);
+      --status-border: rgba(59,130,246,0.2);
+      --status-bg: rgba(59,130,246,0.08);
+      --status-color: #0f172a;
       --status-ok-bg: rgba(34,197,94,0.15);
       --status-ok-border: rgba(34,197,94,0.35);
       --status-ok-color: #047857;
       --status-bad-bg: rgba(248,113,113,0.15);
       --status-bad-border: rgba(248,113,113,0.35);
       --status-bad-color: #b91c1c;
+      --status-badge-bg: rgba(59,130,246,0.22);
+      --status-badge-color: #1d4ed8;
+      --status-ok-badge-bg: rgba(34,197,94,0.85);
+      --status-ok-badge-color: #fff;
+      --status-bad-badge-bg: rgba(248,113,113,0.85);
+      --status-bad-badge-color: #fff;
     }
     .game-speed-racer::before {
       content: '';
@@ -42,11 +54,9 @@
       z-index: 0;
     }
     .game-speed-racer .status-badge {
-      background: var(--indigo);
-      color: #fff;
+      background: var(--status-badge-bg);
+      color: var(--status-badge-color);
     }
-    .game-speed-racer .status-banner.ok .status-badge { background: var(--green); }
-    .game-speed-racer .status-banner.bad .status-badge { background: #ef4444; }
     .race-track {
       position: relative;
       height: clamp(160px, 24vw, 220px);

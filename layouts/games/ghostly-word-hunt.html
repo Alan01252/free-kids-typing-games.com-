@@ -9,43 +9,44 @@
       --good: #34d399;
       --bad: #f87171;
     }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+    .game-ghostly {
       background: radial-gradient(circle at top, rgba(76,29,149,0.55), rgba(17,24,39,0.94));
       color: #f8fafc;
+      --card-bg: rgba(17,24,39,0.65);
+      --card-border: rgba(148,163,184,0.2);
+      --card-shadow: 0 32px 110px rgba(76,29,149,0.4);
+      --status-border: rgba(148,163,184,0.35);
+      --status-bg: rgba(30,64,175,0.18);
+      --status-color: #e2e8f0;
+      --status-ok-bg: rgba(16,185,129,0.18);
+      --status-ok-border: rgba(16,185,129,0.35);
+      --status-bad-bg: rgba(248,113,113,0.18);
+      --status-bad-border: rgba(248,113,113,0.35);
+      --status-badge-size: 36px;
+      --status-badge-bg: rgba(124,58,237,0.55);
+      --status-badge-color: #fff;
+      --status-ok-badge-bg: var(--good);
+      --status-ok-badge-color: #0b3d26;
+      --status-bad-badge-bg: var(--bad);
+      --status-bad-badge-color: #fff;
     }
-    .status-banner {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
-      border-radius: 20px;
-      border: 2px solid rgba(148,163,184,0.35);
-      background: rgba(30, 64, 175, 0.18);
-      font-size: 1rem;
-      color: #e2e8f0;
+    .game-ghostly::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at top, rgba(76,29,149,0.35), transparent 55%);
     }
-    .status-banner.ok {
-      background: rgba(16,185,129,0.18);
-      border-color: rgba(16,185,129,0.35);
+    .game-ghostly::after {
+      content: '';
+      position: absolute;
+      inset: auto -200px -160px -200px;
+      height: 55%;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(17,24,39,0), rgba(30,41,59,0.65)),
+        radial-gradient(600px circle at 80% 15%, rgba(129,140,248,0.35), transparent 70%);
     }
-    .status-banner.bad {
-      background: rgba(248,113,113,0.18);
-      border-color: rgba(248,113,113,0.35);
-    }
-    .status-badge {
-      display: inline-grid;
-      place-items: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--purple);
-      color: #fff;
-      font-weight: 700;
-    }
-    .status-banner.ok .status-badge { background: var(--good); }
-    .status-banner.bad .status-badge { background: var(--bad); }
     .mansion {
       position: relative;
       border-radius: 36px;
@@ -178,11 +179,11 @@
   </style>
 {{ end }}
 
-{{ define "body_class" }}text-slate-100{{ end }}
+{{ define "body_class" }}game-page game-ghostly text-slate-100{{ end }}
 
 {{ define "main" }}
-  <div class="max-w-4xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
-    <header class="text-center space-y-2">
+  <div class="game-shell text-slate-100">
+    <header class="game-hero">
       <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-100 sm:text-5xl">
         <span aria-hidden="true">🕯️</span>
         <span>Ghostly Word Hunt</span>
@@ -190,7 +191,7 @@
       <p class="text-sm text-indigo-200 sm:text-base">Light every candle to chase the giggling ghosts away. Three rooms stand between you and victory!</p>
     </header>
 
-    <section class="rounded-[32px] bg-slate-900/60 p-6 shadow-2xl shadow-purple-900/40 backdrop-blur-sm sm:p-7 space-y-5 border border-slate-700/40">
+    <section class="game-card space-y-5 border border-slate-700/40 bg-slate-900/60 shadow-2xl shadow-purple-900/40 backdrop-blur-sm">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
         <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-900/50 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300">Enter the house</button>
         <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-purple-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-purple-900/40 transition hover:bg-purple-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-300" style="display:none;">Play again</button>

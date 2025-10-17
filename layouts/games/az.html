@@ -12,12 +12,24 @@
         radial-gradient(760px circle at 18% 125%, rgba(16,185,129,0.45), transparent 55%),
         linear-gradient(180deg, #dcfcea 0%, #cffafe 55%, #f8fafc 100%);
       color: #1f2937;
+      --card-bg: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(224,247,255,0.58));
+      --card-border: rgba(99,102,241,0.16);
+      --card-shadow: 0 32px 95px rgba(56,189,248,0.22);
+      --status-border: rgba(99,102,241,0.18);
+      --status-bg: rgba(99,102,241,0.06);
+      --status-color: #1f2937;
       --status-ok-bg: rgba(34,197,94,0.15);
       --status-ok-border: rgba(34,197,94,0.35);
       --status-ok-color: #047857;
       --status-bad-bg: rgba(248,113,113,0.12);
       --status-bad-border: rgba(248,113,113,0.35);
       --status-bad-color: #991b1b;
+      --status-badge-bg: rgba(99,102,241,0.18);
+      --status-badge-color: #312e81;
+      --status-ok-badge-bg: rgba(34,197,94,0.85);
+      --status-ok-badge-color: #fff;
+      --status-bad-badge-bg: rgba(248,113,113,0.85);
+      --status-bad-badge-color: #fff;
     }
     .game-az::before {
       content: '';
@@ -42,17 +54,14 @@
       z-index: 0;
     }
     .game-az .status-badge {
-      background: var(--accent);
-      color: #fff;
+      background: var(--status-badge-bg);
+      color: var(--status-badge-color);
     }
-    .game-az .status-banner.ok .status-badge { background: var(--good); }
-    .game-az .status-banner.bad .status-badge { background: var(--bad); }
     .letter-card {
       position: relative;
-      background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(224,231,255,0.8));
       border-radius: 48px;
-      border: 3px solid rgba(99,102,241,0.2);
-      box-shadow: 0 35px 80px rgba(79,70,229,0.25);
+      border: 3px solid var(--card-border);
+      box-shadow: var(--card-shadow);
     }
     .letter-display {
       font-size: clamp(140px, 32vw, 260px);
@@ -172,7 +181,7 @@
       </p>
     </header>
 
-    <section class="game-card" style="--card-shadow-current: 0 32px 110px rgba(79,70,229,0.16); --card-border-current: rgba(99,102,241,0.2);">
+    <section class="game-card">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
         <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
           Start
