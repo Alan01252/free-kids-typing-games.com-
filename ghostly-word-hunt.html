@@ -97,25 +97,25 @@
       border-radius: 24px;
       background: linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.85));
       border: 2px dashed rgba(148,163,184,0.35);
-      display: grid;
-      place-items: center;
-      color: rgba(148,163,184,0.6);
-      font-size: clamp(24px, 6vw, 40px);
-      font-weight: 800;
-      transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-      padding-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+      padding: 16px 12px;
     }
-    .candle::after {
-      content: '';
-      position: absolute;
-      top: -22px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 38px;
-      background: radial-gradient(circle at 50% 20%, rgba(250,204,21,0.8), rgba(249,115,22,0.2) 60%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    .candle-icon {
+      font-size: clamp(34px, 7vw, 52px);
+      line-height: 1;
+      transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+    }
+    .candle-letter {
+      font-size: clamp(22px, 5vw, 36px);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: rgba(148,163,184,0.65);
+      transition: color 0.25s ease, text-shadow 0.25s ease;
     }
     .candle.lit {
       background: linear-gradient(180deg, rgba(59,130,246,0.35), rgba(30,64,175,0.45));
@@ -125,8 +125,14 @@
       transform: translateY(-6px);
       box-shadow: 0 20px 45px rgba(56,189,248,0.35);
     }
-    .candle.lit::after {
+    .candle.lit .candle-icon {
       opacity: 1;
+      filter: drop-shadow(0 0 14px rgba(253,224,71,0.55));
+      transform: translateY(-4px);
+    }
+    .candle.lit .candle-letter {
+      color: #f8fafc;
+      text-shadow: 0 0 12px rgba(191,219,254,0.75);
     }
     .candle.current {
       border-color: rgba(244,114,182,0.6);
@@ -234,7 +240,7 @@
           <span>🏠</span> <span>Menu</span>
         </a>
         <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🎈</span> <span>Word Builder</span>
+          <span>🧩</span> <span>Word Builder</span>
         </a>
         <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
           <span>🔤</span> <span>A–Z</span>
@@ -332,8 +338,18 @@
         const candle = document.createElement('div');
         candle.className = 'candle';
         candle.dataset.index = i;
-        candle.textContent = word[i].toUpperCase();
-        if(i < letterIndex) candle.classList.add('lit');
+        const letter = document.createElement('span');
+        letter.className = 'candle-letter';
+        letter.textContent = word[i].toUpperCase();
+        candle.appendChild(letter);
+        if(i < letterIndex) {
+          candle.classList.add('lit');
+          const icon = document.createElement('span');
+          icon.className = 'candle-icon';
+          icon.textContent = '🕯️';
+          icon.setAttribute('aria-hidden', 'true');
+          candle.insertBefore(icon, letter);
+        }
         if(i === letterIndex) candle.classList.add('current');
         candleRow.appendChild(candle);
       }
