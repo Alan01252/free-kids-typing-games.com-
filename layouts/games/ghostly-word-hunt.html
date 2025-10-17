@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ghostly Word Hunt</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+{{ define "styles" }}
   <style>
     :root {
       --night: #111827;
@@ -182,8 +176,11 @@
       100% { transform: scale(1); rotate(0); opacity: 1; }
     }
   </style>
-</head>
-<body class="min-h-screen text-slate-100">
+{{ end }}
+
+{{ define "body_class" }}text-slate-100{{ end }}
+
+{{ define "main" }}
   <div class="max-w-4xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
     <header class="text-center space-y-2">
       <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-100 sm:text-5xl">
@@ -232,39 +229,19 @@
       <div id="celebrate" aria-live="polite"></div>
     </section>
 
-    <footer class="space-y-3 text-center text-sm text-indigo-200">
-      <div>Tip: Whisper each spooky word after you type it to make the ghosts giggle.</div>
-      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-indigo-200">
-        <span class="text-xs uppercase tracking-[0.3em] text-indigo-300/80">Play more</span>
-        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🏠</span> <span>Menu</span>
-        </a>
-        <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🧩</span> <span>Word Builder</span>
-        </a>
-        <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🔤</span> <span>A–Z</span>
-        </a>
-        <a href="quick-fox.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🦊</span> <span>Quick Fox</span>
-        </a>
-        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🏎️</span> <span>Speed Racer</span>
-        </a>
-        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>💬</span> <span>Only Verbs</span>
-        </a>
-        <a href="rocket-run.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-200/15 px-3 py-1.5 text-sm font-semibold text-indigo-100 shadow-sm transition hover:bg-indigo-200/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-300/50">
-          <span>🚀</span> <span>Rocket Run</span>
-        </a>
-      </nav>
-    </footer>
   </div>
 
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
   <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="soundWin" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "game-footer.html" (dict "context" . "tip" .Params.tip "theme" (default "light" .Params.theme)) }}
+{{ end }}
+
+{{ define "scripts" }}
   <script>
     const ROOMS = [
       { name: 'Haunted Foyer', words: ['cobweb','lantern','mystic'] },
@@ -531,5 +508,4 @@
     setStatus(null, 'Press “Enter the house” to meet the first room.');
     status.style.display = 'flex';
   </script>
-</body>
-</html>
+{{ end }}

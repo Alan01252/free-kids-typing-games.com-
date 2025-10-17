@@ -1,10 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A–Z</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A–Z · Kids Typing Games</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  :root {
+    --game-font-stack: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-border: rgba(99, 102, 241, 0.15);
+    --card-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+    --card-blur: blur(6px);
+    --status-bg: rgba(99, 102, 241, 0.08);
+    --status-border: rgba(99, 102, 241, 0.25);
+    --status-color: #1f2937;
+    --status-ok-bg: rgba(34, 197, 94, 0.18);
+    --status-ok-border: rgba(34, 197, 94, 0.35);
+    --status-ok-color: #065f46;
+    --status-bad-bg: rgba(248, 113, 113, 0.18);
+    --status-bad-border: rgba(248, 113, 113, 0.35);
+    --status-bad-color: #7f1d1d;
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    font-family: var(--game-font-stack);
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .game-shell {
+    position: relative;
+    margin: 0 auto;
+    width: min(100%, 64rem);
+    padding: 1.5rem 1.25rem;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .game-shell {
+      padding: 3rem 1.5rem;
+      gap: 2rem;
+    }
+  }
+
+  .game-hero {
+    text-align: center;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+  }
+
+  .game-card {
+    --card-bg-current: var(--card-bg);
+    --card-border-current: var(--card-border);
+    --card-shadow-current: var(--card-shadow);
+    border-radius: 32px;
+    border: 1px solid var(--card-border-current);
+    background: var(--card-bg-current);
+    box-shadow: var(--card-shadow-current);
+    backdrop-filter: var(--card-blur);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .game-card[data-surface="muted"] {
+    --card-border-current: rgba(15, 23, 42, 0.25);
+    --card-shadow-current: 0 32px 120px rgba(15, 23, 42, 0.35);
+  }
+
+  .status-banner {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 20px;
+    border: 2px solid var(--status-border);
+    background: var(--status-bg);
+    color: var(--status-color);
+    font-size: 0.975rem;
+  }
+
+  .status-banner.ok {
+    background: var(--status-ok-bg);
+    border-color: var(--status-ok-border);
+    color: var(--status-ok-color);
+  }
+
+  .status-banner.bad {
+    background: var(--status-bad-bg);
+    border-color: var(--status-bad-border);
+    color: var(--status-bad-color);
+  }
+
+  .status-badge {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.2);
+  }
+
+  .touch-input {
+    letter-spacing: 0.35em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .celebrate {
+    min-height: 48px;
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .game-tip {
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  .game-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(99, 102, 241, 0.7);
+  }
+</style>
+
+  
   <style>
     :root {
       --accent: #5b8def;
@@ -12,70 +152,47 @@
       --good: #22c55e;
       --bad: #f87171;
     }
-    html, body { height: 100%; margin: 0; }
-body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
-  background:
-    radial-gradient(920px circle at 78% -260px, rgba(56,189,248,0.55), transparent 60%),
-    radial-gradient(760px circle at 18% 125%, rgba(16,185,129,0.45), transparent 55%),
-    linear-gradient(180deg, #dcfcea 0%, #cffafe 55%, #f8fafc 100%);
-  color: #1f2937;
-  position: relative;
-  overflow-x: hidden;
-}
-body::before {
-  content: '';
-  position: absolute;
-  inset: -160px -200px auto -200px;
-  height: 60%;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%),
-    radial-gradient(600px circle at 20% 20%, rgba(255,255,255,0.45), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body::after {
-  content: '';
-  position: absolute;
-  inset: auto -180px -160px -180px;
-  height: 50%;
-  background:
-    radial-gradient(600px circle at 70% 0%, rgba(134,239,172,0.4), transparent 70%),
-    linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body > * { position: relative; z-index: 1; }
-    .status-banner {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      border-radius: 20px;
-      border: 2px solid rgba(99,102,241,0.25);
-      background: rgba(99,102,241,0.08);
-      font-size: 1rem;
+    .game-az {
+      background:
+        radial-gradient(920px circle at 78% -260px, rgba(56,189,248,0.55), transparent 60%),
+        radial-gradient(760px circle at 18% 125%, rgba(16,185,129,0.45), transparent 55%),
+        linear-gradient(180deg, #dcfcea 0%, #cffafe 55%, #f8fafc 100%);
+      color: #1f2937;
+      --status-ok-bg: rgba(34,197,94,0.15);
+      --status-ok-border: rgba(34,197,94,0.35);
+      --status-ok-color: #047857;
+      --status-bad-bg: rgba(248,113,113,0.12);
+      --status-bad-border: rgba(248,113,113,0.35);
+      --status-bad-color: #991b1b;
     }
-    .status-banner.ok {
-      background: rgba(34,197,94,0.15);
-      border-color: rgba(34,197,94,0.35);
+    .game-az::before {
+      content: '';
+      position: absolute;
+      inset: -160px -200px auto -200px;
+      height: 60%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%),
+        radial-gradient(600px circle at 20% 20%, rgba(255,255,255,0.45), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
-    .status-banner.bad {
-      background: rgba(248,113,113,0.12);
-      border-color: rgba(248,113,113,0.35);
+    .game-az::after {
+      content: '';
+      position: absolute;
+      inset: auto -180px -160px -180px;
+      height: 50%;
+      background:
+        radial-gradient(600px circle at 70% 0%, rgba(134,239,172,0.4), transparent 70%),
+        linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+      z-index: 0;
     }
-    .status-badge {
-      display: inline-grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
+    .game-az .status-badge {
       background: var(--accent);
       color: #fff;
-      font-weight: 700;
     }
-    .status-banner.ok .status-badge { background: var(--good); }
-    .status-banner.bad .status-badge { background: var(--bad); }
+    .game-az .status-banner.ok .status-badge { background: var(--good); }
+    .game-az .status-banner.bad .status-badge { background: var(--bad); }
     .letter-card {
       position: relative;
       background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(224,231,255,0.8));
@@ -185,21 +302,29 @@ body > * { position: relative; z-index: 1; }
     }
     .animate-wiggle { animation: wiggle 0.35s ease; }
   </style>
+
 </head>
-<body class="min-h-screen">
-  <div class="max-w-3xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
-    <header class="text-center space-y-2">
+<body class="min-h-screen game-page game-az text-slate-800">
+  
+  <div class="game-shell text-slate-800">
+    <header class="game-hero">
       <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
         <span aria-hidden="true">🔤</span>
         <span>A–Z</span>
       </h1>
-      <p class="text-sm text-slate-500 sm:text-base">Type each letter to race from A all the way to Z.</p>
+      <p class="mx-auto max-w-2xl text-sm text-slate-500 sm:text-base">
+        Tap start and type each letter in order. Watch the glowing alphabet trail fill up as you sprint from A all the way to Z.
+      </p>
     </header>
 
-    <section class="rounded-[32px] bg-white/90 p-6 shadow-2xl shadow-indigo-100 backdrop-blur-sm sm:p-7 space-y-5">
+    <section class="game-card" style="--card-shadow-current: 0 32px 110px rgba(79,70,229,0.16); --card-border-current: rgba(99,102,241,0.2);">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">Start</button>
-        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" style="display:none;">Play again</button>
+        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          Start
+        </button>
+        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" style="display:none;">
+          Play again
+        </button>
       </div>
       <div id="status" class="status-banner" aria-live="polite">
         <span class="status-badge" id="statusBadge">i</span>
@@ -207,59 +332,95 @@ body > * { position: relative; z-index: 1; }
       </div>
     </section>
 
-    <section id="gameArea" class="letter-card p-6 sm:p-10 space-y-6" style="display:none;" aria-live="polite">
+    <section id="gameArea" class="game-card letter-card" style="display:none;" aria-live="polite">
       <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
         <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
         <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-3xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-4xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" />
       </div>
 
       <div class="text-center space-y-4">
-        <div class="text-sm font-semibold uppercase tracking-[0.35em] text-indigo-400">Current letter</div>
+        <div class="game-section-title text-indigo-400">Current letter</div>
         <div id="letterDisplay" class="letter-display" aria-live="polite" aria-atomic="true">A</div>
         <div id="hint" class="text-base font-semibold text-slate-500">Press Start to begin</div>
       </div>
 
-      <div class="space-y-2">
-        <div class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-400 text-center">Progress</div>
-        <div id="progress" class="progress-dots" aria-label="Alphabet progress"></div>
+      <div class="space-y-4">
+        <div class="rounded-[28px] border border-indigo-100/70 bg-white/75 p-5 backdrop-blur-sm">
+          <div class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.4em] text-indigo-400">Progress</div>
+          <div id="progress" class="progress-dots" aria-label="Alphabet progress"></div>
+        </div>
       </div>
 
       <div id="celebrate" class="celebrate" aria-live="polite"></div>
     </section>
-
-    <footer class="space-y-3 text-center text-sm text-slate-500">
-      <div>Tip: Tap Start, then type each letter in order. Perfect for keyboard warm-ups.</div>
-      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-indigo-500">
-        <span class="text-xs uppercase tracking-[0.3em] text-slate-400">Play more</span>
-        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🏠</span> <span>Menu</span>
-        </a>
-        <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🧩</span> <span>Word Builder</span>
-        </a>
-        <a href="quick-fox.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🦊</span> <span>Quick Fox</span>
-        </a>
-        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🏎️</span> <span>Speed Racer</span>
-        </a>
-        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>💬</span> <span>Only Verbs</span>
-        </a>
-        <a href="ghostly-word-hunt.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>👻</span> <span>Ghost Hunt</span>
-        </a>
-        <a href="rocket-run.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🚀</span> <span>Rocket Run</span>
-        </a>
-      </nav>
-    </footer>
   </div>
 
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
   <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg"></audio>
 
+
+  
+  
+
+
+
+
+
+
+
+
+
+<footer class="space-y-3 text-center text-sm text-slate-500">
+  
+  <div>Tip: Tap Start, then type each letter in order. Perfect for keyboard warm-ups.</div>
+  
+  <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-indigo-500">
+    <span class="text-xs uppercase tracking-[0.3em] text-slate-400">Play more</span>
+    <a href="/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+      <span>🏠</span> <span>Menu</span>
+    </a>
+    
+      
+      <a href="/games/word-builder/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+        <span>🧩</span> <span>Word Builder</span>
+      </a>
+    
+      
+      <a href="/games/az/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" aria-current="page">
+        <span>🔤</span> <span>A–Z</span>
+      </a>
+    
+      
+      <a href="/games/quick-fox/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+        <span>🦊</span> <span>Quick Fox Quest</span>
+      </a>
+    
+      
+      <a href="/games/speed-racer/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+        <span>🏎️</span> <span>Speed Racer</span>
+      </a>
+    
+      
+      <a href="/games/only-verbs/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+        <span>💬</span> <span>Only Verbs</span>
+      </a>
+    
+      
+      <a href="/games/ghostly-word-hunt/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+        <span>👻</span> <span>Ghostly Word Hunt</span>
+      </a>
+    
+      
+      <a href="/games/rocket-run/" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+        <span>🚀</span> <span>Rocket Run</span>
+      </a>
+    
+  </nav>
+</footer>
+
+
+  
   <script>
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -323,7 +484,7 @@ body > * { position: relative; z-index: 1; }
         try {
           const len = playInput.value.length;
           playInput.setSelectionRange(len, len);
-        } catch (_) { /* ignore selection issues */ }
+        } catch (_) {   }
         setTimeout(()=>{
           playInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 40);
@@ -460,5 +621,6 @@ body > * { position: relative; z-index: 1; }
     renderProgress();
     setStatus(null, 'Press Start to begin your alphabet adventure!');
   </script>
+
 </body>
 </html>

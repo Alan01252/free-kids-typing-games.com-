@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Fox Quest</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+{{ define "styles" }}
   <style>
     :root {
       --indigo: #6366f1;
@@ -12,77 +6,54 @@
       --green: #22c55e;
       --bad: #f87171;
     }
-    html, body { height: 100%; margin: 0; }
-body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
-  color: #1f2937;
-  background:
-    radial-gradient(900px circle at 80% -250px, rgba(249, 168, 212, 0.55), transparent 62%),
-    radial-gradient(820px circle at 12% 120%, rgba(254, 215, 165, 0.5), transparent 58%),
-    linear-gradient(180deg, #fff7ed, #fdf2f8 65%, #fefce8);
-  transition: background 0.6s ease;
-  position: relative;
-  overflow-x: hidden;
-}
-body.win-mode {
-  background:
-    radial-gradient(900px circle at 65% -200px, rgba(254,240,138,0.9), transparent 60%),
-    radial-gradient(900px circle at 20% 120%, rgba(254,178,217,0.85), transparent 60%),
-    linear-gradient(180deg, rgba(255,248,230,1), rgba(255,235,240,0.95));
-}
-body::before {
-  content: '';
-  position: absolute;
-  inset: auto -160px -180px -160px;
-  height: 55%;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 100%),
-    radial-gradient(600px circle at 25% 20%, rgba(255,255,255,0.45), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body::after {
-  content: '';
-  position: absolute;
-  inset: -140px -200px auto -200px;
-  height: 60%;
-  background:
-    linear-gradient(130deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%),
-    radial-gradient(500px circle at 80% 10%, rgba(253, 164, 175, 0.4), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body > * { position: relative; z-index: 1; }
-    .status-banner {
-      display: none;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      border-radius: 20px;
-      border: 2px solid rgba(99,102,241,0.25);
-      background: rgba(99,102,241,0.08);
-      font-size: 1rem;
+    .game-quick-fox {
+      color: #1f2937;
+      background:
+        radial-gradient(900px circle at 80% -250px, rgba(249, 168, 212, 0.55), transparent 62%),
+        radial-gradient(820px circle at 12% 120%, rgba(254, 215, 165, 0.5), transparent 58%),
+        linear-gradient(180deg, #fff7ed, #fdf2f8 65%, #fefce8);
+      transition: background 0.6s ease;
+      --status-ok-bg: rgba(34,197,94,0.18);
+      --status-ok-border: rgba(34,197,94,0.35);
+      --status-ok-color: #047857;
+      --status-bad-bg: rgba(248,113,113,0.18);
+      --status-bad-border: rgba(248,113,113,0.35);
+      --status-bad-color: #b91c1c;
     }
-    .status-banner.ok {
-      background: rgba(34,197,94,0.18);
-      border-color: rgba(34,197,94,0.35);
+    .game-quick-fox.win-mode {
+      background:
+        radial-gradient(900px circle at 65% -200px, rgba(254,240,138,0.9), transparent 60%),
+        radial-gradient(900px circle at 20% 120%, rgba(254,178,217,0.85), transparent 60%),
+        linear-gradient(180deg, rgba(255,248,230,1), rgba(255,235,240,0.95));
     }
-    .status-banner.bad {
-      background: rgba(248,113,113,0.18);
-      border-color: rgba(248,113,113,0.35);
+    .game-quick-fox::before {
+      content: '';
+      position: absolute;
+      inset: auto -160px -180px -160px;
+      height: 55%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 100%),
+        radial-gradient(600px circle at 25% 20%, rgba(255,255,255,0.45), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
-    .status-badge {
-      display: inline-grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
+    .game-quick-fox::after {
+      content: '';
+      position: absolute;
+      inset: -140px -200px auto -200px;
+      height: 60%;
+      background:
+        linear-gradient(130deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%),
+        radial-gradient(500px circle at 80% 10%, rgba(253, 164, 175, 0.4), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .game-quick-fox .status-badge {
       background: var(--indigo);
       color: #fff;
-      font-weight: 700;
     }
-    .status-banner.ok .status-badge { background: var(--green); }
-    .status-banner.bad .status-badge { background: var(--bad); }
+    .game-quick-fox .status-banner.ok .status-badge { background: var(--green); }
+    .game-quick-fox .status-banner.bad .status-badge { background: var(--bad); }
     .sentence-card {
       background: rgba(255,255,255,0.96);
       border-radius: 40px;
@@ -221,21 +192,30 @@ body > * { position: relative; z-index: 1; }
       50% { transform: translateY(-10px) scale(1.18); }
     }
   </style>
-</head>
-<body class="min-h-screen">
-  <div class="max-w-4xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
-    <header class="text-center space-y-2">
-      <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-5xl">
+{{ end }}
+
+{{ define "body_class" }}game-page game-quick-fox text-slate-800{{ end }}
+
+{{ define "main" }}
+  <div class="game-shell text-slate-800">
+    <header class="game-hero">
+      <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
         <span aria-hidden="true">🦊</span>
         <span>Quick Fox Quest</span>
       </h1>
-      <p class="text-sm text-slate-500 sm:text-base">Type every letter (and spaces!) of the famous pangram to help the fox leap all the way across.</p>
+      <p class="mx-auto max-w-2xl text-sm text-slate-500 sm:text-base">
+        Type every letter (and the spaces!) of the famous pangram to help the fox leap all the way across the forest clearing.
+      </p>
     </header>
 
-    <section class="rounded-[32px] bg-white/90 p-6 shadow-2xl shadow-indigo-100 backdrop-blur-sm sm:p-7 space-y-5">
+    <section class="game-card" style="--card-shadow-current: 0 32px 110px rgba(124,58,237,0.18); --card-border-current: rgba(99,102,241,0.22);">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">Start</button>
-        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" style="display:none;">Play again</button>
+        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          Start
+        </button>
+        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" style="display:none;">
+          Play again
+        </button>
       </div>
       <div id="status" class="status-banner" aria-live="polite">
         <span class="status-badge" id="statusBadge">i</span>
@@ -243,7 +223,7 @@ body > * { position: relative; z-index: 1; }
       </div>
     </section>
 
-    <section id="gameArea" class="sentence-card p-6 sm:p-9 space-y-7" style="display:none;" aria-live="polite">
+    <section id="gameArea" class="game-card sentence-card" style="display:none;" aria-live="polite">
       <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
         <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
         <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-3xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-4xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" />
@@ -259,42 +239,21 @@ body > * { position: relative; z-index: 1; }
 
       <div id="sentenceGrid" class="sentence-grid" role="list" aria-label="Pangram letter boxes"></div>
 
-      <div id="celebrate" class="text-center text-lg font-semibold text-slate-600 min-h-[48px]" aria-live="polite"></div>
+      <div id="celebrate" class="celebrate text-slate-600" aria-live="polite"></div>
     </section>
-
-    <footer class="space-y-3 text-center text-sm text-slate-500">
-      <div>Tip: Watch for glowing blanks — that means press the space bar!</div>
-      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-indigo-500">
-        <span class="text-xs uppercase tracking-[0.3em] text-slate-400">Play more</span>
-        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🏠</span> <span>Menu</span>
-        </a>
-        <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🧩</span> <span>Word Builder</span>
-        </a>
-        <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🔤</span> <span>A–Z</span>
-        </a>
-        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🏎️</span> <span>Speed Racer</span>
-        </a>
-        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>💬</span> <span>Only Verbs</span>
-        </a>
-        <a href="ghostly-word-hunt.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>👻</span> <span>Ghost Hunt</span>
-        </a>
-        <a href="rocket-run.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🚀</span> <span>Rocket Run</span>
-        </a>
-      </nav>
-    </footer>
   </div>
 
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
   <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg"></audio>
 
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "game-footer.html" (dict "context" . "tip" .Params.tip "theme" (default "light" .Params.theme)) }}
+{{ end }}
+
+{{ define "scripts" }}
   <script>
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -554,5 +513,4 @@ body > * { position: relative; z-index: 1; }
     updateProgress();
     setStatus(null, 'Press Start to begin the fox’s run.');
   </script>
-</body>
-</html>
+{{ end }}

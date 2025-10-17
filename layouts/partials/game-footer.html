@@ -1,0 +1,27 @@
+{{ $ctx := .context | default .Page | default . }}
+{{ $tip := .tip }}
+{{ $theme := .theme | default "light" }}
+{{ $isDark := eq $theme "dark" }}
+{{ $wrapperClass := cond $isDark "space-y-3 text-center text-sm text-slate-100/90" "space-y-3 text-center text-sm text-slate-500" }}
+{{ $navClass := cond $isDark "flex flex-wrap items-center justify-center gap-3 text-slate-100" "flex flex-wrap items-center justify-center gap-3 text-indigo-500" }}
+{{ $labelClass := cond $isDark "text-xs uppercase tracking-[0.3em] text-slate-200/70" "text-xs uppercase tracking-[0.3em] text-slate-400" }}
+{{ $linkClass := cond $isDark "inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/30" "inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" }}
+{{ $games := site.Data.games }}
+{{ $current := $ctx.RelPermalink }}
+<footer class="{{ $wrapperClass }}">
+  {{ with $tip }}
+  <div>{{ . }}</div>
+  {{ end }}
+  <nav aria-label="More games" class="{{ $navClass }}">
+    <span class="{{ $labelClass }}">Play more</span>
+    <a href="/" class="{{ $linkClass }}"{{ if $ctx.IsHome }} aria-current="page"{{ end }}>
+      <span>🏠</span> <span>Menu</span>
+    </a>
+    {{ range $games }}
+      {{ $permalink := printf "/games/%s/" .slug }}
+      <a href="{{ $permalink }}" class="{{ $linkClass }}"{{ if eq $current $permalink }} aria-current="page"{{ end }}>
+        <span>{{ .emoji }}</span> <span>{{ .title }}</span>
+      </a>
+    {{ end }}
+  </nav>
+</footer>

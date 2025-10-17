@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rocket Run</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+{{ define "styles" }}
   <style>
     :root {
       --sky-top: #020617;
@@ -224,8 +218,11 @@
       100% { transform: scale(1); rotate(0); opacity: 1; }
     }
   </style>
-</head>
-<body class="min-h-screen text-slate-100">
+{{ end }}
+
+{{ define "body_class" }}text-slate-100{{ end }}
+
+{{ define "main" }}
   <div class="max-w-5xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
     <header class="text-center space-y-2">
       <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-100 sm:text-5xl">
@@ -325,39 +322,19 @@
       <div id="celebrate" aria-live="polite"></div>
     </section>
 
-    <footer class="space-y-3 text-center text-sm text-blue-200">
-      <div>Tip: Call out the countdown before each launch — “3, 2, 1, blast off!”</div>
-      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-blue-200">
-        <span class="text-xs uppercase tracking-[0.3em] text-blue-300/80">Play more</span>
-        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>🏠</span> <span>Menu</span>
-        </a>
-        <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>🧩</span> <span>Word Builder</span>
-        </a>
-        <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>🔤</span> <span>A–Z</span>
-        </a>
-        <a href="quick-fox.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>🦊</span> <span>Quick Fox</span>
-        </a>
-        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>🏎️</span> <span>Speed Racer</span>
-        </a>
-        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>💬</span> <span>Only Verbs</span>
-        </a>
-        <a href="ghostly-word-hunt.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
-          <span>👻</span> <span>Ghost Hunt</span>
-        </a>
-      </nav>
-    </footer>
   </div>
 
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
   <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/descending_whistle.ogg"></audio>
 
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "game-footer.html" (dict "context" . "tip" .Params.tip "theme" (default "light" .Params.theme)) }}
+{{ end }}
+
+{{ define "scripts" }}
   <script>
     const WORD_BANK = [
       'spark', 'rocket', 'ember', 'launch', 'flare', 'glow', 'fizz', 'crackle', 'flash', 'sparkle',
@@ -642,5 +619,4 @@
     setStatus(null, 'Press “Light the fuse” to start charging rockets.');
     status.style.display = 'flex';
   </script>
-</body>
-</html>
+{{ end }}

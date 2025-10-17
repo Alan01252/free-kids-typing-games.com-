@@ -1,0 +1,7 @@
+baseURL = "/"
+languageCode = "en-gb"
+title = "Kids Typing Games"
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true

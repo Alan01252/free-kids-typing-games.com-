@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} · {{ end }}{{ .Site.Title }}{{ end }}{{ end }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  {{ partial "game-shared-styles.html" . }}
+  {{ block "styles" . }}{{ end }}
+</head>
+<body class="min-h-screen {{ block "body_class" . }}{{ end }}">
+  {{ block "main" . }}{{ end }}
+  {{ block "footer" . }}{{ end }}
+  {{ block "scripts" . }}{{ end }}
+</body>
+</html>

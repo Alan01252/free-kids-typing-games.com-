@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Word Builder</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+{{ define "styles" }}
   <style>
     :root {
       --accent: #5b8def;
@@ -15,40 +9,35 @@
       --hint-bg: #fff7df;
       --hint-border: #ffe49a;
     }
-html, body { height: 100%; margin: 0; }
-body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
-  background:
-    radial-gradient(1000px circle at 78% -280px, rgba(254,215,165,0.65), transparent 60%),
-    radial-gradient(700px circle at 12% 120%, rgba(196,181,253,0.45), transparent 55%),
-    linear-gradient(180deg, #fff7ed 0%, #fef3c7 50%, #f4f8ff 100%);
-  color: #1f2937;
-  position: relative;
-  overflow-x: hidden;
-}
-body::before {
-  content: '';
-  position: absolute;
-  inset: -120px -160px auto -160px;
-  height: 60%;
-  background:
-    radial-gradient(600px circle at 20% 30%, rgba(255,255,255,0.6), transparent 70%),
-    linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(249,250,251,0) 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body::after {
-  content: '';
-  position: absolute;
-  inset: auto -120px -180px -120px;
-  height: 55%;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 100%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 14px, transparent 14px, transparent 28px);
-  pointer-events: none;
-  z-index: 0;
-}
-body > * { position: relative; z-index: 1; }
+    .game-word-builder {
+      background:
+        radial-gradient(1000px circle at 78% -280px, rgba(254,215,165,0.65), transparent 60%),
+        radial-gradient(700px circle at 12% 120%, rgba(196,181,253,0.45), transparent 55%),
+        linear-gradient(180deg, #fff7ed 0%, #fef3c7 50%, #f4f8ff 100%);
+      color: #1f2937;
+    }
+    .game-word-builder::before {
+      content: '';
+      position: absolute;
+      inset: -120px -160px auto -160px;
+      height: 60%;
+      background:
+        radial-gradient(600px circle at 20% 30%, rgba(255,255,255,0.6), transparent 70%),
+        linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(249,250,251,0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .game-word-builder::after {
+      content: '';
+      position: absolute;
+      inset: auto -120px -180px -120px;
+      height: 55%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 100%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 14px, transparent 14px, transparent 28px);
+      pointer-events: none;
+      z-index: 0;
+    }
     .hint {
       display: flex;
       align-items: center;
@@ -134,10 +123,6 @@ body > * { position: relative; z-index: 1; }
     .confetti {
       font-size: 1.75rem;
     }
-    .touch-input {
-      letter-spacing: 0.35em;
-      font-weight: 700;
-    }
     body.win-mode {
       background-image: radial-gradient(circle at top, rgba(254,240,138,0.75), rgba(224,231,255,0.9), rgba(191,219,254,0.95));
       transition: background-image 0.6s ease;
@@ -211,23 +196,53 @@ body > * { position: relative; z-index: 1; }
       100% { transform: translate3d(0,180px,0) scale(0.85) rotate(-18deg); opacity: 0; }
     }
   </style>
-</head>
-<body class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50 text-slate-800">
-  <div class="max-w-3xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
-    <header class="text-center">
+{{ end }}
+
+{{ define "body_class" }}game-page game-word-builder text-slate-800{{ end }}
+
+{{ define "main" }}
+  <div class="game-shell text-slate-800">
+    <header class="game-hero">
       <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight sm:text-5xl">
         <span aria-hidden="true">🧩</span>
         <span>Word Builder</span>
       </h1>
+      <p class="mx-auto max-w-2xl text-sm text-slate-500 sm:text-base">
+        Grown-ups choose the target word. Kids match every uppercase and lowercase tile to build it—with gentle hints and confetti when they win.
+      </p>
     </header>
 
-    <section class="rounded-[32px] bg-white/90 p-6 shadow-2xl shadow-indigo-100 backdrop-blur-sm sm:p-7 space-y-4">
+    <section class="game-card" style="--card-border-current: rgba(99,102,241,0.25); --card-shadow-current: 0 32px 110px rgba(99,102,241,0.16);">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto_auto] md:items-center">
-        <input id="wordInput" list="wordList" type="text" placeholder="Grown‑up: type a word here… (letters only)" aria-label="Practice word" class="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-lg font-semibold text-slate-700 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200" />
+        <input
+          id="wordInput"
+          list="wordList"
+          type="text"
+          placeholder="Grown-up: type a word here… (letters only)"
+          aria-label="Practice word"
+          class="w-full rounded-2xl border-2 border-indigo-100/70 bg-indigo-50/60 px-4 py-3 text-lg font-semibold text-slate-700 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+        />
         <datalist id="wordList"></datalist>
-        <button id="randomBtn" title="Pick a kid-friendly word for you" class="inline-flex w-full items-center justify-center rounded-2xl border-2 border-indigo-100 bg-indigo-50 px-4 py-3 text-base font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">Random word</button>
-        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">Start</button>
-        <button id="actionBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" style="display:none;">Restart</button>
+        <button
+          id="randomBtn"
+          title="Pick a kid-friendly word for you"
+          class="inline-flex w-full items-center justify-center rounded-2xl border-2 border-indigo-100 bg-white px-4 py-3 text-base font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200"
+        >
+          Random word
+        </button>
+        <button
+          id="startBtn"
+          class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200"
+        >
+          Start
+        </button>
+        <button
+          id="actionBtn"
+          class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200"
+          style="display:none;"
+        >
+          Restart
+        </button>
       </div>
       <div>
         <div id="status" class="hint" style="display:none;" aria-live="polite">
@@ -237,14 +252,30 @@ body > * { position: relative; z-index: 1; }
       </div>
     </section>
 
-    <section id="gameArea" class="rounded-[32px] bg-white/90 p-6 shadow-2xl shadow-indigo-100 backdrop-blur-sm sm:p-7 space-y-6" style="display:none;">
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type the letters</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-2xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-3xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
+    <section id="gameArea" class="game-card" style="display:none; --card-border-current: rgba(99,102,241,0.18); --card-shadow-current: 0 36px 120px rgba(99,102,241,0.18);" aria-live="polite">
+      <div
+        id="touchControls"
+        class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/80 p-5"
+        role="group"
+        aria-label="Mobile typing helper"
+      >
+        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">
+          Tap here to type the letters
+        </label>
+        <input
+          id="playInput"
+          class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/85 px-4 py-3 text-center text-2xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-3xl"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          spellcheck="false"
+        />
       </div>
 
       <div class="space-y-3">
-        <div class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
+        <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
           <span class="inline-block h-2 w-2 rounded-full bg-indigo-400"></span>
           <span>Uppercase</span>
         </div>
@@ -252,49 +283,28 @@ body > * { position: relative; z-index: 1; }
       </div>
 
       <div class="space-y-3">
-        <div class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
+        <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
           <span class="inline-block h-2 w-2 rounded-full bg-amber-400"></span>
-          <span>lowercase</span>
+          <span>Lowercase</span>
         </div>
         <div id="rowLower" class="boxes" role="list" aria-label="Lowercase letter boxes"></div>
       </div>
 
-      <div id="celebrate" class="celebrate" aria-live="polite"></div>
+      <div id="celebrate" class="celebrate min-h-[52px]" aria-live="polite"></div>
     </section>
-
-    <footer class="space-y-3 text-center text-sm text-slate-500">
-      <div>Tip: Press the keys to match the boxes. Mistakes wiggle red; try again! 🙂</div>
-      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-indigo-500">
-        <span class="text-xs uppercase tracking-[0.3em] text-slate-400">Play more</span>
-        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🏠</span> <span>Menu</span>
-        </a>
-        <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🔤</span> <span>A–Z</span>
-        </a>
-        <a href="quick-fox.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🦊</span> <span>Quick Fox</span>
-        </a>
-        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🏎️</span> <span>Speed Racer</span>
-        </a>
-        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>💬</span> <span>Only Verbs</span>
-        </a>
-        <a href="ghostly-word-hunt.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>👻</span> <span>Ghost Hunt</span>
-        </a>
-        <a href="rocket-run.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
-          <span>🎆</span> <span>Rocket Run</span>
-        </a>
-      </nav>
-    </footer>
   </div>
 
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
   <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="soundWin" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "game-footer.html" (dict "context" . "tip" .Params.tip "theme" (default "light" .Params.theme)) }}
+{{ end }}
+
+{{ define "scripts" }}
   <script>
     const wordInput = document.getElementById('wordInput');
     const wordList = document.getElementById('wordList');
@@ -585,5 +595,4 @@ body > * { position: relative; z-index: 1; }
     // Initial: keep status hidden to avoid duplication with helper line
     status.style.display = 'none';
   </script>
-</body>
-</html>
+{{ end }}

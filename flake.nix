@@ -1,0 +1,22 @@
+{
+  description = "Kids Typing Games Hugo site";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+    in {
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = [
+          pkgs.hugo
+        ];
+        shellHook = ''
+          echo "Dev shell loaded with Hugo ${pkgs.hugo.version}."
+        '';
+      };
+    };
+}
