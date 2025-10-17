@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Fox Quest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --indigo: #6366f1;
+      --amber: #fbbf24;
+      --green: #22c55e;
+      --bad: #f87171;
+    }
+    html, body { height: 100%; margin: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: #1f2937;
+  background:
+    radial-gradient(900px circle at 80% -250px, rgba(249, 168, 212, 0.55), transparent 62%),
+    radial-gradient(820px circle at 12% 120%, rgba(254, 215, 165, 0.5), transparent 58%),
+    linear-gradient(180deg, #fff7ed, #fdf2f8 65%, #fefce8);
+  transition: background 0.6s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+body.win-mode {
+  background:
+    radial-gradient(900px circle at 65% -200px, rgba(254,240,138,0.9), transparent 60%),
+    radial-gradient(900px circle at 20% 120%, rgba(254,178,217,0.85), transparent 60%),
+    linear-gradient(180deg, rgba(255,248,230,1), rgba(255,235,240,0.95));
+}
+body::before {
+  content: '';
+  position: absolute;
+  inset: auto -160px -180px -160px;
+  height: 55%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 100%),
+    radial-gradient(600px circle at 25% 20%, rgba(255,255,255,0.45), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: absolute;
+  inset: -140px -200px auto -200px;
+  height: 60%;
+  background:
+    linear-gradient(130deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%),
+    radial-gradient(500px circle at 80% 10%, rgba(253, 164, 175, 0.4), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body > * { position: relative; z-index: 1; }
+    .status-banner {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 20px;
+      border: 2px solid rgba(99,102,241,0.25);
+      background: rgba(99,102,241,0.08);
+      font-size: 1rem;
+    }
+    .status-banner.ok {
+      background: rgba(34,197,94,0.18);
+      border-color: rgba(34,197,94,0.35);
+    }
+    .status-banner.bad {
+      background: rgba(248,113,113,0.18);
+      border-color: rgba(248,113,113,0.35);
+    }
+    .status-badge {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--indigo);
+      color: #fff;
+      font-weight: 700;
+    }
+    .status-banner.ok .status-badge { background: var(--green); }
+    .status-banner.bad .status-badge { background: var(--bad); }
+    .sentence-card {
+      background: rgba(255,255,255,0.96);
+      border-radius: 40px;
+      border: 3px solid rgba(99,102,241,0.2);
+      box-shadow: 0 32px 75px rgba(79,70,229,0.22);
+    }
+    .sentence-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 12px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .token-word {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+    }
+    .token {
+      position: relative;
+      width: clamp(46px, 7vw, 64px);
+      height: clamp(64px, 9vw, 88px);
+      border-radius: 22px;
+      border: 2px dashed rgba(99,102,241,0.28);
+      background: rgba(224,231,255,0.5);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: clamp(24px, 6vw, 40px);
+      color: #4f46e5;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+      padding: 4px;
+    }
+    .token .char {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+    .token.space .char {
+      color: rgba(99,102,241,0.45);
+    }
+    .token.space {
+      width: clamp(46px, 7vw, 64px);
+      background: rgba(129,140,248,0.25);
+      border-style: dotted;
+    }
+    .token.space.done {
+      background: rgba(167,243,208,0.8);
+      border-color: rgba(34,197,94,0.5);
+    }
+    .token.current {
+      border-style: solid;
+      border-color: rgba(99,102,241,0.7);
+      background: linear-gradient(145deg, rgba(224,231,255,0.9), rgba(196,210,254,0.95));
+      box-shadow: 0 16px 36px rgba(99,102,241,0.28);
+      transform: translateY(-4px) scale(1.03);
+      color: #312e81;
+    }
+    .token.space.current .char {
+      color: rgba(79,70,229,0.85);
+    }
+    .token.done {
+      border-style: solid;
+      border-color: rgba(34,197,94,0.55);
+      background: linear-gradient(145deg, rgba(187,247,208,0.95), rgba(125,211,252,0.9));
+      color: #065f46;
+    }
+    .token.done.space .char {
+      color: rgba(6,95,70,0.6);
+    }
+    .token.wiggle {
+      animation: wiggle 0.35s ease;
+      border-color: rgba(248,113,113,0.65);
+      background: rgba(254,226,226,0.95);
+      color: #b91c1c;
+    }
+    @keyframes wiggle {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .touch-input {
+      letter-spacing: 0.4em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .progress-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      background: rgba(99,102,241,0.08);
+      border-radius: 999px;
+      border: 2px solid rgba(99,102,241,0.25);
+      font-weight: 600;
+      color: #4338ca;
+    }
+    .progress-chip strong {
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+    .win-banner {
+      position: relative;
+      padding: 24px 20px;
+      border-radius: 32px;
+      border: 3px solid rgba(245,158,11,0.4);
+      background: linear-gradient(140deg, rgba(254,240,138,0.95), rgba(254,215,170,0.92));
+      box-shadow: 0 32px 80px rgba(245,158,11,0.35);
+      display: grid;
+      gap: 14px;
+      justify-items: center;
+      text-align: center;
+      animation: bannerPop 0.6s ease forwards;
+      width: min(100%, 360px);
+      margin: 0 auto;
+    }
+    @keyframes bannerPop {
+      0% { transform: scale(0.85) rotate(-2deg); opacity: 0; }
+      60% { transform: scale(1.05) rotate(1deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+    .win-emoji-line {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      font-size: 2rem;
+    }
+    .win-burst {
+      display: inline-block;
+      animation: burstBounce 1.2s ease-in-out infinite;
+    }
+    @keyframes burstBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.18); }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="max-w-4xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
+    <header class="text-center space-y-2">
+      <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-5xl">
+        <span aria-hidden="true">🦊</span>
+        <span>Quick Fox Quest</span>
+      </h1>
+      <p class="text-sm text-slate-500 sm:text-base">Type every letter (and spaces!) of the famous pangram to help the fox leap all the way across.</p>
+    </header>
+
+    <section class="rounded-[32px] bg-white/90 p-6 shadow-2xl shadow-indigo-100 backdrop-blur-sm sm:p-7 space-y-5">
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">Start</button>
+        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200" style="display:none;">Play again</button>
+      </div>
+      <div id="status" class="status-banner" aria-live="polite">
+        <span class="status-badge" id="statusBadge">i</span>
+        <span id="statusText">Press Start to begin the fox’s run.</span>
+      </div>
+    </section>
+
+    <section id="gameArea" class="sentence-card p-6 sm:p-9 space-y-7" style="display:none;" aria-live="polite">
+      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
+        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
+        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-3xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-4xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" />
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-slate-500">
+        <div class="progress-chip" id="progressChip"><span>Letter</span> <strong>1 of 43</strong></div>
+        <div class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">
+          <span>Hint</span>
+        </div>
+        <div id="hint" class="text-sm font-semibold text-slate-600">Tap Start and press the letter T.</div>
+      </div>
+
+      <div id="sentenceGrid" class="sentence-grid" role="list" aria-label="Pangram letter boxes"></div>
+
+      <div id="celebrate" class="text-center text-lg font-semibold text-slate-600 min-h-[48px]" aria-live="polite"></div>
+    </section>
+
+    <footer class="space-y-3 text-center text-sm text-slate-500">
+      <div>Tip: Watch for glowing blanks — that means press the space bar!</div>
+      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-indigo-500">
+        <span class="text-xs uppercase tracking-[0.3em] text-slate-400">Play more</span>
+        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>🏠</span> <span>Menu</span>
+        </a>
+        <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>🎈</span> <span>Word Builder</span>
+        </a>
+        <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>🔤</span> <span>A–Z</span>
+        </a>
+        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>🏎️</span> <span>Speed Racer</span>
+        </a>
+        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>💬</span> <span>Only Verbs</span>
+        </a>
+        <a href="ghostly-word-hunt.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>👻</span> <span>Ghost Hunt</span>
+        </a>
+        <a href="rocket-run.html" class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-600 shadow-sm transition hover:bg-indigo-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          <span>🚀</span> <span>Rocket Run</span>
+        </a>
+      </nav>
+    </footer>
+  </div>
+
+  <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+  <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg"></audio>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status = document.getElementById('status');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusText = document.getElementById('statusText');
+    const sentenceGrid = document.getElementById('sentenceGrid');
+    const hint = document.getElementById('hint');
+    const progressChip = document.getElementById('progressChip');
+    const celebrate = document.getElementById('celebrate');
+    const gameArea = document.getElementById('gameArea');
+    const playInput = document.getElementById('playInput');
+    const touchControls = document.getElementById('touchControls');
+
+    const soundCorrect = document.getElementById('soundCorrect');
+    const soundWrong = document.getElementById('soundWrong');
+    const soundWin = document.getElementById('soundWin');
+
+    const SENTENCE = 'The quick brown fox jumped over the lazy dog';
+    const characters = SENTENCE.split('');
+    let index = 0;
+    let active = false;
+
+    const isTouchDevice = (() => {
+      if(typeof window === 'undefined') return false;
+      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
+      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
+      return hasTouchEvent || hasTouchPoints || coarsePointer;
+    })();
+    if(touchControls){
+      touchControls.classList.toggle('hidden', !isTouchDevice);
+    }
+
+    function setStatus(kind, message){
+      statusText.innerHTML = message;
+      status.classList.remove('ok','bad');
+      statusBadge.textContent = 'i';
+      if(kind === 'ok'){
+        status.classList.add('ok');
+        statusBadge.textContent = '✓';
+      } else if(kind === 'bad'){
+        status.classList.add('bad');
+        statusBadge.textContent = '×';
+      }
+      status.style.display = 'flex';
+    }
+
+    function buildSentence(){
+      sentenceGrid.innerHTML = '';
+      let runningIndex = 0;
+      const words = SENTENCE.split(' ');
+      words.forEach((word, wordIdx)=>{
+        const wordWrap = document.createElement('div');
+        wordWrap.className = 'token-word';
+        [...word].forEach(letter=>{
+          const letterToken = document.createElement('span');
+          letterToken.className = 'token';
+          letterToken.dataset.index = runningIndex++;
+          letterToken.setAttribute('role', 'listitem');
+          letterToken.setAttribute('aria-label', `Letter ${letter}`);
+          letterToken.innerHTML = `<span class="char">${letter}</span>`;
+          wordWrap.appendChild(letterToken);
+        });
+        sentenceGrid.appendChild(wordWrap);
+        if(wordIdx < words.length - 1){
+          const spaceToken = document.createElement('span');
+          spaceToken.className = 'token space';
+          spaceToken.dataset.index = runningIndex++;
+          spaceToken.setAttribute('role', 'listitem');
+           spaceToken.setAttribute('aria-label', 'Space character');
+          spaceToken.innerHTML = '<span class="char">&nbsp;</span>';
+          sentenceGrid.appendChild(spaceToken);
+        }
+      });
+    }
+
+    function updateTokens(){
+      const tokens = sentenceGrid.querySelectorAll('.token');
+      tokens.forEach(token=>{
+        const tokenIndex = Number(token.dataset.index);
+        token.classList.remove('current','done','wiggle');
+        if(tokenIndex < index) token.classList.add('done');
+        if(tokenIndex === index) token.classList.add('current');
+      });
+
+      const currentToken = sentenceGrid.querySelector(`.token[data-index="${index}"]`);
+      if(currentToken){
+        const rect = currentToken.getBoundingClientRect();
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const offsetTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
+        const topSafe = 120;
+        if(rect.top - offsetTop < topSafe || rect.bottom - offsetTop > viewportHeight - 140){
+          const currentScroll = window.scrollY || window.pageYOffset || 0;
+          const targetTop = rect.top + currentScroll - offsetTop - 140;
+          window.scrollTo({ top: targetTop, behavior: 'smooth' });
+        }
+      }
+    }
+
+    function updateProgress(){
+      const total = characters.length;
+      const current = Math.min(index + 1, total);
+      progressChip.innerHTML = `<span>Letter</span> <strong>${current} of ${total}</strong>`;
+    }
+
+    function focusPlayInput(){
+      if(!playInput || !isTouchDevice) return;
+      requestAnimationFrame(()=>{
+        playInput.focus({ preventScroll: true });
+        try {
+          const len = playInput.value.length;
+          playInput.setSelectionRange(len, len);
+        } catch (_) {}
+        setTimeout(()=>updateTokens(), 50);
+      });
+    }
+
+    function startGame(){
+      index = 0;
+      active = true;
+      document.body.classList.remove('win-mode');
+      startBtn.style.display = 'none';
+      resetBtn.style.display = 'inline-flex';
+      gameArea.style.display = 'block';
+      celebrate.innerHTML = '';
+      buildSentence();
+      updateTokens();
+      updateProgress();
+      hint.textContent = 'Type the letter you see glowing. Spaces count too!';
+      setStatus('ok', 'Ready! Start with the letter <strong>T</strong>.');
+      focusPlayInput();
+    }
+
+    function resetGame(){
+      active = false;
+      document.body.classList.remove('win-mode');
+      startBtn.style.display = 'inline-flex';
+      resetBtn.style.display = 'none';
+      gameArea.style.display = 'none';
+      celebrate.innerHTML = '';
+      setStatus(null, 'Press Start to begin the fox’s run.');
+      status.style.display = 'flex';
+      index = 0;
+      updateProgress();
+      if(playInput){
+        playInput.value = '';
+        playInput.blur();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function finishGame(){
+      active = false;
+      document.body.classList.add('win-mode');
+      updateTokens();
+      setStatus('ok', 'Epic! The fox made it across the sentence.');
+      const bursts = ['🦊','🌟','🎉','🌈','🥳'];
+      const burstLine = bursts.map((emoji, idx)=>`<span class="win-burst" style="animation-delay:${(idx*0.12).toFixed(2)}s">${emoji}</span>`).join('');
+      celebrate.innerHTML = `
+        <div class="win-banner">
+          <div class="win-emoji-line">${burstLine}</div>
+          <div class="text-lg font-extrabold uppercase tracking-[0.25em] text-amber-700">pangram mastered!</div>
+          <div class="text-sm font-semibold text-amber-900">“The quick brown fox jumped over the lazy dog”</div>
+        </div>
+      `;
+      soundWin.currentTime = 0;
+      soundWin.play();
+      resetBtn.focus();
+      if(playInput){
+        playInput.value = '';
+        if(isTouchDevice) playInput.blur();
+      }
+      if(isTouchDevice){
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(()=>window.scrollTo({ top: 0, behavior: 'smooth' }), 120);
+      }
+    }
+
+    function wrongLetter(expected, pressed){
+      soundWrong.currentTime = 0;
+      soundWrong.play();
+      const humanPressed = pressed === ' ' ? 'Space' : pressed.toUpperCase();
+      const friendlyExpected = expected === ' ' ? 'Space' : expected.toUpperCase();
+      setStatus('bad', `Almost! We need <strong>${friendlyExpected}</strong> — you pressed <strong>${humanPressed}</strong>.`);
+      const currentToken = sentenceGrid.querySelector(`.token[data-index="${index}"]`);
+      if(currentToken){
+        currentToken.classList.remove('wiggle');
+        void currentToken.offsetWidth;
+        currentToken.classList.add('wiggle');
+      }
+    }
+
+    function handleKeyPress(rawKey){
+      if(!active) return;
+      if(!rawKey || rawKey.length !== 1) return;
+      const needed = characters[index];
+      if(needed === undefined) return;
+      const normalizedKey = rawKey === ' ' ? ' ' : rawKey;
+      const isMatch = needed === ' ' ? normalizedKey === ' ' : normalizedKey.toLowerCase() === needed.toLowerCase();
+
+      if(isMatch){
+        soundCorrect.currentTime = 0;
+        soundCorrect.play();
+        index++;
+        updateTokens();
+        updateProgress();
+        if(index >= characters.length){
+          finishGame();
+        } else {
+          const next = characters[index];
+          const friendly = next === ' ' ? 'Space' : next.toUpperCase();
+          setStatus('ok', `Great! Next letter: <strong>${friendly}</strong>`);
+        }
+      } else {
+        wrongLetter(needed, rawKey);
+      }
+    }
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+
+    document.addEventListener('keydown', (e)=>{
+      if(!active) return;
+      if(e.target === playInput) return;
+      const key = e.key === 'Spacebar' ? ' ' : e.key;
+      handleKeyPress(key);
+    });
+
+    if(playInput){
+      playInput.addEventListener('input', ()=>{
+        if(!active){
+          playInput.value = '';
+          return;
+        }
+        const value = playInput.value;
+        if(!value){
+          focusPlayInput();
+          return;
+        }
+        const letters = value.split('');
+        playInput.value = '';
+        letters.forEach(ch=>handleKeyPress(ch));
+        focusPlayInput();
+      });
+      playInput.addEventListener('click', ()=>{
+        if(active) focusPlayInput();
+      });
+    }
+
+    if(gameArea){
+      gameArea.addEventListener('click', ()=>{
+        if(active) focusPlayInput();
+      });
+    }
+
+    updateProgress();
+    setStatus(null, 'Press Start to begin the fox’s run.');
+  </script>
+</body>
+</html>

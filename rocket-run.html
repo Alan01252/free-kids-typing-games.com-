@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rocket Run</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --sky-top: #020617;
+      --sky-bottom: #0f172a;
+      --accent: #60a5fa;
+      --accent-2: #f97316;
+      --good: #22c55e;
+      --bad: #f87171;
+    }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+      background: radial-gradient(circle at 50% -20%, rgba(56,189,248,0.25), transparent 55%), linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+      color: #f8fafc;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .status-banner {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 20px;
+      border: 2px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.6);
+      color: #e2e8f0;
+      font-size: 1rem;
+    }
+    .status-banner.ok { border-color: rgba(34,197,94,0.4); background: rgba(16,185,129,0.2); }
+    .status-banner.bad { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.2); }
+    .status-badge {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .status-banner.ok .status-badge { background: var(--good); }
+    .status-banner.bad .status-badge { background: var(--bad); color: #fff; }
+    .pad-card {
+      background: rgba(15,23,42,0.65);
+      border-radius: 32px;
+      border: 1px solid rgba(148,163,184,0.25);
+      box-shadow: 0 25px 90px rgba(15,23,42,0.45);
+      overflow: hidden;
+    }
+    .launch-grid {
+      position: relative;
+      display: grid;
+      gap: 20px;
+    }
+    @media (min-width: 640px) {
+      .launch-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    }
+    .rocket {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: clamp(180px, 26vw, 240px);
+      padding-bottom: 18px;
+      overflow: visible;
+    }
+    .rocket .tower {
+      position: absolute;
+      bottom: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(148,163,184,0.4), rgba(15,23,42,0.8));
+      border-radius: 999px;
+      opacity: 0.35;
+    }
+    .rocket span.emoji {
+      font-size: clamp(48px, 7vw, 64px);
+      filter: drop-shadow(0 10px 25px rgba(96,165,250,0.45));
+      transition: transform 0.3s ease, opacity 0.2s ease;
+    }
+    .rocket.inactive span.emoji {
+      opacity: 0.3;
+      filter: drop-shadow(0 4px 12px rgba(15,23,42,0.8));
+    }
+    .rocket.current span.emoji {
+      opacity: 1;
+      transform: translateY(-6px) scale(1.05);
+    }
+    .rocket .fuse {
+      position: absolute;
+      bottom: 48px;
+      height: 4px;
+      width: 60px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.3);
+      overflow: hidden;
+      transform: translateY(0);
+    }
+    .rocket .fuse::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(249,115,22,0.8), rgba(250,204,21,0.8));
+      transform: scaleX(var(--charge, 0));
+      transform-origin: left;
+      transition: transform 0.15s ease;
+    }
+    .rocket.launch span.emoji {
+      animation: lift 1.15s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+    @keyframes lift {
+      0% { transform: translateY(-6px) scale(1.05); opacity: 1; }
+      60% { transform: translateY(-180px) scale(1.1); opacity: 1; }
+      80% { opacity: 0.7; }
+      100% { transform: translateY(-260px) scale(0.95); opacity: 0; }
+    }
+    .rocket .burst {
+      position: absolute;
+      bottom: 140px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244,114,182,0.9), rgba(56,189,248,0.1));
+      opacity: 0;
+      transform: scale(0);
+      pointer-events: none;
+    }
+    .rocket.launch .burst {
+      animation: burst 0.8s ease-out 0.6s forwards;
+    }
+    @keyframes burst {
+      0% { opacity: 0; transform: scale(0); }
+      20% { opacity: 1; transform: scale(1.8); }
+      60% { opacity: 0.8; transform: scale(2.4); }
+      100% { opacity: 0; transform: scale(3.3); }
+    }
+    .rocket .trail {
+      position: absolute;
+      bottom: -12px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(251,191,36,1), rgba(249,115,22,0));
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .rocket.charging .trail {
+      opacity: 1;
+      animation: flicker 0.4s alternate infinite;
+    }
+    @keyframes flicker {
+      0% { transform: scale(0.5); opacity: 0.6; }
+      100% { transform: scale(0.8); opacity: 1; }
+    }
+    .letter-row {
+      --letters: 6;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .letter-box {
+      width: clamp(48px, calc((min(100%, 640px) - (var(--letters) - 1)*16px)/var(--letters)), 86px);
+      min-width: 48px;
+      height: clamp(64px, 9vw, 96px);
+      border-radius: 20px;
+      border: 2px dashed rgba(148,163,184,0.35);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: clamp(30px, 6vw, 44px);
+      color: rgba(191,219,254,0.6);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .letter-box.filled {
+      border-style: solid;
+      border-color: rgba(96,165,250,0.6);
+      background: rgba(37,99,235,0.25);
+      color: #e0f2fe;
+      transform: translateY(-4px);
+    }
+    .letter-box.current {
+      border-style: solid;
+      border-color: rgba(251,191,36,0.7);
+      background: rgba(251,191,36,0.2);
+      color: #fff7ed;
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 20px 50px rgba(251,191,36,0.25);
+    }
+    .letter-box.wiggle { animation: wiggle 0.35s ease; border-color: rgba(248,113,113,0.6); background: rgba(254,226,226,0.2); color: #fecaca; }
+    @keyframes wiggle {
+      0%, 100% { transform: translateY(0); }
+      20% { transform: translate(-4px, -4px); }
+      40% { transform: translate(4px, -8px); }
+      60% { transform: translate(-3px, -5px); }
+      80% { transform: translate(3px, -7px); }
+    }
+    .touch-input {
+      letter-spacing: 0.4em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .celebration {
+      padding: 26px 22px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(56,189,248,0.25), rgba(251,191,36,0.2));
+      border: 2px solid rgba(96,165,250,0.4);
+      box-shadow: 0 30px 90px rgba(14,116,144,0.35);
+      text-align: center;
+      animation: pop 0.6s ease;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.85) rotate(-2deg); opacity: 0; }
+      60% { transform: scale(1.05) rotate(1deg); opacity: 1; }
+      100% { transform: scale(1); rotate(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100">
+  <div class="max-w-5xl mx-auto px-5 py-6 space-y-6 sm:px-6 sm:py-8 sm:space-y-8">
+    <header class="text-center space-y-2">
+      <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-100 sm:text-5xl">
+        <span aria-hidden="true">🚀</span>
+        <span>Rocket Launch</span>
+      </h1>
+      <p class="text-sm text-slate-200 sm:text-base">Launch each rocket by typing its word. Launch all seven rockets to light up the sky!</p>
+    </header>
+
+    <section class="pad-card p-6 sm:p-7 space-y-5">
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-blue-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-blue-900/40 transition hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300">Light the fuse</button>
+        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-amber-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-amber-900/40 transition hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300" style="display:none;">Race again</button>
+      </div>
+      <div id="status" class="status-banner" aria-live="polite">
+        <span class="status-badge" id="statusBadge">i</span>
+        <span id="statusText">Press “Light the fuse” to start launching rockets.</span>
+      </div>
+    </section>
+
+    <section id="gameArea" class="pad-card p-6 sm:p-8 space-y-8" style="display:none;" aria-live="polite">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-3xl bg-blue-500/20 px-5 py-4 text-center text-sm font-semibold text-blue-100 shadow-inner shadow-blue-900/40 border border-blue-400/30">
+          <div class="uppercase tracking-[0.3em] text-xs text-blue-200">Rocket</div>
+          <div id="progressCounter" class="mt-1 text-3xl font-extrabold text-blue-100">1 / 7</div>
+        </div>
+        <div class="rounded-3xl bg-slate-900/70 px-5 py-4 text-center text-sm font-semibold text-slate-200 shadow-inner shadow-slate-900/40 border border-slate-600/40">
+          <div class="uppercase tracking-[0.3em] text-xs text-slate-400">Next words</div>
+          <div id="queue" class="mt-1 flex flex-wrap justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400"></div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-3xl bg-slate-900/60 border border-slate-700/40 px-4 py-6">
+        <div class="launch-grid sm:grid-cols-7">
+          <div class="rocket inactive" data-index="0">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+          <div class="rocket inactive" data-index="1">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+          <div class="rocket inactive" data-index="2">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+          <div class="rocket inactive" data-index="3">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+          <div class="rocket inactive" data-index="4">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+          <div class="rocket inactive" data-index="5">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+          <div class="rocket inactive" data-index="6">
+            <div class="tower"></div>
+            <span class="emoji">🚀</span>
+            <div class="fuse"></div>
+            <div class="trail"></div>
+            <div class="burst"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-blue-300/40 bg-blue-900/30 p-5" role="group" aria-label="Mobile typing helper">
+        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-blue-200">Tap to type</label>
+        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-blue-400/40 bg-slate-900/70 px-4 py-3 text-center text-2xl text-blue-100 focus:border-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400/40 sm:text-3xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
+      </div>
+
+      <div class="space-y-4 text-center">
+        <div class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-200">Current word</div>
+        <div id="letterRow" class="letter-row"></div>
+      </div>
+
+      <div id="celebrate" aria-live="polite"></div>
+    </section>
+
+    <footer class="space-y-3 text-center text-sm text-blue-200">
+      <div>Tip: Call out the countdown before each launch — “3, 2, 1, blast off!”</div>
+      <nav aria-label="More games" class="flex flex-wrap items-center justify-center gap-3 text-blue-200">
+        <span class="text-xs uppercase tracking-[0.3em] text-blue-300/80">Play more</span>
+        <a href="index.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>🏠</span> <span>Menu</span>
+        </a>
+        <a href="word-builder.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>🎈</span> <span>Word Builder</span>
+        </a>
+        <a href="az.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>🔤</span> <span>A–Z</span>
+        </a>
+        <a href="quick-fox.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>🦊</span> <span>Quick Fox</span>
+        </a>
+        <a href="speed-racer.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>🏎️</span> <span>Speed Racer</span>
+        </a>
+        <a href="only-verbs.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>💬</span> <span>Only Verbs</span>
+        </a>
+        <a href="ghostly-word-hunt.html" class="inline-flex items-center gap-1 rounded-full bg-blue-200/10 px-3 py-1.5 text-sm font-semibold text-blue-100 shadow-sm transition hover:bg-blue-200/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+          <span>👻</span> <span>Ghost Hunt</span>
+        </a>
+      </nav>
+    </footer>
+  </div>
+
+  <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+  <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/descending_whistle.ogg"></audio>
+
+  <script>
+    const WORD_BANK = [
+      'spark', 'rocket', 'ember', 'launch', 'flare', 'glow', 'fizz', 'crackle', 'flash', 'sparkle',
+      'ignite', 'burst', 'fusion', 'glitter', 'stream', 'blaze', 'dazzle', 'twinkle', 'shimmer', 'comet'
+    ];
+    const TOTAL_ROCKETS = 7;
+
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status = document.getElementById('status');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusText = document.getElementById('statusText');
+    const gameArea = document.getElementById('gameArea');
+    const progressCounter = document.getElementById('progressCounter');
+    const queue = document.getElementById('queue');
+    const rocketEls = Array.from(document.querySelectorAll('.rocket'));
+    const letterRow = document.getElementById('letterRow');
+    const celebrate = document.getElementById('celebrate');
+    const playInput = document.getElementById('playInput');
+    const touchControls = document.getElementById('touchControls');
+
+    const soundCorrect = document.getElementById('soundCorrect');
+    const soundWrong = document.getElementById('soundWrong');
+    const soundWin = document.getElementById('soundWin');
+
+    let words = [];
+    let rocketIndex = 0;
+    let letterIndex = 0;
+    let active = false;
+
+    const isTouchDevice = (() => {
+      if(typeof window === 'undefined') return false;
+      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
+      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
+      return hasTouchEvent || hasTouchPoints || coarsePointer;
+    })();
+    if(touchControls){
+      touchControls.classList.toggle('hidden', !isTouchDevice);
+    }
+
+    function setStatus(kind, message){
+      statusText.innerHTML = message;
+      status.classList.remove('ok','bad');
+      statusBadge.textContent = 'i';
+      if(kind === 'ok'){
+        status.classList.add('ok');
+        statusBadge.textContent = '✓';
+      } else if(kind === 'bad'){
+        status.classList.add('bad');
+        statusBadge.textContent = '×';
+      }
+      status.style.display = 'flex';
+    }
+
+    function shuffleWords(){
+      const pool = [...new Set(WORD_BANK)];
+      for(let i = pool.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool.slice(0, TOTAL_ROCKETS);
+    }
+
+    function renderQueue(){
+      const upcoming = words.slice(rocketIndex + 1);
+      queue.innerHTML = upcoming.map(word => `<span class="rounded-full bg-blue-400/15 px-3 py-1 text-xs font-semibold text-blue-100 uppercase tracking-[0.3em]">${word}</span>`).join('') || '<span class="px-3 py-1 text-xs text-blue-200/70 uppercase tracking-[0.3em]">Final burst</span>';
+    }
+
+    function renderWord(){
+      letterRow.innerHTML = '';
+      const word = words[rocketIndex] || '';
+      letterRow.style.setProperty('--letters', word.length);
+      for(let i = 0; i < word.length; i++){
+        const box = document.createElement('div');
+        box.className = 'letter-box';
+        box.dataset.index = i;
+        box.textContent = word[i].toUpperCase();
+        if(i < letterIndex) box.classList.add('filled');
+        if(i === letterIndex) box.classList.add('current');
+        letterRow.appendChild(box);
+      }
+    }
+
+    function resetRocketsState(){
+      rocketEls.forEach(rocket=>{
+        rocket.classList.remove('launch','charging','current');
+        rocket.classList.add('inactive');
+        rocket.style.removeProperty('--charge');
+        const fuse = rocket.querySelector('.fuse');
+        if(fuse) fuse.style.setProperty('--charge', 0);
+        const emoji = rocket.querySelector('.emoji');
+        if(emoji) emoji.style.removeProperty('transform');
+      });
+    }
+
+    function setCurrentRocket(){
+      rocketEls.forEach(el=>el.classList.remove('current','charging'));
+      const rocket = rocketEls[rocketIndex];
+      if(rocket){
+        rocket.classList.remove('inactive');
+        rocket.classList.add('current','charging');
+        rocket.querySelector('.fuse')?.style.setProperty('--charge', letterIndex / words[rocketIndex].length);
+      }
+    }
+
+    function updateFuse(){
+      const rocket = rocketEls[rocketIndex];
+      if(!rocket) return;
+      const fuse = rocket.querySelector('.fuse');
+      if(!fuse) return;
+      const word = words[rocketIndex];
+      const charge = word.length ? letterIndex / word.length : 0;
+      fuse.style.setProperty('--charge', charge);
+      if(charge >= 1){
+        rocket.classList.remove('charging');
+      }
+    }
+
+    function focusPlayInput(){
+      if(!playInput || !isTouchDevice) return;
+      requestAnimationFrame(()=>{
+        playInput.focus({ preventScroll: true });
+        try {
+          const len = playInput.value.length;
+          playInput.setSelectionRange(len, len);
+        } catch (_) {}
+      });
+    }
+
+    function handleCorrect(){
+      const word = words[rocketIndex];
+      letterIndex++;
+      if(letterIndex >= word.length){
+        launchRocket(rocketIndex);
+        rocketIndex++;
+        letterIndex = 0;
+        if(rocketIndex >= words.length){
+          finishShow();
+          return;
+        } else {
+          setStatus('ok', `Great! Next rocket word: <strong>${words[rocketIndex].toUpperCase()}</strong>`);
+        }
+      } else {
+        setStatus('ok', `Keep charging! Next letter: <strong>${word[letterIndex].toUpperCase()}</strong>`);
+      }
+      progressCounter.textContent = `${Math.min(rocketIndex + 1, TOTAL_ROCKETS)} / ${TOTAL_ROCKETS}`;
+      renderQueue();
+      renderWord();
+      updateFuse();
+      setCurrentRocket();
+      soundCorrect.currentTime = 0;
+      soundCorrect.play();
+    }
+
+    function handleWrong(key){
+      soundWrong.currentTime = 0;
+      soundWrong.play();
+      const expected = words[rocketIndex][letterIndex].toUpperCase();
+      const shown = (key || '?').toUpperCase();
+      setStatus('bad', `Almost! Rocket wants <strong>${expected}</strong> — you pressed <strong>${shown}</strong>.`);
+      const box = letterRow.querySelector(`.letter-box[data-index="${letterIndex}"]`);
+      if(box){
+        box.classList.remove('wiggle');
+        void box.offsetWidth;
+        box.classList.add('wiggle');
+      }
+    }
+
+    function launchRocket(index){
+      const rocket = rocketEls[index];
+      if(!rocket) return;
+      rocket.classList.remove('current','charging');
+      rocket.classList.add('launch');
+      rocket.querySelector('.fuse')?.style.setProperty('--charge', 1);
+      setTimeout(()=>rocket.classList.add('inactive'), 1400);
+    }
+
+    function handleKeyPress(key){
+      if(!active) return;
+      if(!key || key.length !== 1) return;
+      if(!/[a-zA-Z]/.test(key)) return;
+      const expected = words[rocketIndex][letterIndex];
+      if(!expected) return;
+      if(key.toLowerCase() === expected.toLowerCase()){
+        handleCorrect();
+      } else {
+        handleWrong(key);
+      }
+    }
+
+    function finishShow(){
+      active = false;
+      setStatus('ok', 'Sky full of colour! You launched every rocket.');
+      celebrate.innerHTML = `
+        <div class="celebration">
+          <div class="text-2xl font-extrabold text-blue-100 uppercase tracking-[0.25em]">Fireworks Finale</div>
+          <div class="text-lg font-semibold text-slate-100">Amazing typing — the fireworks were spectacular!</div>
+          <div class="text-4xl leading-none mt-1">🎆 🎇 🎆</div>
+        </div>
+      `;
+      soundWin.currentTime = 0;
+      soundWin.play();
+      resetBtn.focus();
+      if(playInput){
+        playInput.value = '';
+        if(isTouchDevice) playInput.blur();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startShow(){
+      words = shuffleWords();
+      rocketIndex = 0;
+      letterIndex = 0;
+      active = true;
+      celebrate.innerHTML = '';
+      startBtn.style.display = 'none';
+      resetBtn.style.display = 'inline-flex';
+      gameArea.style.display = 'block';
+      resetRocketsState();
+      progressCounter.textContent = `1 / ${TOTAL_ROCKETS}`;
+      renderQueue();
+      renderWord();
+      setCurrentRocket();
+      updateFuse();
+      setStatus('ok', `Ready! First rocket word: <strong>${words[0].toUpperCase()}</strong>.`);
+      focusPlayInput();
+    }
+
+    function resetShow(){
+      active = false;
+      startBtn.style.display = 'inline-flex';
+      resetBtn.style.display = 'none';
+      gameArea.style.display = 'none';
+      celebrate.innerHTML = '';
+      letterRow.innerHTML = '';
+      letterRow.style.removeProperty('--letters');
+      queue.innerHTML = '';
+      progressCounter.textContent = `1 / ${TOTAL_ROCKETS}`;
+      setStatus(null, 'Press “Light the fuse” to start charging rockets.');
+      status.style.display = 'flex';
+      resetRocketsState();
+      if(playInput){
+        playInput.value = '';
+        playInput.blur();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    startBtn.addEventListener('click', startShow);
+    resetBtn.addEventListener('click', resetShow);
+
+    document.addEventListener('keydown', (e)=>{
+      if(!active) return;
+      if(e.target === playInput) return;
+      handleKeyPress(e.key);
+    });
+
+    if(playInput){
+      playInput.addEventListener('input', ()=>{
+        if(!active){
+          playInput.value = '';
+          return;
+        }
+        const letters = playInput.value.match(/[a-zA-Z]/g) || [];
+        playInput.value = '';
+        letters.forEach(ch=>handleKeyPress(ch));
+        focusPlayInput();
+      });
+      playInput.addEventListener('click', ()=>{
+        if(active) focusPlayInput();
+      });
+    }
+
+    if(gameArea){
+      gameArea.addEventListener('click', ()=>{
+        if(active) focusPlayInput();
+      });
+    }
+
+    setStatus(null, 'Press “Light the fuse” to start charging rockets.');
+    status.style.display = 'flex';
+  </script>
+</body>
+</html>
