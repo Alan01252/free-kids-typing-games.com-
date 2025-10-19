@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} · {{ end }}{{ .Site.Title }}{{ end }}{{ end }}</title>
+  <link rel="icon" href="{{ "favicon.ico" | absURL }}" type="image/x-icon" />
+  <link rel="shortcut icon" href="{{ "favicon.ico" | absURL }}" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
   {{ partial "game-shared-styles.html" . }}
   {{ block "styles" . }}{{ end }}

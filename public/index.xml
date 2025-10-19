@@ -2,58 +2,58 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Free Kids Typing Games on Kids Typing Games</title>
-    <link>/</link>
+    <link>//localhost:1313/</link>
     <description>Recent content in Free Kids Typing Games on Kids Typing Games</description>
     <generator>Hugo</generator>
     <language>en-gb</language>
-    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A–Z</title>
-      <link>/games/az/</link>
+      <link>//localhost:1313/games/az/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/az/</guid>
+      <guid>//localhost:1313/games/az/</guid>
       <description></description>
     </item>
     <item>
       <title>Ghostly Word Hunt</title>
-      <link>/games/ghostly-word-hunt/</link>
+      <link>//localhost:1313/games/ghostly-word-hunt/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/ghostly-word-hunt/</guid>
+      <guid>//localhost:1313/games/ghostly-word-hunt/</guid>
       <description></description>
     </item>
     <item>
       <title>Only Verbs</title>
-      <link>/games/only-verbs/</link>
+      <link>//localhost:1313/games/only-verbs/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/only-verbs/</guid>
+      <guid>//localhost:1313/games/only-verbs/</guid>
       <description></description>
     </item>
     <item>
       <title>Quick Fox Quest</title>
-      <link>/games/quick-fox/</link>
+      <link>//localhost:1313/games/quick-fox/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/quick-fox/</guid>
+      <guid>//localhost:1313/games/quick-fox/</guid>
       <description></description>
     </item>
     <item>
       <title>Rocket Run</title>
-      <link>/games/rocket-run/</link>
+      <link>//localhost:1313/games/rocket-run/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/rocket-run/</guid>
+      <guid>//localhost:1313/games/rocket-run/</guid>
       <description></description>
     </item>
     <item>
       <title>Speed Racer</title>
-      <link>/games/speed-racer/</link>
+      <link>//localhost:1313/games/speed-racer/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/speed-racer/</guid>
+      <guid>//localhost:1313/games/speed-racer/</guid>
       <description></description>
     </item>
     <item>
       <title>Word Builder</title>
-      <link>/games/word-builder/</link>
+      <link>//localhost:1313/games/word-builder/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/games/word-builder/</guid>
+      <guid>//localhost:1313/games/word-builder/</guid>
       <description></description>
     </item>
   </channel>
