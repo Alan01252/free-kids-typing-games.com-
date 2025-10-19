@@ -338,28 +338,6 @@
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #6366f1;
     }
-    .game-only-verbs::before {
-      content: '';
-      position: absolute;
-      inset: -160px -200px auto -200px;
-      height: 50%;
-      background:
-        radial-gradient(600px circle at 18% 35%, rgba(254,240,138,0.45), transparent 70%),
-        linear-gradient(130deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .game-only-verbs::after {
-      content: '';
-      position: absolute;
-      inset: auto -200px -180px -200px;
-      height: 55%;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%),
-        radial-gradient(600px circle at 75% 10%, rgba(45,212,191,0.35), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
     .game-only-verbs .status-badge {
       background: var(--status-badge-bg);
       color: var(--status-badge-color);
@@ -404,7 +382,7 @@
       font-weight: 700;
       text-transform: uppercase;
     }
-    .finish-banner {
+    .celebration {
       padding: 24px 20px;
       border-radius: 32px;
       border: 3px solid rgba(245,158,11,0.4);
@@ -818,7 +796,7 @@
       active = false;
       setStatus('ok', 'All verbs complete! Great job taking action.');
       const winMarkup = `
-        <div class="finish-banner">
+        <div class="celebration">
           <div class="text-2xl font-extrabold text-amber-700 uppercase tracking-[0.25em]">All verbs!</div>
           <div class="text-lg font-semibold text-slate-700">You mastered seven action words.</div>
           <div class="text-3xl">👏 💪 🎉</div>

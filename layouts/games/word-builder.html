@@ -35,28 +35,6 @@
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #6366f1;
     }
-    .game-word-builder::before {
-      content: '';
-      position: absolute;
-      inset: -120px -160px auto -160px;
-      height: 60%;
-      background:
-        radial-gradient(600px circle at 20% 30%, rgba(255,255,255,0.6), transparent 70%),
-        linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(249,250,251,0) 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .game-word-builder::after {
-      content: '';
-      position: absolute;
-      inset: auto -120px -180px -120px;
-      height: 55%;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 100%),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 14px, transparent 14px, transparent 28px);
-      pointer-events: none;
-      z-index: 0;
-    }
     .hint {
       display: flex;
       align-items: center;
@@ -154,7 +132,7 @@
       from { transform: translateY(-3px) scale(1.02); }
       to { transform: translateY(3px) scale(0.98); }
     }
-    .win-banner {
+    .celebration {
       position: relative;
       overflow: hidden;
       border-radius: 28px;
@@ -536,7 +514,7 @@
         return `<span class="confetti-piece" style="left:${left}%; animation-delay:${delay}s;">${icon}</span>`;
       }).join('');
       const winMarkup = `
-        <div class="win-banner">
+        <div class="celebration">
           <div class="win-emoji-line">${burstLine}</div>
           <div class="win-text">Amazing! You built <strong>${upperWord}</strong></div>
           <div class="win-sub">Give a high five and tap Play again!</div>

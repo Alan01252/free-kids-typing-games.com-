@@ -33,23 +33,6 @@
       --overlay-panel-color: #f8fafc;
       --overlay-action-primary: #7c3aed;
     }
-    .game-ghostly::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at top, rgba(76,29,149,0.35), transparent 55%);
-    }
-    .game-ghostly::after {
-      content: '';
-      position: absolute;
-      inset: auto -200px -160px -200px;
-      height: 55%;
-      pointer-events: none;
-      background:
-        linear-gradient(180deg, rgba(17,24,39,0), rgba(30,41,59,0.65)),
-        radial-gradient(600px circle at 80% 15%, rgba(129,140,248,0.35), transparent 70%);
-    }
     .mansion {
       position: relative;
       border-radius: 36px;
@@ -165,7 +148,7 @@
       font-weight: 700;
       text-transform: uppercase;
     }
-    .finish-banner {
+    .celebration {
       padding: 28px 24px;
       border-radius: 32px;
       background: linear-gradient(145deg, rgba(59,130,246,0.25), rgba(124,58,237,0.3));
@@ -428,7 +411,7 @@
       active = false;
       setStatus('ok', 'All rooms are glowing! The ghosts are delighted.');
       const winMarkup = `
-        <div class="finish-banner">
+        <div class="celebration">
           <div class="text-2xl font-extrabold text-indigo-100 uppercase tracking-[0.25em]">mansion aglow</div>
           <div class="text-lg font-semibold text-indigo-50">You lit every candle and befriended all the ghosts. Happy Halloween!</div>
           <div class="text-4xl leading-none">🕯️ 👻 🕯️</div>

@@ -34,28 +34,6 @@
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #5b8def;
     }
-    .game-az::before {
-      content: '';
-      position: absolute;
-      inset: -160px -200px auto -200px;
-      height: 60%;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%),
-        radial-gradient(600px circle at 20% 20%, rgba(255,255,255,0.45), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .game-az::after {
-      content: '';
-      position: absolute;
-      inset: auto -180px -160px -180px;
-      height: 50%;
-      background:
-        radial-gradient(600px circle at 70% 0%, rgba(134,239,172,0.4), transparent 70%),
-        linear-gradient(120deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
     .game-az .status-badge {
       background: var(--status-badge-bg);
       color: var(--status-badge-color);
@@ -122,7 +100,7 @@
       background: radial-gradient(circle at top, rgba(254,240,138,0.8), rgba(224,231,255,0.85));
       transition: background 0.6s ease;
     }
-    .win-banner {
+    .celebration {
       position: relative;
       padding: 24px 20px;
       border-radius: 30px;
@@ -137,7 +115,7 @@
       width: min(100%, 340px);
       margin: 0 auto;
     }
-    .win-banner strong {
+    .celebration strong {
       color: #b45309;
       text-shadow: 0 0 16px rgba(234,179,8,0.35);
     }
@@ -325,7 +303,7 @@
       const bursts = ['🎉','🎊','🌟','✨','🥳'];
       const burstLine = bursts.map((emoji, idx)=>`<span class="win-burst" style="animation-delay:${(idx*0.12).toFixed(2)}s">${emoji}</span>`).join('');
       const winMarkup = `
-        <div class="win-banner">
+        <div class="celebration">
           <div class="win-emoji-line">${burstLine}</div>
           <div class="text-lg font-extrabold uppercase tracking-[0.3em] text-amber-700">You did it!</div>
           <div class="text-sm font-semibold text-amber-900">All the letters from <strong>A to Z</strong>!</div>

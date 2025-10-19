@@ -41,28 +41,6 @@
         radial-gradient(900px circle at 20% 120%, rgba(254,178,217,0.85), transparent 60%),
         linear-gradient(180deg, rgba(255,248,230,1), rgba(255,235,240,0.95));
     }
-    .game-quick-fox::before {
-      content: '';
-      position: absolute;
-      inset: auto -160px -180px -160px;
-      height: 55%;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 100%),
-        radial-gradient(600px circle at 25% 20%, rgba(255,255,255,0.45), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .game-quick-fox::after {
-      content: '';
-      position: absolute;
-      inset: -140px -200px auto -200px;
-      height: 60%;
-      background:
-        linear-gradient(130deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%),
-        radial-gradient(500px circle at 80% 10%, rgba(253, 164, 175, 0.4), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
     .game-quick-fox .status-badge {
       background: var(--status-badge-bg);
       color: var(--status-badge-color);
@@ -168,7 +146,7 @@
       font-size: 1.1rem;
       letter-spacing: 0.05em;
     }
-    .win-banner {
+    .celebration {
       position: relative;
       padding: 24px 20px;
       border-radius: 32px;
@@ -425,7 +403,7 @@
       const bursts = ['🦊','🌟','🎉','🌈','🥳'];
       const burstLine = bursts.map((emoji, idx)=>`<span class="win-burst" style="animation-delay:${(idx*0.12).toFixed(2)}s">${emoji}</span>`).join('');
       const winMarkup = `
-        <div class="win-banner">
+        <div class="celebration">
           <div class="win-emoji-line">${burstLine}</div>
           <div class="text-lg font-extrabold uppercase tracking-[0.25em] text-amber-700">pangram mastered!</div>
           <div class="text-sm font-semibold text-amber-900">“The quick brown fox jumped over the lazy dog”</div>
