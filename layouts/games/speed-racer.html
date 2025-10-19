@@ -30,6 +30,9 @@
       --status-ok-badge-color: #fff;
       --status-bad-badge-bg: rgba(248,113,113,0.85);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(255,255,255,0.96);
+      --overlay-panel-color: #0f172a;
+      --overlay-action-primary: #6366f1;
     }
     .game-speed-racer::before {
       content: '';
@@ -439,20 +442,33 @@
       const timeStr = formatTime(elapsed);
       car.style.left = '100%';
       setStatus('ok', `Finish line crossed in <strong>${timeStr}</strong>!`);
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="finish-banner">
           <div class="text-2xl font-extrabold text-amber-700 uppercase tracking-[0.25em]">Finish!</div>
           <div class="mt-2 text-lg font-semibold text-slate-700">You raced through all seven words in <strong>${timeStr}</strong>.</div>
           <div class="mt-3 text-3xl">🏁 🎉 🏎️</div>
         </div>
       `;
-      resetBtn.focus();
+      celebrate.innerHTML = winMarkup;
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();
       }
       soundWin.currentTime = 0;
       soundWin.play();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetRace();
+            startRace();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 

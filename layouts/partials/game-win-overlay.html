@@ -1,0 +1,118 @@
+<div id="gameWinOverlay" class="game-win-overlay" aria-hidden="true">
+  <div class="game-win-overlay__panel" role="dialog" aria-modal="true" aria-label="Celebration" tabindex="-1" aria-hidden="true">
+    <button type="button" class="game-win-overlay__close" data-overlay-dismiss aria-label="Close celebration overlay">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div id="gameWinOverlayBody" class="game-win-overlay__body"></div>
+    <div class="game-win-overlay__actions">
+      <button type="button" class="game-win-overlay__again" data-overlay-again>Play again</button>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    const overlay = document.getElementById('gameWinOverlay');
+    if(!overlay) return;
+    const panel = overlay.querySelector('.game-win-overlay__panel');
+    const body = overlay.querySelector('#gameWinOverlayBody');
+    const actions = overlay.querySelector('.game-win-overlay__actions');
+    const againBtn = overlay.querySelector('[data-overlay-again]');
+    const dismissers = overlay.querySelectorAll('[data-overlay-dismiss]');
+    let lastActiveElement = null;
+    let storedOptions = null;
+    let playAgainHandler = null;
+
+    function cleanupPlayAgain(){
+      if(playAgainHandler && againBtn){
+        againBtn.removeEventListener('click', playAgainHandler);
+        playAgainHandler = null;
+      }
+    }
+
+    function handleKeydown(event){
+      if(event.key === 'Escape'){
+        event.preventDefault();
+        hide();
+      }
+    }
+
+    function hide(opts = {}){
+      if(!overlay.classList.contains('is-active')) return;
+      const { focusTarget } = opts;
+      overlay.classList.remove('is-active');
+      overlay.setAttribute('aria-hidden', 'true');
+      panel.setAttribute('aria-hidden', 'true');
+      body.innerHTML = '';
+      document.body.classList.remove('game-has-overlay');
+      document.removeEventListener('keydown', handleKeydown);
+      cleanupPlayAgain();
+
+      const target = focusTarget || storedOptions?.focusTarget || lastActiveElement;
+      const onDismiss = storedOptions?.onDismiss;
+
+      storedOptions = null;
+      lastActiveElement = null;
+
+      if(typeof onDismiss === 'function'){
+        onDismiss();
+      }
+
+      if(target && typeof target.focus === 'function'){
+        requestAnimationFrame(()=>target.focus());
+      }
+    }
+
+    overlay.addEventListener('click', event=>{
+      if(event.target === overlay){
+        hide();
+      }
+    });
+
+    dismissers.forEach(btn=>{
+      btn.addEventListener('click', ()=>hide());
+    });
+
+    function show(options = {}){
+      lastActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      storedOptions = options;
+      overlay.classList.add('is-active');
+      overlay.setAttribute('aria-hidden', 'false');
+      panel.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('game-has-overlay');
+      body.innerHTML = options.content || '';
+
+      const hasPlayAgain = typeof options.onPlayAgain === 'function';
+      const playAgainLabel = options.playAgainLabel || 'Play again';
+      if(hasPlayAgain && againBtn){
+        if(actions) actions.style.display = '';
+        againBtn.style.display = '';
+        againBtn.textContent = playAgainLabel;
+        cleanupPlayAgain();
+        playAgainHandler = ()=>{
+          options.onPlayAgain();
+          hide({ focusTarget: options.focusTarget });
+        };
+        againBtn.addEventListener('click', playAgainHandler);
+      } else {
+        cleanupPlayAgain();
+        if(againBtn) againBtn.style.display = 'none';
+        if(actions) actions.style.display = 'none';
+      }
+
+      document.addEventListener('keydown', handleKeydown);
+      requestAnimationFrame(()=>{
+        if(options.initialFocus === 'playAgain' && hasPlayAgain && againBtn && againBtn.style.display !== 'none'){
+          againBtn.focus({ preventScroll: true });
+        } else {
+          panel.focus({ preventScroll: true });
+        }
+      });
+    }
+
+    window.GameCelebration = {
+      show,
+      hide,
+      isOpen: ()=>overlay.classList.contains('is-active')
+    };
+  })();
+</script>

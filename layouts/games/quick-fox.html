@@ -31,6 +31,9 @@
       --status-ok-badge-color: #fff;
       --status-bad-badge-bg: rgba(248,113,113,0.85);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(255,255,255,0.96);
+      --overlay-panel-color: #1f2937;
+      --overlay-action-primary: #ec4899;
     }
     .game-quick-fox.win-mode {
       background:
@@ -421,16 +424,29 @@
       setStatus('ok', 'Epic! The fox made it across the sentence.');
       const bursts = ['🦊','🌟','🎉','🌈','🥳'];
       const burstLine = bursts.map((emoji, idx)=>`<span class="win-burst" style="animation-delay:${(idx*0.12).toFixed(2)}s">${emoji}</span>`).join('');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="win-banner">
           <div class="win-emoji-line">${burstLine}</div>
           <div class="text-lg font-extrabold uppercase tracking-[0.25em] text-amber-700">pangram mastered!</div>
           <div class="text-sm font-semibold text-amber-900">“The quick brown fox jumped over the lazy dog”</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      resetBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetGame();
+            startGame();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();

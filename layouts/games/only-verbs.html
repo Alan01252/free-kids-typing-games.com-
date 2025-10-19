@@ -30,6 +30,9 @@
       --status-ok-badge-color: #fff;
       --status-bad-badge-bg: rgba(248,113,113,0.85);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(255,255,255,0.96);
+      --overlay-panel-color: #1f2937;
+      --overlay-action-primary: #6366f1;
     }
     .game-only-verbs::before {
       content: '';
@@ -337,16 +340,29 @@
     function finishLesson(){
       active = false;
       setStatus('ok', 'All verbs complete! Great job taking action.');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="finish-banner">
           <div class="text-2xl font-extrabold text-amber-700 uppercase tracking-[0.25em]">All verbs!</div>
           <div class="text-lg font-semibold text-slate-700">You mastered seven action words.</div>
           <div class="text-3xl">👏 💪 🎉</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      resetBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetLesson();
+            startLesson();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();

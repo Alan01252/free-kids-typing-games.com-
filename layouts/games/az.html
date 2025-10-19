@@ -30,6 +30,9 @@
       --status-ok-badge-color: #fff;
       --status-bad-badge-bg: rgba(248,113,113,0.85);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(255,255,255,0.96);
+      --overlay-panel-color: #1f2937;
+      --overlay-action-primary: #5b8def;
     }
     .game-az::before {
       content: '';
@@ -321,21 +324,55 @@
       setStatus('ok', 'Amazing! You reached Z!');
       const bursts = ['🎉','🎊','🌟','✨','🥳'];
       const burstLine = bursts.map((emoji, idx)=>`<span class="win-burst" style="animation-delay:${(idx*0.12).toFixed(2)}s">${emoji}</span>`).join('');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="win-banner">
           <div class="win-emoji-line">${burstLine}</div>
           <div class="text-lg font-extrabold uppercase tracking-[0.3em] text-amber-700">You did it!</div>
           <div class="text-sm font-semibold text-amber-900">All the letters from <strong>A to Z</strong>!</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      resetBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetGame();
+            startGame();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();
       }
       if(isTouchDevice){
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function resetGame(){
+      active = false;
+      document.body.classList.remove('win-mode');
+      gameArea.style.display = 'none';
+      celebrate.innerHTML = '';
+      setStatus(null, 'Press Start to begin your alphabet adventure!');
+      status.style.display = 'flex';
+      startBtn.style.display = 'inline-flex';
+      resetBtn.style.display = 'none';
+      letterDisplay.textContent = 'A';
+      hint.textContent = 'Press Start to begin';
+      renderProgress();
+      if(isTouchDevice){
+        if(playInput){
+          playInput.value = '';
+          playInput.blur();
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
@@ -376,23 +413,7 @@
     }
 
     startBtn.addEventListener('click', startGame);
-    resetBtn.addEventListener('click', ()=>{
-      active = false;
-      document.body.classList.remove('win-mode');
-      gameArea.style.display = 'none';
-      celebrate.innerHTML = '';
-      setStatus(null, 'Press Start to begin your alphabet adventure!');
-      status.style.display = 'flex';
-      startBtn.style.display = 'inline-flex';
-      resetBtn.style.display = 'none';
-      letterDisplay.textContent = 'A';
-      hint.textContent = 'Press Start to begin';
-      renderProgress();
-      if(isTouchDevice){
-        if(playInput){ playInput.value = ''; playInput.blur(); }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
+    resetBtn.addEventListener('click', resetGame);
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;

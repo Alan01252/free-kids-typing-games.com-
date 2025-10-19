@@ -11,6 +11,7 @@
 <body class="min-h-screen {{ block "body_class" . }}{{ end }}">
   {{ block "main" . }}{{ end }}
   {{ block "footer" . }}{{ end }}
+  {{ partial "game-win-overlay.html" . }}
   {{ block "scripts" . }}{{ end }}
 </body>
 </html>

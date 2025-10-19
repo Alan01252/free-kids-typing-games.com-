@@ -31,6 +31,9 @@
       --status-ok-badge-color: #fff;
       --status-bad-badge-bg: rgba(248,113,113,0.9);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(255,255,255,0.96);
+      --overlay-panel-color: #1f2937;
+      --overlay-action-primary: #6366f1;
     }
     .game-word-builder::before {
       content: '';
@@ -532,7 +535,7 @@
         const delay = (i * 0.08).toFixed(2);
         return `<span class="confetti-piece" style="left:${left}%; animation-delay:${delay}s;">${icon}</span>`;
       }).join('');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="win-banner">
           <div class="win-emoji-line">${burstLine}</div>
           <div class="win-text">Amazing! You built <strong>${upperWord}</strong></div>
@@ -540,9 +543,21 @@
           <div class="win-confetti">${confettiPieces}</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0; soundWin.play();
       actionBtn.textContent = 'Play again';
-      actionBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetToSetup();
+          },
+          focusTarget: wordInput,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        actionBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice){

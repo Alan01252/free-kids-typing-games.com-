@@ -27,6 +27,9 @@
       --status-ok-badge-bg: var(--good);
       --status-bad-badge-bg: var(--bad);
       --status-bad-badge-color: #ffffff;
+      --overlay-panel-bg: rgba(15,23,42,0.94);
+      --overlay-panel-color: #f8fafc;
+      --overlay-action-primary: #3b82f6;
     }
     .game-rocket-run .game-card {
       overflow: hidden;
@@ -512,16 +515,29 @@
     function finishShow(){
       active = false;
       setStatus('ok', 'Sky full of colour! You launched every rocket.');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="celebration">
-          <div class="text-2xl font-extrabold text-blue-100 uppercase tracking-[0.25em]">Fireworks Finale</div>
-          <div class="text-lg font-semibold text-slate-100">Amazing typing — the fireworks were spectacular!</div>
-          <div class="text-4xl leading-none mt-1">🎆 🎇 🎆</div>
+          <div class="text-2xl font-extrabold text-blue-100 uppercase tracking-[0.25em]">Launch Complete</div>
+          <div class="text-lg font-semibold text-slate-100">Amazing typing — every rocket blasted off perfectly!</div>
+          <div class="text-4xl leading-none mt-1">🚀🌟🚀</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      resetBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetShow();
+            startShow();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();

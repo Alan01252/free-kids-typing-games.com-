@@ -29,6 +29,9 @@
       --status-ok-badge-color: #0b3d26;
       --status-bad-badge-bg: var(--bad);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(17,24,39,0.94);
+      --overlay-panel-color: #f8fafc;
+      --overlay-action-primary: #7c3aed;
     }
     .game-ghostly::before {
       content: '';
@@ -424,16 +427,29 @@
     function finishHunt(){
       active = false;
       setStatus('ok', 'All rooms are glowing! The ghosts are delighted.');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="finish-banner">
           <div class="text-2xl font-extrabold text-indigo-100 uppercase tracking-[0.25em]">mansion aglow</div>
           <div class="text-lg font-semibold text-indigo-50">You lit every candle and befriended all the ghosts. Happy Halloween!</div>
           <div class="text-4xl leading-none">🕯️ 👻 🕯️</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      resetBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetHunt();
+            startHunt();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();

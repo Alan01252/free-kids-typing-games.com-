@@ -28,6 +28,9 @@
     --status-ok-badge-color: #ffffff;
     --status-bad-badge-bg: var(--status-bad-bg);
     --status-bad-badge-color: #ffffff;
+    --overlay-panel-bg: rgba(15, 23, 42, 0.92);
+    --overlay-panel-color: #f8fafc;
+    --overlay-action-primary: #2563eb;
   }
 
   html,
@@ -169,6 +172,132 @@
     text-transform: uppercase;
     color: rgba(99, 102, 241, 0.7);
   }
+
+  body.game-has-overlay {
+    overflow: hidden;
+  }
+
+  .game-win-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 6vw, 3rem);
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+  }
+
+  .game-win-overlay.is-active {
+    display: flex;
+    animation: overlayFade 0.24s ease;
+  }
+
+  .game-win-overlay__panel {
+    position: relative;
+    width: min(32rem, 100%);
+    max-height: calc(100vh - 4rem);
+    overflow: auto;
+    border-radius: 30px;
+    border: 1px solid var(--card-border, rgba(148, 163, 184, 0.35));
+    background: var(--overlay-panel-bg, var(--card-bg, rgba(15, 23, 42, 0.92)));
+    box-shadow: var(--card-shadow, 0 30px 90px rgba(15, 23, 42, 0.35));
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    display: grid;
+    gap: 1.5rem;
+    color: var(--overlay-panel-color, inherit);
+    outline: none;
+  }
+
+  .game-win-overlay__panel:focus-visible {
+    outline: 3px solid rgba(96, 165, 250, 0.6);
+    outline-offset: 6px;
+  }
+
+  .game-win-overlay__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(15, 23, 42, 0.14);
+    color: inherit;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .game-win-overlay__close:hover {
+    transform: translateY(-1px);
+    background: rgba(15, 23, 42, 0.28);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
+  }
+
+  .game-win-overlay__close span {
+    line-height: 1;
+  }
+
+  .game-win-overlay__body {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .game-win-overlay__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .game-win-overlay__actions button {
+    border-radius: 999px;
+    font-weight: 700;
+    padding: 0.75rem 1.9rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+
+  .game-win-overlay__actions button:focus-visible {
+    outline: 3px solid rgba(148, 197, 253, 0.75);
+    outline-offset: 4px;
+  }
+
+  .game-win-overlay__again {
+    background: var(--overlay-action-primary, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 22px 45px rgba(37, 99, 235, 0.35);
+  }
+
+  .game-win-overlay__again:hover {
+    transform: translateY(-1px);
+  }
+
+  @keyframes overlayFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .game-win-overlay {
+      backdrop-filter: none;
+    }
+    .game-win-overlay.is-active {
+      animation: none;
+    }
+    .game-win-overlay__actions button {
+      transition: none;
+    }
+    .game-win-overlay__close {
+      transition: none;
+    }
+  }
 </style>
 
   
@@ -202,6 +331,9 @@
       --status-ok-badge-color: #0b3d26;
       --status-bad-badge-bg: var(--bad);
       --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(17,24,39,0.94);
+      --overlay-panel-color: #f8fafc;
+      --overlay-action-primary: #7c3aed;
     }
     .game-ghostly::before {
       content: '';
@@ -469,6 +601,125 @@
 </footer>
 
 
+  <div id="gameWinOverlay" class="game-win-overlay" aria-hidden="true">
+  <div class="game-win-overlay__panel" role="dialog" aria-modal="true" aria-label="Celebration" tabindex="-1" aria-hidden="true">
+    <button type="button" class="game-win-overlay__close" data-overlay-dismiss aria-label="Close celebration overlay">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div id="gameWinOverlayBody" class="game-win-overlay__body"></div>
+    <div class="game-win-overlay__actions">
+      <button type="button" class="game-win-overlay__again" data-overlay-again>Play again</button>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    const overlay = document.getElementById('gameWinOverlay');
+    if(!overlay) return;
+    const panel = overlay.querySelector('.game-win-overlay__panel');
+    const body = overlay.querySelector('#gameWinOverlayBody');
+    const actions = overlay.querySelector('.game-win-overlay__actions');
+    const againBtn = overlay.querySelector('[data-overlay-again]');
+    const dismissers = overlay.querySelectorAll('[data-overlay-dismiss]');
+    let lastActiveElement = null;
+    let storedOptions = null;
+    let playAgainHandler = null;
+
+    function cleanupPlayAgain(){
+      if(playAgainHandler && againBtn){
+        againBtn.removeEventListener('click', playAgainHandler);
+        playAgainHandler = null;
+      }
+    }
+
+    function handleKeydown(event){
+      if(event.key === 'Escape'){
+        event.preventDefault();
+        hide();
+      }
+    }
+
+    function hide(opts = {}){
+      if(!overlay.classList.contains('is-active')) return;
+      const { focusTarget } = opts;
+      overlay.classList.remove('is-active');
+      overlay.setAttribute('aria-hidden', 'true');
+      panel.setAttribute('aria-hidden', 'true');
+      body.innerHTML = '';
+      document.body.classList.remove('game-has-overlay');
+      document.removeEventListener('keydown', handleKeydown);
+      cleanupPlayAgain();
+
+      const target = focusTarget || storedOptions?.focusTarget || lastActiveElement;
+      const onDismiss = storedOptions?.onDismiss;
+
+      storedOptions = null;
+      lastActiveElement = null;
+
+      if(typeof onDismiss === 'function'){
+        onDismiss();
+      }
+
+      if(target && typeof target.focus === 'function'){
+        requestAnimationFrame(()=>target.focus());
+      }
+    }
+
+    overlay.addEventListener('click', event=>{
+      if(event.target === overlay){
+        hide();
+      }
+    });
+
+    dismissers.forEach(btn=>{
+      btn.addEventListener('click', ()=>hide());
+    });
+
+    function show(options = {}){
+      lastActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      storedOptions = options;
+      overlay.classList.add('is-active');
+      overlay.setAttribute('aria-hidden', 'false');
+      panel.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('game-has-overlay');
+      body.innerHTML = options.content || '';
+
+      const hasPlayAgain = typeof options.onPlayAgain === 'function';
+      const playAgainLabel = options.playAgainLabel || 'Play again';
+      if(hasPlayAgain && againBtn){
+        if(actions) actions.style.display = '';
+        againBtn.style.display = '';
+        againBtn.textContent = playAgainLabel;
+        cleanupPlayAgain();
+        playAgainHandler = ()=>{
+          options.onPlayAgain();
+          hide({ focusTarget: options.focusTarget });
+        };
+        againBtn.addEventListener('click', playAgainHandler);
+      } else {
+        cleanupPlayAgain();
+        if(againBtn) againBtn.style.display = 'none';
+        if(actions) actions.style.display = 'none';
+      }
+
+      document.addEventListener('keydown', handleKeydown);
+      requestAnimationFrame(()=>{
+        if(options.initialFocus === 'playAgain' && hasPlayAgain && againBtn && againBtn.style.display !== 'none'){
+          againBtn.focus({ preventScroll: true });
+        } else {
+          panel.focus({ preventScroll: true });
+        }
+      });
+    }
+
+    window.GameCelebration = {
+      show,
+      hide,
+      isOpen: ()=>overlay.classList.contains('is-active')
+    };
+  })();
+</script>
+
   
   <script>
     const ROOMS = [
@@ -651,16 +902,29 @@
     function finishHunt(){
       active = false;
       setStatus('ok', 'All rooms are glowing! The ghosts are delighted.');
-      celebrate.innerHTML = `
+      const winMarkup = `
         <div class="finish-banner">
           <div class="text-2xl font-extrabold text-indigo-100 uppercase tracking-[0.25em]">mansion aglow</div>
           <div class="text-lg font-semibold text-indigo-50">You lit every candle and befriended all the ghosts. Happy Halloween!</div>
           <div class="text-4xl leading-none">🕯️ 👻 🕯️</div>
         </div>
       `;
+      celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      resetBtn.focus();
+      if(!isTouchDevice && window.GameCelebration){
+        window.GameCelebration.show({
+          content: winMarkup,
+          onPlayAgain: ()=>{
+            resetHunt();
+            startHunt();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
       if(playInput){
         playInput.value = '';
         if(isTouchDevice) playInput.blur();
