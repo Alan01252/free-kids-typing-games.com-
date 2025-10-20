@@ -535,7 +535,7 @@
         const key = char === ' ' ? ' ' : char;
         handleKeyPress(key, { skipHighlight: true });
       },
-      getViewportTarget: () => sentenceGrid,
+      getViewportTarget: () => sentenceGrid.querySelector('.token.current') || sentenceGrid,
       getPaddingTarget: () => document.querySelector('.game-shell')
     });
     const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
@@ -593,16 +593,21 @@
       });
 
       const currentToken = sentenceGrid.querySelector(`.token[data-index="${index}"]`);
-      if(currentToken){
-        const rect = currentToken.getBoundingClientRect();
-        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-        const offsetTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
-        const topSafe = 120;
-        if(rect.top - offsetTop < topSafe || rect.bottom - offsetTop > viewportHeight - 140){
-          const currentScroll = window.scrollY || window.pageYOffset || 0;
-          const targetTop = rect.top + currentScroll - offsetTop - 140;
-          window.scrollTo({ top: targetTop, behavior: 'smooth' });
-        }
+      if(!currentToken) return;
+
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(currentToken);
+        return;
+      }
+
+      const rect = currentToken.getBoundingClientRect();
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const offsetTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
+      const topSafe = 120;
+      if(rect.top - offsetTop < topSafe || rect.bottom - offsetTop > viewportHeight - 140){
+        const currentScroll = window.scrollY || window.pageYOffset || 0;
+        const targetTop = rect.top + currentScroll - offsetTop - 140;
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
       }
     }
 
@@ -627,7 +632,10 @@
       setStatus('ok', 'Ready! Start with the letter <strong>T</strong>.');
       if(isTouchDevice){
         touchKeyboard?.show();
-        touchKeyboard?.ensureVisible(sentenceGrid);
+        const currentToken = sentenceGrid.querySelector('.token.current');
+        if(currentToken){
+          touchKeyboard?.ensureVisible(currentToken);
+        }
       }
     }
 
@@ -694,6 +702,9 @@
         currentToken.classList.remove('wiggle');
         void currentToken.offsetWidth;
         currentToken.classList.add('wiggle');
+        if(isTouchDevice){
+          touchKeyboard?.ensureVisible(currentToken);
+        }
       }
     }
 
@@ -714,9 +725,6 @@
         index++;
         updateTokens();
         updateProgress();
-        if(isTouchDevice){
-          touchKeyboard?.ensureVisible(sentenceGrid);
-        }
         if(index >= characters.length){
           finishGame();
         } else {
@@ -726,9 +734,6 @@
         }
       } else {
         wrongLetter(needed, rawKey);
-        if(isTouchDevice){
-          touchKeyboard?.ensureVisible(sentenceGrid);
-        }
       }
     }
 

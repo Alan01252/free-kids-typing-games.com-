@@ -201,7 +201,6 @@
     border: none;
     border-radius: 0;
     padding: var(--panel-pad) clamp(6px, 3vw, 18px) calc(var(--panel-pad) + env(safe-area-inset-bottom, 0px));
-    padding-top: calc(var(--panel-pad) + clamp(18px, 4vw, 32px));
     background: var(--touch-panel-bg);
     color: var(--touch-panel-color);
     z-index: 120;
@@ -222,6 +221,7 @@
     justify-content: space-between;
     gap: clamp(8px, 3vw, 18px);
     padding-inline: clamp(6px, 3vw, 18px);
+    margin-bottom: clamp(6px, 2vw, 12px);
   }
 
   .keyboard-label {
@@ -256,18 +256,18 @@
     margin: clamp(4px, 1.4vw, 12px) 0;
   }
 
-  .virtual-keyboard .simple-keyboard .hg-row:nth-child(1) {
+  .virtual-keyboard .simple-keyboard .hg-row:nth-of-type(1) {
     --cols: 10;
   }
 
-  .virtual-keyboard .simple-keyboard .hg-row:nth-child(2) {
+  .virtual-keyboard .simple-keyboard .hg-row:nth-of-type(2) {
     --cols: 9;
     padding-inline: clamp(2px, 2.5vw, 32px);
   }
 
-  .virtual-keyboard .simple-keyboard .hg-row:nth-child(3) {
+  .virtual-keyboard .simple-keyboard .hg-row:nth-of-type(3) {
     --cols: 7;
-    padding-inline: clamp(6px, 5vw, 72px);
+    padding-inline: clamp(2px, 2vw, 12px);
   }
 
   .virtual-keyboard .simple-keyboard .hg-button {
@@ -304,6 +304,16 @@
     border-color: var(--touch-key-highlight-border);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35), 0 12px 30px rgba(59, 130, 246, 0.45);
     transform: translateY(0) scale(1.01);
+  }
+
+  .virtual-keyboard .simple-keyboard .hg-row .hg-button[data-skbtn="Space"] {
+    grid-column: 1 / -1;
+    max-width: none;
+    justify-content: center;
+  }
+
+  .virtual-keyboard .simple-keyboard .hg-row .hg-button[data-skbtn="Space"] span {
+    letter-spacing: 0.35em;
   }
 
   .touch-controls-close {

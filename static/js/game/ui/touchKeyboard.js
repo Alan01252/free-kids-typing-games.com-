@@ -64,12 +64,6 @@
     return `Key ${key}`;
   }
 
-  function dataLetterForKey(key){
-    if(isSpaceKey(key)) return 'SPACE';
-    if(typeof key === 'string') return key.toUpperCase();
-    return '';
-  }
-
   function normalizeVirtualKey(button){
     if(typeof button !== 'string') return null;
     if(isSpaceKey(button)) return { value: ' ', label: 'Space' };
@@ -118,10 +112,11 @@
       acc[key] = keyDisplayLabel(key);
       return acc;
     }, {});
-    const attributes = keys.flatMap(key => ([
-      { attribute: 'aria-label', value: ariaLabelForKey(key), button: key },
-      { attribute: 'data-letter', value: dataLetterForKey(key), button: key }
-    ]));
+    const attributes = keys.map(key => ({
+      attribute: 'aria-label',
+      value: ariaLabelForKey(key),
+      button: key
+    }));
 
     state.keyboard.setOptions({
       layout,
@@ -226,34 +221,28 @@
     if (!state.visible || !keyboardWrapper) return;
     if (typeof char !== 'string' || char.length !== 1) return;
     if (char === ' ') {
-      const spaceButton = keyboardWrapper.querySelector('.hg-button[data-letter="SPACE"]');
-      if (!spaceButton) return;
-      spaceButton.classList.add('is-flashing');
-      const timers = state.keyFlashTimers;
-      if (timers.has('SPACE')) {
-        clearTimeout(timers.get('SPACE'));
-      }
-      const timer = window.setTimeout(() => {
-        spaceButton.classList.remove('is-flashing');
-        timers.delete('SPACE');
-      }, 180);
-      timers.set('SPACE', timer);
+      highlightKey('Space');
       return;
     }
     const letter = char.toUpperCase();
     if (!/[A-Z]/.test(letter)) return;
-    const btn = keyboardWrapper.querySelector(`.hg-button[data-letter="${letter}"]`);
+    highlightKey(letter);
+  }
+
+  function highlightKey(buttonId){
+    if (!keyboardWrapper) return;
+    const btn = keyboardWrapper.querySelector(`.hg-button[data-skbtn="${buttonId}"]`);
     if (!btn) return;
     btn.classList.add('is-flashing');
     const timers = state.keyFlashTimers;
-    if (timers.has(letter)) {
-      clearTimeout(timers.get(letter));
+    if (timers.has(buttonId)) {
+      clearTimeout(timers.get(buttonId));
     }
     const timer = window.setTimeout(() => {
       btn.classList.remove('is-flashing');
-      timers.delete(letter);
+      timers.delete(buttonId);
     }, 180);
-    timers.set(letter, timer);
+    timers.set(buttonId, timer);
   }
 
   function clearFlashTimers(){
