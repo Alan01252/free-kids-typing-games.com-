@@ -41,7 +41,7 @@
       --overlay-action-primary: #3b82f6;
       --letter-gap: clamp(10px, 4vw, 20px);
       --letter-padding-inline: clamp(6px, 5vw, 28px);
-      --letter-overflow-x: auto;
+      --letter-overflow-x: visible;
       --letter-size: clamp(50px, min(12vw, 80px), 90px);
       --letter-min-size: 50px;
       --letter-height: clamp(64px, 9vw, 96px);
@@ -72,6 +72,9 @@
       --touch-key-highlight-bg: rgba(59,130,246,0.95);
       --touch-key-highlight-border: rgba(59,130,246,0.35);
     }
+    .game-rocket-run .game-card {
+      overflow: visible;
+    }
     .launch-grid {
       position: relative;
       display: grid;
@@ -79,6 +82,22 @@
     }
     @media (min-width: 640px) {
       .launch-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    }
+    @media (max-width: 639px) {
+      .launch-grid {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        min-height: clamp(220px, 62vw, 280px);
+      }
+      .launch-grid .rocket {
+        display: none;
+      }
+      .launch-grid .rocket.current,
+      .launch-grid .rocket.launch {
+        display: flex;
+        grid-column: 1;
+        grid-row: 1;
+      }
     }
     .rocket {
       position: relative;
@@ -90,6 +109,8 @@
       padding-bottom: 18px;
       overflow: visible;
     }
+    .rocket.current { z-index: 1; }
+    .rocket.launch { z-index: 2; }
     .rocket .tower {
       position: absolute;
       bottom: 0;
@@ -653,6 +674,9 @@
         letterRow.appendChild(box);
       }
       window.GameUI?.fitLettersFor?.(letterRow);
+      if(typeof requestAnimationFrame === 'function'){
+        requestAnimationFrame(()=>window.GameUI?.fitLettersFor?.(letterRow));
+      }
       if(isTouchDevice){
         touchKeyboard?.ensureVisible(letterRow);
       }
