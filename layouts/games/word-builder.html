@@ -34,6 +34,17 @@
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #6366f1;
+      --touch-panel-bg: linear-gradient(145deg, rgba(99,102,241,0.92), rgba(37,99,235,0.75));
+      --touch-panel-color: #eff6ff;
+      --touch-label-color: #c7d2fe;
+      --touch-key-bg: rgba(99,102,241,0.28);
+      --touch-key-border: rgba(129,140,248,0.5);
+      --touch-key-color: #f8fafc;
+      --touch-key-shadow: 0 16px 34px rgba(79,70,229,0.25);
+      --touch-key-active-bg: rgba(59,130,246,0.92);
+      --touch-key-active-color: #f8fafc;
+      --touch-key-highlight-bg: rgba(99,102,241,0.95);
+      --touch-key-highlight-border: rgba(165,180,252,0.5);
     }
     .hint {
       display: flex;
@@ -245,27 +256,6 @@
     </section>
 
     <section id="gameArea" class="game-card" style="display:none;" aria-live="polite">
-      <div
-        id="touchControls"
-        class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/80 p-5"
-        role="group"
-        aria-label="Mobile typing helper"
-      >
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">
-          Tap here to type the letters
-        </label>
-        <input
-          id="playInput"
-          class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/85 px-4 py-3 text-center text-2xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-3xl"
-          type="text"
-          inputmode="text"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="none"
-          spellcheck="false"
-        />
-      </div>
-
       <div class="space-y-3">
         <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
           <span class="inline-block h-2 w-2 rounded-full bg-indigo-400"></span>
@@ -300,8 +290,6 @@
   <script>
     const wordInput = document.getElementById('wordInput');
     const wordList = document.getElementById('wordList');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
     const startBtn = document.getElementById('startBtn');
     const randomBtn = document.getElementById('randomBtn');
     const actionBtn = document.getElementById('actionBtn');
@@ -317,16 +305,14 @@
     const soundWrong = document.getElementById('soundWrong');
     const soundWin = document.getElementById('soundWin');
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'word-builder',
+      label: 'Tap letters to build',
+      onKeyPress: (char) => processKey(char, { skipHighlight: true }),
+      getViewportTarget: () => rowUpper,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     const WORDS = ['cat','dog','sun','star','moon','bus','train','car','ball','cup','duck','frog','teddy','book','apple','bee','fish','milk','jam','cake','bed','sock','kite','leaf','ship'];
 
@@ -344,36 +330,12 @@
 
     function onlyLetters(s){ return s.replace(/[^a-zA-Z]/g, ''); }
 
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        const len = playInput.value.length;
-        try {
-          playInput.setSelectionRange(len, len);
-        } catch (_) {
-          /* Some mobile browsers do not support setSelectionRange on certain input modes. */
-        }
-        setTimeout(()=>{
-          ensureGameVisible();
-        }, 40);
-      });
-    }
-
-    function ensureGameVisible(){
-      if(!isTouchDevice || !gameArea || gameArea.style.display === 'none') return;
-      const boxForTop = rowUpper.firstElementChild || rowUpper;
-      if(!boxForTop) return;
-      const rect = boxForTop.getBoundingClientRect();
-      const viewportTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
-      const currentScroll = window.scrollY || window.pageYOffset || 0;
-      const targetTop = rect.top + currentScroll - viewportTop - 20;
-      window.scrollTo({ top: targetTop, left: 0, behavior: 'smooth' });
-    }
-
-    function processKey(rawKey){
+    function processKey(rawKey, opts = {}){
       if(!active || !rawKey || rawKey.length !== 1) return;
       if(!/[a-zA-Z]/.test(rawKey)) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(rawKey);
+      }
       const needed = target[index];
       if(!needed) return;
       if(rawKey.toLowerCase() === needed.toLowerCase()){
@@ -387,7 +349,9 @@
       } else {
         wiggle(index, rawKey);
       }
-      ensureGameVisible();
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(rowUpper);
+      }
     }
 
     function makeBoxes(word){
@@ -436,11 +400,10 @@
       actionBtn.textContent = 'Restart';
       setHint('ok', `Ready! Press the first letter: <strong>${target[0].toUpperCase()}</strong>`);
       wordInput.blur();
-      if(playInput){
-        playInput.value = '';
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(rowUpper);
       }
-      focusPlayInput();
-      ensureGameVisible();
     }
 
     function resetToSetup(){
@@ -460,10 +423,11 @@
       actionBtn.style.display = 'none';
       status.style.display = 'none';
       wordInput.value = '';
-      wordInput.focus();
-      if(playInput){
-        playInput.value = '';
-        playInput.blur();
+      if(isTouchDevice){
+        wordInput.blur();
+        touchKeyboard?.hide();
+      } else {
+        wordInput.focus();
       }
     }
 
@@ -495,6 +459,7 @@
 
     function win(){
       active = false;
+      touchKeyboard?.hide();
       setHint('ok', 'Yay! You built the word! 🎉');
       document.body.classList.add('win-mode');
       gameArea.classList.add('victory');
@@ -531,12 +496,6 @@
       } else {
         actionBtn.focus();
       }
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice){
-          playInput.blur();
-        }
-      }
       if(isTouchDevice){
         wordInput.blur();
         const jumpToTop = ()=>window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -547,7 +506,7 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === wordInput || e.target === playInput) return;
+      if(e.target === wordInput) return;
       processKey(e.key);
     });
 
@@ -559,38 +518,6 @@
       wordInput.value = choice;
       status.style.display = 'none';
       startGame();
-    });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const value = playInput.value;
-        if(!value){
-          focusPlayInput();
-          return;
-        }
-        const letters = value.match(/[a-zA-Z]/g) || [];
-        playInput.value = '';
-        letters.forEach(ch=>processKey(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(touchControls){
-      touchControls.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    gameArea.addEventListener('click', (e)=>{
-      if(!active) return;
-      if(e.target.closest && e.target.closest('.boxes')) focusPlayInput();
     });
 
     // Keyboard helpers

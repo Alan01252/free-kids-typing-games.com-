@@ -44,6 +44,17 @@
       --letter-error-border-color: rgba(248,113,113,0.6);
       --letter-error-bg: rgba(254,226,226,0.92);
       --letter-error-color: #b91c1c;
+      --touch-panel-bg: linear-gradient(145deg, rgba(59,130,246,0.92), rgba(37,99,235,0.72));
+      --touch-panel-color: #e0f2fe;
+      --touch-label-color: #bfdbfe;
+      --touch-key-bg: rgba(59,130,246,0.28);
+      --touch-key-border: rgba(147,197,253,0.55);
+      --touch-key-color: #e0f2fe;
+      --touch-key-shadow: 0 16px 34px rgba(29,78,216,0.28);
+      --touch-key-active-bg: rgba(37,99,235,0.9);
+      --touch-key-active-color: #e0f2fe;
+      --touch-key-highlight-bg: rgba(59,130,246,0.95);
+      --touch-key-highlight-border: rgba(191,219,254,0.55);
     }
     .game-speed-racer .status-badge {
       background: var(--status-badge-bg);
@@ -168,11 +179,6 @@
         <div id="car" class="car" style="left:0%;"><span aria-hidden="true">🏎️</span></div>
       </div>
 
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-2xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-3xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
-      </div>
-
       <div class="space-y-4 text-center">
         <div class="game-section-title text-indigo-400">Current word</div>
         <div id="wordBoxes" class="box-row letter-row"></div>
@@ -219,8 +225,6 @@
     const timerDisplay = document.getElementById('timer');
     const wordCounter = document.getElementById('wordCounter');
     const celebrate = document.getElementById('celebrate');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -233,16 +237,14 @@
     let startTime = 0;
     let timerInterval = null;
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'speed-racer',
+      label: 'Tap letters to race',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => wordBoxes,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -309,6 +311,9 @@
         wordBoxes.appendChild(box);
       }
       window.GameUI?.fitLettersFor?.(wordBoxes);
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(wordBoxes);
+      }
     }
 
     function updateCar(){
@@ -354,12 +359,18 @@
         void currentBox.offsetWidth;
         currentBox.classList.add('wiggle');
       }
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(wordBoxes);
+      }
     }
 
-    function handleKeyPress(key){
+    function handleKeyPress(key, opts = {}){
       if(!active || !raceWords.length) return;
       if(!key || key.length !== 1) return;
       if(!/[a-zA-Z]/.test(key)) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(key);
+      }
       const expected = raceWords[currentWordIndex][currentLetterIndex];
       if(!expected) return;
       if(key.toLowerCase() === expected.toLowerCase()){
@@ -369,17 +380,6 @@
       }
     }
 
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        try {
-          const len = playInput.value.length;
-          playInput.setSelectionRange(len, len);
-        } catch (_) {}
-      });
-    }
-
     function finishRace(){
       active = false;
       stopTimer();
@@ -387,6 +387,7 @@
       const timeStr = formatTime(elapsed);
       car.style.left = '100%';
       setStatus('ok', `Finish line crossed in <strong>${timeStr}</strong>!`);
+      touchKeyboard?.hide();
       const winMarkup = `
         <div class="celebration">
           <div class="text-2xl font-extrabold text-amber-700 uppercase tracking-[0.25em]">Finish!</div>
@@ -395,10 +396,6 @@
         </div>
       `;
       celebrate.innerHTML = winMarkup;
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice) playInput.blur();
-      }
       soundWin.currentTime = 0;
       soundWin.play();
       if(!isTouchDevice && window.GameCelebration){
@@ -432,7 +429,10 @@
       renderWord();
       updateCar();
       startTimer();
-      focusPlayInput();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(wordBoxes);
+      }
     }
 
     function resetRace(){
@@ -450,10 +450,7 @@
       gameArea.style.display = 'none';
       setStatus(null, 'Press Start to rev the engine.');
       status.style.display = 'flex';
-      if(playInput){
-        playInput.value = '';
-        playInput.blur();
-      }
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -462,36 +459,10 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === playInput) return;
+      const target = e.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(e.key);
     });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const value = playInput.value;
-        if(!value){
-          focusPlayInput();
-          return;
-        }
-        const letters = value.match(/[a-zA-Z]/g) || [];
-        playInput.value = '';
-        letters.forEach(ch=>handleKeyPress(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(gameArea){
-      gameArea.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
 
     setStatus(null, 'Press Start to rev the engine.');
     status.style.display = 'flex';

@@ -13,6 +13,7 @@
   {{ block "main" . }}{{ end }}
   {{ block "footer" . }}{{ end }}
   {{ partial "game-win-overlay.html" . }}
+  {{ partial "game-touch-controls.html" . }}
   <script src="{{ "js/game/ui/fitLetters.js" | relURL }}"></script>
   {{ block "scripts" . }}{{ end }}
 </body>

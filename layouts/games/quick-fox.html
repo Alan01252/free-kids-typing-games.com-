@@ -28,6 +28,17 @@
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #ec4899;
+      --touch-panel-bg: linear-gradient(145deg, rgba(244,114,182,0.92), rgba(236,72,153,0.72));
+      --touch-panel-color: #fff5fb;
+      --touch-label-color: #fde0f0;
+      --touch-key-bg: rgba(244,114,182,0.28);
+      --touch-key-border: rgba(244,114,182,0.5);
+      --touch-key-color: #fff5fb;
+      --touch-key-shadow: 0 16px 34px rgba(236,72,153,0.28);
+      --touch-key-active-bg: rgba(236,72,153,0.92);
+      --touch-key-active-color: #fff5fb;
+      --touch-key-highlight-bg: rgba(244,114,182,0.96);
+      --touch-key-highlight-border: rgba(252,165,211,0.55);
     }
     .game-quick-fox.win-mode {
       background:
@@ -197,11 +208,6 @@
     </section>
 
     <section id="gameArea" class="game-card sentence-card" style="display:none;" aria-live="polite">
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-3xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-4xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" />
-      </div>
-
       <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-slate-500">
         <div class="progress-chip" id="progressChip"><span>Letter</span> <strong>1 of 43</strong></div>
         <div class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">
@@ -238,8 +244,6 @@
     const progressChip = document.getElementById('progressChip');
     const celebrate = document.getElementById('celebrate');
     const gameArea = document.getElementById('gameArea');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -250,16 +254,22 @@
     let index = 0;
     let active = false;
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'quick-fox',
+      label: 'Tap letters to help the fox',
+      layout: [
+        'Q W E R T Y U I O P',
+        'A S D F G H J K L',
+        'Z X C V B N M Space'
+      ],
+      onKeyPress: (char) => {
+        const key = char === ' ' ? ' ' : char;
+        handleKeyPress(key, { skipHighlight: true });
+      },
+      getViewportTarget: () => sentenceGrid,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -333,18 +343,6 @@
       progressChip.innerHTML = `<span>Letter</span> <strong>${current} of ${total}</strong>`;
     }
 
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        try {
-          const len = playInput.value.length;
-          playInput.setSelectionRange(len, len);
-        } catch (_) {}
-        setTimeout(()=>updateTokens(), 50);
-      });
-    }
-
     function startGame(){
       index = 0;
       active = true;
@@ -358,7 +356,10 @@
       updateProgress();
       hint.textContent = 'Type the letter you see glowing. Spaces count too!';
       setStatus('ok', 'Ready! Start with the letter <strong>T</strong>.');
-      focusPlayInput();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(sentenceGrid);
+      }
     }
 
     function resetGame(){
@@ -372,15 +373,13 @@
       status.style.display = 'flex';
       index = 0;
       updateProgress();
-      if(playInput){
-        playInput.value = '';
-        playInput.blur();
-      }
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function finishGame(){
       active = false;
+      touchKeyboard?.hide();
       document.body.classList.add('win-mode');
       updateTokens();
       setStatus('ok', 'Epic! The fox made it across the sentence.');
@@ -409,10 +408,6 @@
       } else {
         resetBtn.focus();
       }
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice) playInput.blur();
-      }
       if(isTouchDevice){
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(()=>window.scrollTo({ top: 0, behavior: 'smooth' }), 120);
@@ -433,9 +428,12 @@
       }
     }
 
-    function handleKeyPress(rawKey){
+    function handleKeyPress(rawKey, opts = {}){
       if(!active) return;
       if(!rawKey || rawKey.length !== 1) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(rawKey);
+      }
       const needed = characters[index];
       if(needed === undefined) return;
       const normalizedKey = rawKey === ' ' ? ' ' : rawKey;
@@ -447,6 +445,9 @@
         index++;
         updateTokens();
         updateProgress();
+        if(isTouchDevice){
+          touchKeyboard?.ensureVisible(sentenceGrid);
+        }
         if(index >= characters.length){
           finishGame();
         } else {
@@ -456,6 +457,9 @@
         }
       } else {
         wrongLetter(needed, rawKey);
+        if(isTouchDevice){
+          touchKeyboard?.ensureVisible(sentenceGrid);
+        }
       }
     }
 
@@ -464,37 +468,11 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === playInput) return;
+      const target = e.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       const key = e.key === 'Spacebar' ? ' ' : e.key;
       handleKeyPress(key);
     });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const value = playInput.value;
-        if(!value){
-          focusPlayInput();
-          return;
-        }
-        const letters = value.split('');
-        playInput.value = '';
-        letters.forEach(ch=>handleKeyPress(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(gameArea){
-      gameArea.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
 
     updateProgress();
     setStatus(null, 'Press Start to begin the fox’s run.');

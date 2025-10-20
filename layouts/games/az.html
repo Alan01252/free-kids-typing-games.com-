@@ -33,6 +33,17 @@
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #5b8def;
+      --touch-panel-bg: linear-gradient(145deg, rgba(59,130,246,0.92), rgba(37,99,235,0.72));
+      --touch-panel-color: #eff6ff;
+      --touch-label-color: #c7d2fe;
+      --touch-key-bg: rgba(59,130,246,0.28);
+      --touch-key-border: rgba(147,197,253,0.55);
+      --touch-key-color: #eff6ff;
+      --touch-key-shadow: 0 16px 34px rgba(30,64,175,0.28);
+      --touch-key-active-bg: rgba(37,99,235,0.9);
+      --touch-key-active-color: #eff6ff;
+      --touch-key-highlight-bg: rgba(59,130,246,0.96);
+      --touch-key-highlight-border: rgba(191,219,254,0.55);
     }
     .game-az .status-badge {
       background: var(--status-badge-bg);
@@ -168,11 +179,6 @@
     </section>
 
     <section id="gameArea" class="game-card letter-card" style="display:none;" aria-live="polite">
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-3xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-4xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" />
-      </div>
-
       <div class="text-center space-y-4">
         <div class="game-section-title text-indigo-400">Current letter</div>
         <div id="letterDisplay" class="letter-display" aria-live="polite" aria-atomic="true">A</div>
@@ -212,8 +218,6 @@
     const progress = document.getElementById('progress');
     const celebrate = document.getElementById('celebrate');
     const gameArea = document.getElementById('gameArea');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -223,16 +227,14 @@
     let index = 0;
     let active = false;
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'alphabet-adventure',
+      label: 'Tap letters A to Z',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => letterDisplay,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -257,20 +259,6 @@
       }).join('');
     }
 
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        try {
-          const len = playInput.value.length;
-          playInput.setSelectionRange(len, len);
-        } catch (_) { /* ignore selection issues */ }
-        setTimeout(()=>{
-          playInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 40);
-      });
-    }
-
     function startGame(){
       index = 0;
       active = true;
@@ -283,11 +271,15 @@
       startBtn.style.display = 'none';
       resetBtn.style.display = 'inline-flex';
       setStatus('ok', 'Ready! Type the letter A to begin.');
-      focusPlayInput();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(letterDisplay);
+      }
     }
 
     function finishGame(){
       active = false;
+      touchKeyboard?.hide();
       document.body.classList.add('win-mode');
       setStatus('ok', 'Amazing! You reached Z!');
       const bursts = ['🎉','🎊','🌟','✨','🥳'];
@@ -315,10 +307,6 @@
       } else {
         resetBtn.focus();
       }
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice) playInput.blur();
-      }
       if(isTouchDevice){
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -336,11 +324,8 @@
       letterDisplay.textContent = 'A';
       hint.textContent = 'Press Start to begin';
       renderProgress();
+      touchKeyboard?.hide();
       if(isTouchDevice){
-        if(playInput){
-          playInput.value = '';
-          playInput.blur();
-        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
@@ -357,10 +342,13 @@
       }
     }
 
-    function handleKeyPress(key){
+    function handleKeyPress(key, opts = {}){
       if(!active) return;
       if(!key || key.length !== 1) return;
       if(!/[a-zA-Z]/.test(key)) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(key);
+      }
       const pressed = key.toUpperCase();
       const needed = alphabet[index];
       if(pressed === needed){
@@ -374,9 +362,15 @@
         } else {
           letterDisplay.textContent = alphabet[index];
           setStatus('ok', `Great! Next letter: <strong>${alphabet[index]}</strong>`);
+          if(isTouchDevice){
+            touchKeyboard?.ensureVisible(letterDisplay);
+          }
         }
       } else {
         wrongLetter(needed, key);
+        if(isTouchDevice){
+          touchKeyboard?.ensureVisible(letterDisplay);
+        }
       }
     }
 
@@ -385,36 +379,10 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === playInput) return;
+      const target = e.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(e.key);
     });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const value = playInput.value;
-        if(!value){
-          focusPlayInput();
-          return;
-        }
-        const letters = value.match(/[a-zA-Z]/g) || [];
-        playInput.value = '';
-        letters.forEach(ch=>handleKeyPress(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(gameArea){
-      gameArea.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
 
     renderProgress();
     setStatus(null, 'Press Start to begin your alphabet adventure!');

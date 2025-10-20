@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ghostly Word Hunt · Kids Typing Games</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="//localhost:1313/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="//localhost:1313/favicon.ico" type="image/x-icon" />
   
 
-  
-
-<link rel="stylesheet" href="/css/main.min.6f568f9d60c4d9ef08d3324f691e9465d9d0cb8fe7ab3525ab6ec3086fdf522a.css" integrity="sha256-b1aPnWDE2e8I0zJPaR6UZdnQy4/nqzUlq27DCG/fUio=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/main.css">
 
   
   <style>
@@ -49,6 +47,17 @@
       --overlay-panel-bg: rgba(17,24,39,0.94);
       --overlay-panel-color: #f8fafc;
       --overlay-action-primary: #7c3aed;
+      --touch-panel-bg: linear-gradient(145deg, rgba(124,58,237,0.92), rgba(30,64,175,0.72));
+      --touch-panel-color: #e0e7ff;
+      --touch-label-color: #c4b5fd;
+      --touch-key-bg: rgba(124,58,237,0.32);
+      --touch-key-border: rgba(167,139,250,0.5);
+      --touch-key-color: #ede9fe;
+      --touch-key-shadow: 0 16px 34px rgba(76,29,149,0.32);
+      --touch-key-active-bg: rgba(99,102,241,0.92);
+      --touch-key-active-color: #f5f3ff;
+      --touch-key-highlight-bg: rgba(124,58,237,0.98);
+      --touch-key-highlight-border: rgba(167,139,250,0.55);
     }
     .mansion {
       position: relative;
@@ -207,11 +216,6 @@
           <div class="uppercase tracking-[0.3em] text-xs text-slate-400">Next words</div>
           <div id="queue" class="mt-1 flex flex-wrap justify-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400"></div>
         </div>
-      </div>
-
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-300/40 bg-indigo-900/30 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-200">Tap to type</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-400/40 bg-slate-900/70 px-4 py-3 text-center text-2xl text-indigo-100 focus:border-indigo-300 focus:outline-none focus:ring-4 focus:ring-indigo-400/40 sm:text-3xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
       </div>
 
       <div class="space-y-6">
@@ -411,6 +415,89 @@
   })();
 </script>
 
+  <div
+  id="gameTouchControls"
+  class="touch-controls-panel hidden space-y-3"
+  role="group"
+  aria-label="On-screen keyboard"
+  aria-hidden="true"
+>
+  <div class="touch-controls-header">
+    <div id="gameTouchLabel" class="keyboard-label text-xs font-semibold uppercase tracking-[0.35em]">
+      Tap letters to play
+    </div>
+    <button
+      type="button"
+      class="touch-controls-close"
+      data-touch-close
+      aria-label="Hide keyboard"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  
+<div id="gameTouchKeyboard" class="virtual-keyboard hidden" data-virtual-keyboard>
+  <div class="simple-keyboard" data-keyboard-root></div>
+</div>
+<script>
+  (() => {
+    if (window.SimpleKeyboardLoader) return;
+
+    const SCRIPT_SRC = 'https://unpkg.com/simple-keyboard@latest/build/index.js';
+    const STYLE_HREF = 'https://unpkg.com/simple-keyboard@latest/build/css/index.css';
+
+    function ensureStyles() {
+      if (document.head.querySelector('link[data-simple-keyboard-style]')) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = STYLE_HREF;
+      link.setAttribute('data-simple-keyboard-style', 'true');
+      document.head.appendChild(link);
+    }
+
+    function ensureScript(resolve, reject) {
+      const existing = document.head.querySelector('script[data-simple-keyboard-script]');
+      if (existing) {
+        if (window.SimpleKeyboard) {
+          resolve(window.SimpleKeyboard.default || window.SimpleKeyboard);
+          return;
+        }
+        existing.addEventListener('load', () => resolve(window.SimpleKeyboard.default || window.SimpleKeyboard), { once: true });
+        existing.addEventListener('error', reject, { once: true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = SCRIPT_SRC;
+      script.async = true;
+      script.setAttribute('data-simple-keyboard-script', 'true');
+      script.addEventListener('load', () => resolve(window.SimpleKeyboard.default || window.SimpleKeyboard), { once: true });
+      script.addEventListener('error', reject, { once: true });
+      document.head.appendChild(script);
+    }
+
+    window.SimpleKeyboardLoader = {
+      loadPromise: null,
+      load() {
+        if (this.loadPromise) return this.loadPromise;
+        if (window.SimpleKeyboard) {
+          this.loadPromise = Promise.resolve(window.SimpleKeyboard.default || window.SimpleKeyboard);
+          ensureStyles();
+          return this.loadPromise;
+        }
+        ensureStyles();
+        this.loadPromise = new Promise((resolve, reject) => {
+          ensureScript(resolve, reject);
+        });
+        return this.loadPromise;
+      }
+    };
+  })();
+</script>
+
+</div>
+<script src="/js/game/ui/touchKeyboard.js"></script>
+
   <script src="/js/game/ui/fitLetters.js"></script>
   
   <script>
@@ -431,8 +518,6 @@
     const roomLabel = document.getElementById('roomLabel');
     const queue = document.getElementById('queue');
     const celebrate = document.getElementById('celebrate');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -443,16 +528,14 @@
     let letterIndex = 0;
     let active = false;
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'ghostly-word-hunt',
+      label: 'Tap letters to light candles',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => candleRow,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -502,6 +585,9 @@
         candleRow.appendChild(candle);
       }
       window.GameUI?.fitLettersFor?.(candleRow);
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(candleRow);
+      }
     }
 
     function updateRoomUI(){
@@ -509,17 +595,6 @@
       roomLabel.textContent = currentRoom().name;
       renderQueue();
       renderCandles();
-    }
-
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        try {
-          const len = playInput.value.length;
-          playInput.setSelectionRange(len, len);
-        } catch (_) {}
-      });
     }
 
     function popGhost(candle){
@@ -577,12 +652,18 @@
         candle.classList.add('wiggle');
         popGhost(candle);
       }
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(candleRow);
+      }
     }
 
-    function handleKeyPress(key){
+    function handleKeyPress(key, opts = {}){
       if(!active) return;
       if(!key || key.length !== 1) return;
       if(!/[a-zA-Z]/.test(key)) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(key);
+      }
       const expected = currentRoom().words[wordIndex][letterIndex];
       if(!expected) return;
       if(key.toLowerCase() === expected.toLowerCase()){
@@ -594,6 +675,7 @@
 
     function finishHunt(){
       active = false;
+      touchKeyboard?.hide();
       setStatus('ok', 'All rooms are glowing! The ghosts are delighted.');
       const winMarkup = `
         <div class="celebration">
@@ -618,10 +700,6 @@
       } else {
         resetBtn.focus();
       }
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice) playInput.blur();
-      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -636,7 +714,10 @@
       gameArea.style.display = 'block';
       updateRoomUI();
       setStatus('ok', `Begin with <strong>${currentRoom().words[wordIndex].toUpperCase()}</strong> in the ${currentRoom().name}.`);
-      focusPlayInput();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(candleRow);
+      }
     }
 
     function resetHunt(){
@@ -653,10 +734,7 @@
       roomLabel.textContent = ROOMS[0].name;
       setStatus(null, 'Press “Enter the house” to meet the first room.');
       status.style.display = 'flex';
-      if(playInput){
-        playInput.value = '';
-        playInput.blur();
-      }
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -665,31 +743,10 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === playInput) return;
+      const target = e.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(e.key);
     });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const letters = playInput.value.match(/[a-zA-Z]/g) || [];
-        playInput.value = '';
-        letters.forEach(ch=>handleKeyPress(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(gameArea){
-      gameArea.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
 
     setStatus(null, 'Press “Enter the house” to meet the first room.');
     status.style.display = 'flex';

@@ -29,6 +29,17 @@
       --overlay-action-primary: #6366f1;
       --letter-overflow-x: visible;
       --letter-gap: clamp(12px, 5vw, 28px);
+      --touch-panel-bg: linear-gradient(145deg, rgba(16,185,129,0.92), rgba(13,148,136,0.72));
+      --touch-panel-color: #ecfdf5;
+      --touch-label-color: #ccfbf1;
+      --touch-key-bg: rgba(16,185,129,0.28);
+      --touch-key-border: rgba(45,212,191,0.5);
+      --touch-key-color: #ecfdf5;
+      --touch-key-shadow: 0 16px 34px rgba(13,148,136,0.28);
+      --touch-key-active-bg: rgba(45,212,191,0.92);
+      --touch-key-active-color: #ecfdf5;
+      --touch-key-highlight-bg: rgba(45,212,191,0.96);
+      --touch-key-highlight-border: rgba(94,234,212,0.55);
     }
     .game-only-verbs .letter-row {
       display: flex;
@@ -61,7 +72,7 @@
         <span>Only Verbs</span>
       </h1>
       <p class="mx-auto max-w-2xl text-sm text-slate-500 sm:text-base">
-        Seven action words appear one at a time. Type each verb correctly to unlock the next mission and cheer about what the word means.
+        Seven action words appear one at a time. Type each verb correctly to unlock the next verb.
       </p>
     </header>
 
@@ -90,11 +101,6 @@
           <div class="uppercase tracking-[0.3em] text-xs text-slate-400">Next verbs</div>
           <div id="queue" class="mt-1 flex flex-wrap justify-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400"></div>
         </div>
-      </div>
-
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-200 bg-indigo-50/70 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500">Tap here to type</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-200 bg-white/80 px-4 py-3 text-center text-2xl text-indigo-700 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200 sm:text-3xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
       </div>
 
       <div class="space-y-4 text-center">
@@ -135,8 +141,6 @@
     const queue = document.getElementById('queue');
     const progressCounter = document.getElementById('progressCounter');
     const celebrate = document.getElementById('celebrate');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -147,16 +151,14 @@
     let wordIndex = 0;
     let letterIndex = 0;
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'only-verbs',
+      label: 'Tap letters to choose verbs',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => letterRow,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -207,22 +209,14 @@
       if(typeof requestAnimationFrame === 'function'){
         requestAnimationFrame(()=> window.GameUI?.fitLettersFor?.(letterRow));
       }
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(letterRow);
+      }
     }
 
     function updateProgress(){
       progressCounter.textContent = `${Math.min(wordIndex + 1, TOTAL_VERBS)} / ${TOTAL_VERBS}`;
       renderQueue();
-    }
-
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        try {
-          const len = playInput.value.length;
-          playInput.setSelectionRange(len, len);
-        } catch (_) {}
-      });
     }
 
     function handleCorrect(){
@@ -258,12 +252,18 @@
         void box.offsetWidth;
         box.classList.add('wiggle');
       }
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(letterRow);
+      }
     }
 
-    function handleKeyPress(key){
+    function handleKeyPress(key, opts = {}){
       if(!active) return;
       if(!key || key.length !== 1) return;
       if(!/[a-zA-Z]/.test(key)) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(key);
+      }
       const expected = verbs[wordIndex][letterIndex];
       if(!expected) return;
       if(key.toLowerCase() === expected.toLowerCase()){
@@ -275,6 +275,7 @@
 
     function finishLesson(){
       active = false;
+      touchKeyboard?.hide();
       setStatus('ok', 'All verbs complete! Great job taking action.');
       const winMarkup = `
         <div class="celebration">
@@ -299,10 +300,6 @@
       } else {
         resetBtn.focus();
       }
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice) playInput.blur();
-      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -318,7 +315,10 @@
       renderWord();
       updateProgress();
       setStatus('ok', `Go! First verb: <strong>${verbs[0].toUpperCase()}</strong>`);
-      focusPlayInput();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(letterRow);
+      }
     }
 
     function resetLesson(){
@@ -334,10 +334,7 @@
       progressCounter.textContent = `1 / ${TOTAL_VERBS}`;
       setStatus(null, 'Press Start to see your first verb.');
       status.style.display = 'flex';
-      if(playInput){
-        playInput.value = '';
-        playInput.blur();
-      }
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -346,31 +343,10 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === playInput) return;
+      const target = e.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(e.key);
     });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const letters = playInput.value.match(/[a-zA-Z]/g) || [];
-        playInput.value = '';
-        letters.forEach(ch=>handleKeyPress(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(gameArea){
-      gameArea.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
 
     setStatus(null, 'Press Start to see your first verb.');
     status.style.display = 'flex';

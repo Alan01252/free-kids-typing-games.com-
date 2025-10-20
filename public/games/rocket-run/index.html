@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rocket Run · Kids Typing Games</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="//localhost:1313/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="//localhost:1313/favicon.ico" type="image/x-icon" />
   
 
-  
-
-<link rel="stylesheet" href="/css/main.min.6f568f9d60c4d9ef08d3324f691e9465d9d0cb8fe7ab3525ab6ec3086fdf522a.css" integrity="sha256-b1aPnWDE2e8I0zJPaR6UZdnQy4/nqzUlq27DCG/fUio=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/main.css">
 
   
   <style>
@@ -61,6 +59,18 @@
       --letter-current-shadow: 0 20px 50px rgba(251,191,36,0.25);
       --letter-error-bg: rgba(254,226,226,0.2);
       --letter-error-color: #fecaca;
+      --touch-panel-bg: linear-gradient(145deg, rgba(30,64,175,0.92), rgba(30,64,175,0.7));
+      --touch-panel-color: #e0f2fe;
+      --touch-panel-shadow: 0 18px 40px rgba(15,23,42,0.48);
+      --touch-label-color: #bfdbfe;
+      --touch-key-bg: rgba(37,99,235,0.3);
+      --touch-key-border: rgba(96,165,250,0.5);
+      --touch-key-color: #e0f2fe;
+      --touch-key-shadow: 0 16px 34px rgba(15,23,42,0.32);
+      --touch-key-active-bg: rgba(59,130,246,0.9);
+      --touch-key-active-color: #e0f2fe;
+      --touch-key-highlight-bg: rgba(59,130,246,0.95);
+      --touch-key-highlight-border: rgba(59,130,246,0.35);
     }
     .launch-grid {
       position: relative;
@@ -178,86 +188,6 @@
       40% { transform: translate(4px, -8px); }
       60% { transform: translate(-3px, -5px); }
       80% { transform: translate(3px, -7px); }
-    }
-    .touch-controls-panel {
-      --panel-pad: clamp(14px, 4vw, 26px);
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100vw;
-      max-width: 100vw;
-      transform: translateY(100%);
-      border-radius: 0;
-      border: none;
-      padding: var(--panel-pad) clamp(6px, 3vw, 18px) calc(var(--panel-pad) + env(safe-area-inset-bottom, 0px));
-      background: linear-gradient(145deg, rgba(30,64,175,0.9), rgba(30,64,175,0.68));
-      z-index: 120;
-      transition: transform 0.35s cubic-bezier(0.26, 0.92, 0.42, 1);
-      pointer-events: none;
-      backdrop-filter: blur(18px);
-      box-shadow: 0 18px 40px rgba(15,23,42,0.48);
-    }
-    .touch-controls-panel.is-active {
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-    .keyboard-label {
-      padding-inline: clamp(6px, 3vw, 24px);
-      text-align: center;
-      letter-spacing: 0.4em;
-    }
-    .virtual-keyboard {
-      display: grid;
-      gap: clamp(6px, 2.2vw, 12px);
-      width: 100%;
-      margin: 0;
-    }
-    .virtual-keyboard .simple-keyboard {
-      width: 100%;
-      background: transparent;
-      padding: 0 clamp(1px, 1vw, 10px) clamp(1px, 1.4vw, 10px);
-      box-shadow: none;
-    }
-    .virtual-keyboard .simple-keyboard.hg-theme-default .hg-row {
-      --cols: 10;
-      display: grid;
-      grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-      gap: clamp(2px, 1.1vw, 10px);
-      margin: clamp(4px, 1.4vw, 12px) 0;
-    }
-    .virtual-keyboard .simple-keyboard .hg-row:nth-child(1) { --cols: 10; }
-    .virtual-keyboard .simple-keyboard .hg-row:nth-child(2) { --cols: 9; padding-inline: clamp(2px, 2.5vw, 32px); }
-    .virtual-keyboard .simple-keyboard .hg-row:nth-child(3) { --cols: 7; padding-inline: clamp(6px, 5vw, 72px); }
-    .virtual-keyboard .simple-keyboard .hg-button {
-      width: 100% !important;
-      min-width: 0;
-      height: clamp(52px, 12vw, 104px);
-      border-radius: clamp(10px, 3vw, 20px);
-      font-size: clamp(20px, 4.2vw, 30px);
-      font-weight: 700;
-      margin: 0;
-      background: rgba(37,99,235,0.3);
-      border: 2px solid rgba(96,165,250,0.5);
-      color: #e0f2fe;
-      transition: transform 0.1s ease, background 0.1s ease, box-shadow 0.1s ease;
-      box-shadow: 0 16px 34px rgba(15,23,42,0.32);
-      padding: 0;
-    }
-    .virtual-keyboard .simple-keyboard .hg-button span {
-      display: inline-block;
-      transform: translateY(1px);
-    }
-    .virtual-keyboard .simple-keyboard .hg-button:active,
-    .virtual-keyboard .simple-keyboard .hg-button.hg-active {
-      background: rgba(59,130,246,0.9);
-      transform: translateY(1px) scale(0.98);
-      box-shadow: 0 10px 28px rgba(30,64,175,0.45);
-    }
-    .virtual-keyboard .simple-keyboard .hg-button.is-flashing {
-      background: rgba(59,130,246,0.95);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.35), 0 12px 30px rgba(59,130,246,0.45);
-      transform: translateY(0) scale(1.01);
     }
     .celebration {
       padding: 26px 22px;
@@ -377,70 +307,6 @@
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
   <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/magic_chime.ogg"></audio>
-
-  <div id="touchControls" class="hidden touch-controls-panel space-y-3" role="group" aria-label="On-screen keyboard">
-    <div class="keyboard-label text-xs font-semibold uppercase text-blue-200">Tap letters to launch</div>
-    
-<div id="rocketRunKeyboard" class="virtual-keyboard hidden" data-virtual-keyboard>
-  <div class="simple-keyboard" data-keyboard-root></div>
-</div>
-<script>
-  (() => {
-    if (window.SimpleKeyboardLoader) return;
-
-    const SCRIPT_SRC = 'https://unpkg.com/simple-keyboard@latest/build/index.js';
-    const STYLE_HREF = 'https://unpkg.com/simple-keyboard@latest/build/css/index.css';
-
-    function ensureStyles() {
-      if (document.head.querySelector('link[data-simple-keyboard-style]')) return;
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = STYLE_HREF;
-      link.setAttribute('data-simple-keyboard-style', 'true');
-      document.head.appendChild(link);
-    }
-
-    function ensureScript(resolve, reject) {
-      const existing = document.head.querySelector('script[data-simple-keyboard-script]');
-      if (existing) {
-        if (window.SimpleKeyboard) {
-          resolve(window.SimpleKeyboard.default || window.SimpleKeyboard);
-          return;
-        }
-        existing.addEventListener('load', () => resolve(window.SimpleKeyboard.default || window.SimpleKeyboard), { once: true });
-        existing.addEventListener('error', reject, { once: true });
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = SCRIPT_SRC;
-      script.async = true;
-      script.setAttribute('data-simple-keyboard-script', 'true');
-      script.addEventListener('load', () => resolve(window.SimpleKeyboard.default || window.SimpleKeyboard), { once: true });
-      script.addEventListener('error', reject, { once: true });
-      document.head.appendChild(script);
-    }
-
-    window.SimpleKeyboardLoader = {
-      loadPromise: null,
-      load() {
-        if (this.loadPromise) return this.loadPromise;
-        if (window.SimpleKeyboard) {
-          this.loadPromise = Promise.resolve(window.SimpleKeyboard.default || window.SimpleKeyboard);
-          ensureStyles();
-          return this.loadPromise;
-        }
-        ensureStyles();
-        this.loadPromise = new Promise((resolve, reject) => {
-          ensureScript(resolve, reject);
-        });
-        return this.loadPromise;
-      }
-    };
-  })();
-</script>
-
-  </div>
 
 
   
@@ -622,6 +488,89 @@
   })();
 </script>
 
+  <div
+  id="gameTouchControls"
+  class="touch-controls-panel hidden space-y-3"
+  role="group"
+  aria-label="On-screen keyboard"
+  aria-hidden="true"
+>
+  <div class="touch-controls-header">
+    <div id="gameTouchLabel" class="keyboard-label text-xs font-semibold uppercase tracking-[0.35em]">
+      Tap letters to play
+    </div>
+    <button
+      type="button"
+      class="touch-controls-close"
+      data-touch-close
+      aria-label="Hide keyboard"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  
+<div id="gameTouchKeyboard" class="virtual-keyboard hidden" data-virtual-keyboard>
+  <div class="simple-keyboard" data-keyboard-root></div>
+</div>
+<script>
+  (() => {
+    if (window.SimpleKeyboardLoader) return;
+
+    const SCRIPT_SRC = 'https://unpkg.com/simple-keyboard@latest/build/index.js';
+    const STYLE_HREF = 'https://unpkg.com/simple-keyboard@latest/build/css/index.css';
+
+    function ensureStyles() {
+      if (document.head.querySelector('link[data-simple-keyboard-style]')) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = STYLE_HREF;
+      link.setAttribute('data-simple-keyboard-style', 'true');
+      document.head.appendChild(link);
+    }
+
+    function ensureScript(resolve, reject) {
+      const existing = document.head.querySelector('script[data-simple-keyboard-script]');
+      if (existing) {
+        if (window.SimpleKeyboard) {
+          resolve(window.SimpleKeyboard.default || window.SimpleKeyboard);
+          return;
+        }
+        existing.addEventListener('load', () => resolve(window.SimpleKeyboard.default || window.SimpleKeyboard), { once: true });
+        existing.addEventListener('error', reject, { once: true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = SCRIPT_SRC;
+      script.async = true;
+      script.setAttribute('data-simple-keyboard-script', 'true');
+      script.addEventListener('load', () => resolve(window.SimpleKeyboard.default || window.SimpleKeyboard), { once: true });
+      script.addEventListener('error', reject, { once: true });
+      document.head.appendChild(script);
+    }
+
+    window.SimpleKeyboardLoader = {
+      loadPromise: null,
+      load() {
+        if (this.loadPromise) return this.loadPromise;
+        if (window.SimpleKeyboard) {
+          this.loadPromise = Promise.resolve(window.SimpleKeyboard.default || window.SimpleKeyboard);
+          ensureStyles();
+          return this.loadPromise;
+        }
+        ensureStyles();
+        this.loadPromise = new Promise((resolve, reject) => {
+          ensureScript(resolve, reject);
+        });
+        return this.loadPromise;
+      }
+    };
+  })();
+</script>
+
+</div>
+<script src="/js/game/ui/touchKeyboard.js"></script>
+
   <script src="/js/game/ui/fitLetters.js"></script>
   
   <script>
@@ -644,9 +593,14 @@
     const rocketEls = Array.from(document.querySelectorAll('.rocket'));
     const letterRow = document.getElementById('letterRow');
     const celebrate = document.getElementById('celebrate');
-    const touchControls = document.getElementById('touchControls');
-    const keyboardWrapper = document.getElementById('rocketRunKeyboard');
-    const gameShell = document.querySelector('.game-shell');
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'rocket-run',
+      label: 'Tap letters to launch',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => letterRow,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -656,52 +610,6 @@
     let rocketIndex = 0;
     let letterIndex = 0;
     let active = false;
-    let virtualKeyboard = null;
-    let keyboardVisible = false;
-    let hideKeyboardTimeout = null;
-    const keyFlashTimers = Object.create(null);
-    const scheduleFitLetters = (delay = 0) => {
-      if(!letterRow) return;
-      window.setTimeout(()=>{
-        window.GameUI?.fitLettersFor?.(letterRow);
-      }, delay);
-    };
-
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-    const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-    return hasTouchEvent || hasTouchPoints || coarsePointer;
-  })();
-    if(touchControls){
-      touchControls.setAttribute('aria-hidden', 'true');
-    }
-    if(keyboardWrapper){
-      keyboardWrapper.setAttribute('aria-hidden', 'true');
-    }
-    if(window.SimpleKeyboardLoader){
-      window.SimpleKeyboardLoader.load().catch(()=>{});
-    }
-
-    const updateKeyboardOffset = ()=>{
-      if(!keyboardVisible || !touchControls || touchControls.classList.contains('hidden')) return;
-      if(!gameShell) return;
-      const height = Math.round(touchControls.offsetHeight || 0);
-      if(height > 0){
-        gameShell.style.paddingBottom = `${height + 36}px`;
-      }
-    };
-
-    const ensureKeyboardViewport = ()=>{
-      if(!keyboardVisible || !letterRow || !touchControls) return;
-      const rowRect = letterRow.getBoundingClientRect();
-      const boardRect = touchControls.getBoundingClientRect();
-      if(rowRect.bottom > boardRect.top - 12){
-        const offset = rowRect.bottom - boardRect.top + 24;
-        window.scrollBy({ top: offset, behavior: 'smooth' });
-      }
-    };
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -745,6 +653,9 @@
         letterRow.appendChild(box);
       }
       window.GameUI?.fitLettersFor?.(letterRow);
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(letterRow);
+      }
     }
 
     function resetRocketsState(){
@@ -782,132 +693,6 @@
       }
     }
 
-    function toggleTouchControls(show){
-      if(!touchControls) return;
-      const shouldShow = !!show;
-      clearTimeout(hideKeyboardTimeout);
-      if(shouldShow){
-        if(keyboardVisible){
-          updateKeyboardOffset();
-          return;
-        }
-        keyboardVisible = true;
-        touchControls.classList.remove('hidden');
-        touchControls.style.removeProperty('display');
-        touchControls.setAttribute('aria-hidden', 'false');
-        if(keyboardWrapper){
-          keyboardWrapper.classList.remove('hidden');
-          keyboardWrapper.style.removeProperty('display');
-          keyboardWrapper.setAttribute('aria-hidden', 'false');
-        }
-        requestAnimationFrame(()=>{
-          touchControls.classList.add('is-active');
-          updateKeyboardOffset();
-          setTimeout(updateKeyboardOffset, 200);
-          setTimeout(ensureKeyboardViewport, 260);
-          scheduleFitLetters(0);
-          scheduleFitLetters(260);
-        });
-        window.addEventListener('resize', updateKeyboardOffset);
-        window.addEventListener('resize', ensureKeyboardViewport);
-        scheduleFitLetters(0);
-      } else {
-        if(!keyboardVisible) return;
-        keyboardVisible = false;
-        touchControls.setAttribute('aria-hidden', 'true');
-        if(keyboardWrapper){
-          keyboardWrapper.setAttribute('aria-hidden', 'true');
-        }
-        touchControls.classList.remove('is-active');
-        window.removeEventListener('resize', updateKeyboardOffset);
-        window.removeEventListener('resize', ensureKeyboardViewport);
-        Object.keys(keyFlashTimers).forEach(letter=>{
-          clearTimeout(keyFlashTimers[letter]);
-          delete keyFlashTimers[letter];
-        });
-        if(keyboardWrapper){
-          keyboardWrapper.querySelectorAll('.hg-button.is-flashing').forEach(btn=>btn.classList.remove('is-flashing'));
-        }
-        scheduleFitLetters(0);
-        hideKeyboardTimeout = setTimeout(()=>{
-          touchControls.classList.add('hidden');
-          touchControls.style.display = 'none';
-          if(keyboardWrapper){
-            keyboardWrapper.classList.add('hidden');
-            keyboardWrapper.style.display = 'none';
-          }
-          if(gameShell){
-            gameShell.style.removeProperty('padding-bottom');
-          }
-          scheduleFitLetters(0);
-        }, 360);
-      }
-    }
-
-    function ensureVirtualKeyboard(){
-      if(virtualKeyboard) return;
-      if(!window.SimpleKeyboardLoader || !keyboardWrapper) return;
-      window.SimpleKeyboardLoader.load()
-        .then(KeyboardCtor=>{
-          if(virtualKeyboard) return;
-          const targetEl = keyboardWrapper.querySelector('.simple-keyboard');
-          if(!KeyboardCtor || !targetEl) return;
-          const layout = {
-            default: [
-              'Q W E R T Y U I O P',
-              'A S D F G H J K L',
-              'Z X C V B N M'
-            ]
-          };
-          const letters = layout.default.join(' ').split(' ');
-          virtualKeyboard = new KeyboardCtor(targetEl, {
-            layout,
-            mergeDisplay: true,
-            display: letters.reduce((acc, key)=>{
-              acc[key] = key;
-              return acc;
-            },{}),
-            theme: 'hg-theme-default rocket-keyboard',
-            useButtonTag: true,
-            buttonAttributes: letters.flatMap(letter=>([
-              {
-                attribute: 'aria-label',
-                value: `Letter ${letter}`,
-                buttons: letter
-              },
-              {
-                attribute: 'data-letter',
-                value: letter,
-                buttons: letter
-              }
-            ])),
-            onKeyPress: button=>{
-              if(!active) return;
-              if(button && button.length === 1 && /[a-z]/i.test(button)){
-                flashKeyboardKey(button);
-                handleKeyPress(button, { skipHighlight: true });
-              }
-            }
-          });
-          updateKeyboardOffset();
-          setTimeout(updateKeyboardOffset, 250);
-          setTimeout(ensureKeyboardViewport, 320);
-        })
-        .catch(()=>{});
-    }
-
-    function flashKeyboardKey(char){
-      if(!keyboardWrapper || !char) return;
-      const letter = char.toUpperCase();
-      const button = keyboardWrapper.querySelector(`.hg-button[data-letter="${letter}"]`);
-      if(!button) return;
-      button.classList.add('is-flashing');
-      clearTimeout(keyFlashTimers[letter]);
-      keyFlashTimers[letter] = setTimeout(()=>{
-        button.classList.remove('is-flashing');
-        delete keyFlashTimers[letter];
-      }, 180);
-    }
 
     function handleCorrect(){
       const word = words[rocketIndex];
@@ -946,6 +731,9 @@
         void box.offsetWidth;
         box.classList.add('wiggle');
       }
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(letterRow);
+      }
     }
 
     function launchRocket(index){
@@ -962,7 +750,7 @@
       if(!key || key.length !== 1) return;
       if(!/[a-zA-Z]/.test(key)) return;
       if(!opts.skipHighlight){
-        flashKeyboardKey(key);
+        touchKeyboard?.flashKey(key);
       }
       const expected = words[rocketIndex][letterIndex];
       if(!expected) return;
@@ -999,7 +787,7 @@
       } else {
         resetBtn.focus();
       }
-      toggleTouchControls(false);
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1019,8 +807,9 @@
       setCurrentRocket();
       updateFuse();
       setStatus('ok', `Ready! First rocket word: <strong>${words[0].toUpperCase()}</strong>.`);
-      toggleTouchControls(true);
-      ensureVirtualKeyboard();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+      }
     }
 
     function resetShow(){
@@ -1036,7 +825,7 @@
       setStatus(null, 'Press “Light the fuse” to start charging rockets.');
       status.style.display = 'flex';
       resetRocketsState();
-      toggleTouchControls(false);
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1049,8 +838,6 @@
       if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(e.key);
     });
-
-    ensureVirtualKeyboard();
 
     setStatus(null, 'Press “Light the fuse” to start charging rockets.');
     status.style.display = 'flex';

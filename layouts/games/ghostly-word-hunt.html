@@ -35,6 +35,17 @@
       --overlay-panel-bg: rgba(17,24,39,0.94);
       --overlay-panel-color: #f8fafc;
       --overlay-action-primary: #7c3aed;
+      --touch-panel-bg: linear-gradient(145deg, rgba(124,58,237,0.92), rgba(30,64,175,0.72));
+      --touch-panel-color: #e0e7ff;
+      --touch-label-color: #c4b5fd;
+      --touch-key-bg: rgba(124,58,237,0.32);
+      --touch-key-border: rgba(167,139,250,0.5);
+      --touch-key-color: #ede9fe;
+      --touch-key-shadow: 0 16px 34px rgba(76,29,149,0.32);
+      --touch-key-active-bg: rgba(99,102,241,0.92);
+      --touch-key-active-color: #f5f3ff;
+      --touch-key-highlight-bg: rgba(124,58,237,0.98);
+      --touch-key-highlight-border: rgba(167,139,250,0.55);
     }
     .mansion {
       position: relative;
@@ -196,11 +207,6 @@
         </div>
       </div>
 
-      <div id="touchControls" class="hidden space-y-3 rounded-3xl border-2 border-dashed border-indigo-300/40 bg-indigo-900/30 p-5" role="group" aria-label="Mobile typing helper">
-        <label for="playInput" class="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-200">Tap to type</label>
-        <input id="playInput" class="touch-input w-full rounded-2xl border-2 border-indigo-400/40 bg-slate-900/70 px-4 py-3 text-center text-2xl text-indigo-100 focus:border-indigo-300 focus:outline-none focus:ring-4 focus:ring-indigo-400/40 sm:text-3xl" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
-      </div>
-
       <div class="space-y-6">
         <div class="room-title">
           <span>👻</span>
@@ -243,8 +249,6 @@
     const roomLabel = document.getElementById('roomLabel');
     const queue = document.getElementById('queue');
     const celebrate = document.getElementById('celebrate');
-    const playInput = document.getElementById('playInput');
-    const touchControls = document.getElementById('touchControls');
 
     const soundCorrect = document.getElementById('soundCorrect');
     const soundWrong = document.getElementById('soundWrong');
@@ -255,16 +259,14 @@
     let letterIndex = 0;
     let active = false;
 
-    const isTouchDevice = (() => {
-      if(typeof window === 'undefined') return false;
-      const hasTouchEvent = 'ontouchstart' in window || (window.DocumentTouch && document instanceof window.DocumentTouch);
-      const hasTouchPoints = navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-      const coarsePointer = window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
-      return hasTouchEvent || hasTouchPoints || coarsePointer;
-    })();
-    if(touchControls){
-      touchControls.classList.toggle('hidden', !isTouchDevice);
-    }
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'ghostly-word-hunt',
+      label: 'Tap letters to light candles',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => candleRow,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
     function setStatus(kind, message){
       statusText.innerHTML = message;
@@ -314,6 +316,9 @@
         candleRow.appendChild(candle);
       }
       window.GameUI?.fitLettersFor?.(candleRow);
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(candleRow);
+      }
     }
 
     function updateRoomUI(){
@@ -321,17 +326,6 @@
       roomLabel.textContent = currentRoom().name;
       renderQueue();
       renderCandles();
-    }
-
-    function focusPlayInput(){
-      if(!playInput || !isTouchDevice) return;
-      requestAnimationFrame(()=>{
-        playInput.focus({ preventScroll: true });
-        try {
-          const len = playInput.value.length;
-          playInput.setSelectionRange(len, len);
-        } catch (_) {}
-      });
     }
 
     function popGhost(candle){
@@ -389,12 +383,18 @@
         candle.classList.add('wiggle');
         popGhost(candle);
       }
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(candleRow);
+      }
     }
 
-    function handleKeyPress(key){
+    function handleKeyPress(key, opts = {}){
       if(!active) return;
       if(!key || key.length !== 1) return;
       if(!/[a-zA-Z]/.test(key)) return;
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey(key);
+      }
       const expected = currentRoom().words[wordIndex][letterIndex];
       if(!expected) return;
       if(key.toLowerCase() === expected.toLowerCase()){
@@ -406,6 +406,7 @@
 
     function finishHunt(){
       active = false;
+      touchKeyboard?.hide();
       setStatus('ok', 'All rooms are glowing! The ghosts are delighted.');
       const winMarkup = `
         <div class="celebration">
@@ -430,10 +431,6 @@
       } else {
         resetBtn.focus();
       }
-      if(playInput){
-        playInput.value = '';
-        if(isTouchDevice) playInput.blur();
-      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -448,7 +445,10 @@
       gameArea.style.display = 'block';
       updateRoomUI();
       setStatus('ok', `Begin with <strong>${currentRoom().words[wordIndex].toUpperCase()}</strong> in the ${currentRoom().name}.`);
-      focusPlayInput();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(candleRow);
+      }
     }
 
     function resetHunt(){
@@ -465,10 +465,7 @@
       roomLabel.textContent = ROOMS[0].name;
       setStatus(null, 'Press “Enter the house” to meet the first room.');
       status.style.display = 'flex';
-      if(playInput){
-        playInput.value = '';
-        playInput.blur();
-      }
+      touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -477,31 +474,10 @@
 
     document.addEventListener('keydown', (e)=>{
       if(!active) return;
-      if(e.target === playInput) return;
+      const target = e.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(e.key);
     });
-
-    if(playInput){
-      playInput.addEventListener('input', ()=>{
-        if(!active){
-          playInput.value = '';
-          return;
-        }
-        const letters = playInput.value.match(/[a-zA-Z]/g) || [];
-        playInput.value = '';
-        letters.forEach(ch=>handleKeyPress(ch));
-        focusPlayInput();
-      });
-      playInput.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
-
-    if(gameArea){
-      gameArea.addEventListener('click', ()=>{
-        if(active) focusPlayInput();
-      });
-    }
 
     setStatus(null, 'Press “Enter the house” to meet the first room.');
     status.style.display = 'flex';

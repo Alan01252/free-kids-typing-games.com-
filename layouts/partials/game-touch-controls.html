@@ -1,0 +1,23 @@
+<div
+  id="gameTouchControls"
+  class="touch-controls-panel hidden space-y-3"
+  role="group"
+  aria-label="On-screen keyboard"
+  aria-hidden="true"
+>
+  <div class="touch-controls-header">
+    <div id="gameTouchLabel" class="keyboard-label text-xs font-semibold uppercase tracking-[0.35em]">
+      Tap letters to play
+    </div>
+    <button
+      type="button"
+      class="touch-controls-close"
+      data-touch-close
+      aria-label="Hide keyboard"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  {{ partial "virtual-keyboard.html" (dict "id" "gameTouchKeyboard") }}
+</div>
+<script src="{{ "js/game/ui/touchKeyboard.js" | relURL }}"></script>
