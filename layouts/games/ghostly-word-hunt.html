@@ -15,6 +15,9 @@
       --card-bg: rgba(17,24,39,0.65);
       --card-border: rgba(148,163,184,0.2);
       --card-shadow: 0 32px 110px rgba(76,29,149,0.4);
+      --letter-gap: 16px;
+      --letter-padding-inline: clamp(8px, 6vw, 24px);
+      --letter-overflow-x: visible;
       --status-border: rgba(148,163,184,0.35);
       --status-bg: rgba(30,64,175,0.18);
       --status-color: #e2e8f0;
@@ -73,7 +76,9 @@
     }
     .candle {
       position: relative;
-      width: clamp(46px, calc((min(100%, 640px) - (var(--letters) - 1) * var(--gap)) / var(--letters)), 84px);
+      --candle-size: clamp(46px, calc((min(100%, 640px) - (var(--letters) - 1) * var(--gap)) / var(--letters)), 84px);
+      width: var(--candle-size);
+      min-width: var(--candle-size);
       height: clamp(96px, 12vw, 120px);
       border-radius: 24px;
       background: linear-gradient(180deg, rgba(30,41,59,0.9), rgba(15,23,42,0.85));
@@ -95,6 +100,7 @@
       font-size: clamp(22px, 5vw, 36px);
       font-weight: 800;
       letter-spacing: 0.08em;
+      line-height: 1;
       color: rgba(148,163,184,0.65);
       transition: color 0.25s ease, text-shadow 0.25s ease;
     }

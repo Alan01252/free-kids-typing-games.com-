@@ -27,18 +27,14 @@
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #6366f1;
-      --letter-gap: clamp(10px, 4vw, 20px);
-      --letter-padding-inline: clamp(8px, 5vw, 24px);
-      --letter-overflow-x: auto;
-      --letter-size: clamp(44px, min(12vw, 74px), 88px);
-      --letter-height: clamp(60px, 9vw, 90px);
-      --letter-font-size: clamp(26px, 5vw, 38px);
-      --letter-current-shadow: 0 14px 32px rgba(99,102,241,0.25);
+      --letter-overflow-x: visible;
+      --letter-gap: clamp(12px, 5vw, 28px);
     }
     .game-only-verbs .letter-row {
-      display: inline-flex;
-      width: auto;
+      display: flex;
+      width: 100%;
       max-width: 100%;
+      justify-content: center;
       margin-inline: auto;
     }
     .game-only-verbs .celebration {

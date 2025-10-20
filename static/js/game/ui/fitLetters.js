@@ -3,24 +3,39 @@
   if (window.__fitLettersAttached__) return;
   window.__fitLettersAttached__ = true;
 
-  function fitLettersFor(el) {
+  function measureAndScale(el) {
     if (!el) return;
-
     el.style.transform = 'none';
     el.style.whiteSpace = 'nowrap';
-
+    el.style.removeProperty('--letter-fit-gap');
     const parent = el.parentElement;
     if (!parent) return;
-
     const available = parent.getBoundingClientRect().width || 0;
-    const actual = el.scrollWidth || 0;
+    let actual = el.scrollWidth || 0;
     if (!available || !actual) return;
-
+    const childCount = el.children ? el.children.length : 0;
+    if (childCount > 1 && actual > available) {
+      const style = window.getComputedStyle(el);
+      const baseGap = parseFloat(style.columnGap || style.gap || '0') || 0;
+      if (baseGap > 0) {
+        const overflow = actual - available;
+        const adjust = overflow / (childCount - 1);
+        const targetGap = Math.max(baseGap * 0.4, baseGap - adjust);
+        if (targetGap < baseGap) {
+          el.style.setProperty('--letter-fit-gap', `${targetGap}px`);
+          actual = el.scrollWidth || actual;
+        }
+      }
+    }
     const scale = Math.min(1, available / actual);
-    if (scale < 1) {
-      el.style.transform = `scale(${scale})`;
-    } else {
-      el.style.transform = 'none';
+    el.style.transform = scale < 1 ? `scale(${scale})` : 'none';
+  }
+
+  function fitLettersFor(el) {
+    if (!el) return;
+    measureAndScale(el);
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => measureAndScale(el));
     }
   }
 

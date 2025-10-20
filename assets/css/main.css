@@ -160,12 +160,12 @@
   .letter-row {
     display: flex;
     width: 100%;
-    gap: var(--letter-gap, clamp(12px, 5vw, 28px));
+    gap: var(--letter-fit-gap, var(--letter-gap, clamp(12px, 5vw, 28px)));
     justify-content: center;
     flex-wrap: nowrap;
     padding-inline: var(--letter-padding-inline, clamp(10px, 6vw, 32px));
-    overflow-x: var(--letter-overflow-x, hidden);
-    overflow-y: hidden;
+    overflow-x: var(--letter-overflow-x, visible);
+    overflow-y: visible;
     max-width: 100%;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -190,6 +190,7 @@
     place-items: center;
     font-weight: var(--letter-weight, 800);
     font-size: var(--letter-font-size, clamp(30px, 6vw, 44px));
+    line-height: 1;
     color: var(--letter-color, rgba(191, 219, 254, 0.6));
     transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   }
