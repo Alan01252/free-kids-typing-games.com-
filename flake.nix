@@ -13,8 +13,10 @@
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [
           pkgs.hugo
+          pkgs.nodejs
         ];
         shellHook = ''
+          export PATH=$PWD/node_modules/.bin:$PATH
           echo "Dev shell loaded with Hugo ${pkgs.hugo.version}."
         '';
       };

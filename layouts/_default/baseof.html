@@ -6,7 +6,6 @@
   <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} · {{ end }}{{ .Site.Title }}{{ end }}{{ end }}</title>
   <link rel="icon" href="{{ "favicon.ico" | absURL }}" type="image/x-icon" />
   <link rel="shortcut icon" href="{{ "favicon.ico" | absURL }}" type="image/x-icon" />
-  <script src="https://cdn.tailwindcss.com"></script>
   {{ partial "game-shared-styles.html" . }}
   {{ block "styles" . }}{{ end }}
 </head>
@@ -14,6 +13,7 @@
   {{ block "main" . }}{{ end }}
   {{ block "footer" . }}{{ end }}
   {{ partial "game-win-overlay.html" . }}
+  <script src="{{ "js/game/ui/fitLetters.js" | relURL }}"></script>
   {{ block "scripts" . }}{{ end }}
 </body>
 </html>

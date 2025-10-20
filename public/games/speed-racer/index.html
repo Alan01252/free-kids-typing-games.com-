@@ -1,315 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Speed Racer · Kids Typing Games</title>
-  <link rel="icon" href="//localhost:1313/favicon.ico" type="image/x-icon" />
-  <link rel="shortcut icon" href="//localhost:1313/favicon.ico" type="image/x-icon" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-  :root {
-    --game-font-stack: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --card-border: rgba(99, 102, 241, 0.15);
-    --card-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
-    --card-blur: blur(6px);
-    --status-bg: rgba(99, 102, 241, 0.08);
-    --status-border: rgba(99, 102, 241, 0.25);
-    --status-color: #1f2937;
-    --status-ok-bg: rgba(34, 197, 94, 0.18);
-    --status-ok-border: rgba(34, 197, 94, 0.35);
-    --status-ok-color: #065f46;
-    --status-bad-bg: rgba(248, 113, 113, 0.18);
-    --status-bad-border: rgba(248, 113, 113, 0.35);
-    --status-bad-color: #7f1d1d;
-    --status-badge-size: 34px;
-    --status-badge-bg: rgba(99, 102, 241, 0.2);
-    --status-badge-color: #312e81;
-    --status-ok-badge-bg: var(--status-ok-bg);
-    --status-ok-badge-color: #ffffff;
-    --status-bad-badge-bg: var(--status-bad-bg);
-    --status-bad-badge-color: #ffffff;
-    --overlay-panel-bg: rgba(15, 23, 42, 0.92);
-    --overlay-panel-color: #f8fafc;
-    --overlay-action-primary: #2563eb;
-  }
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  
 
-  html,
-  body {
-    height: 100%;
-    margin: 0;
-  }
+  
 
-  body {
-    font-family: var(--game-font-stack);
-    position: relative;
-    overflow-x: hidden;
-    line-height: 1.6;
-  }
-
-  body > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .game-shell {
-    position: relative;
-    margin: 0 auto;
-    width: min(100%, 64rem);
-    padding: 1.5rem 1.25rem;
-    display: grid;
-    gap: 1.75rem;
-  }
-
-  @media (min-width: 640px) {
-    .game-shell {
-      padding: 3rem 1.5rem;
-      gap: 2rem;
-    }
-  }
-
-  .game-hero {
-    text-align: center;
-    display: grid;
-    gap: 0.75rem;
-    justify-items: center;
-  }
-
-  .game-hero h1 {
-    margin: 0;
-  }
-
-  .game-hero p {
-    margin: 0;
-    max-width: 40rem;
-  }
-
-  .game-card {
-    --card-bg-current: var(--card-bg);
-    --card-border-current: var(--card-border);
-    --card-shadow-current: var(--card-shadow);
-    border-radius: 32px;
-    border: 1px solid var(--card-border-current);
-    background: var(--card-bg-current);
-    box-shadow: var(--card-shadow-current);
-    backdrop-filter: var(--card-blur);
-    padding: clamp(1.5rem, 4vw, 2.5rem);
-    display: grid;
-    gap: 1.25rem;
-  }
-
-  .game-card[data-surface="muted"] {
-    --card-border-current: rgba(15, 23, 42, 0.25);
-    --card-shadow-current: 0 32px 120px rgba(15, 23, 42, 0.35);
-  }
-
-  .status-banner {
-    display: none;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem 1.1rem;
-    border-radius: 20px;
-    border: 2px solid var(--status-border);
-    background: var(--status-bg);
-    color: var(--status-color);
-    font-size: 0.975rem;
-  }
-
-  .status-banner.ok {
-    background: var(--status-ok-bg);
-    border-color: var(--status-ok-border);
-    color: var(--status-ok-color);
-  }
-
-  .status-banner.bad {
-    background: var(--status-bad-bg);
-    border-color: var(--status-bad-border);
-    color: var(--status-bad-color);
-  }
-
-  .status-badge {
-    display: inline-grid;
-    place-items: center;
-    width: var(--status-badge-size);
-    height: var(--status-badge-size);
-    border-radius: 50%;
-    font-weight: 700;
-    background: var(--status-badge-bg);
-    color: var(--status-badge-color);
-  }
-
-  .status-banner.ok .status-badge {
-    background: var(--status-ok-badge-bg);
-    color: var(--status-ok-badge-color);
-  }
-
-  .status-banner.bad .status-badge {
-    background: var(--status-bad-badge-bg);
-    color: var(--status-bad-badge-color);
-  }
-
-  .touch-input {
-    letter-spacing: 0.35em;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .celebrate {
-    min-height: 48px;
-    text-align: center;
-    font-size: 1.15rem;
-    font-weight: 600;
-  }
-
-  .game-tip {
-    font-size: 0.95rem;
-    opacity: 0.85;
-  }
-
-  .game-section-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: rgba(99, 102, 241, 0.7);
-  }
-
-  body.game-has-overlay {
-    overflow: hidden;
-  }
-
-  .game-win-overlay {
-    position: fixed;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: clamp(1.5rem, 6vw, 3rem);
-    background: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(8px);
-    z-index: 999;
-  }
-
-  .game-win-overlay.is-active {
-    display: flex;
-    animation: overlayFade 0.24s ease;
-  }
-
-  .game-win-overlay__panel {
-    position: relative;
-    width: min(32rem, 100%);
-    max-height: calc(100vh - 4rem);
-    overflow: auto;
-    border-radius: 30px;
-    border: 1px solid var(--card-border, rgba(148, 163, 184, 0.35));
-    background: var(--overlay-panel-bg, var(--card-bg, rgba(15, 23, 42, 0.92)));
-    box-shadow: var(--card-shadow, 0 30px 90px rgba(15, 23, 42, 0.35));
-    padding: clamp(1.75rem, 4vw, 2.5rem);
-    display: grid;
-    gap: 1.5rem;
-    color: var(--overlay-panel-color, inherit);
-    outline: none;
-  }
-
-  .game-win-overlay__panel:focus-visible {
-    outline: 3px solid rgba(96, 165, 250, 0.6);
-    outline-offset: 6px;
-  }
-
-  .game-win-overlay__close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    display: inline-grid;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 999px;
-    border: none;
-    background: rgba(15, 23, 42, 0.14);
-    color: inherit;
-    font-size: 1.25rem;
-    cursor: pointer;
-    transition: transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .game-win-overlay__close:hover {
-    transform: translateY(-1px);
-    background: rgba(15, 23, 42, 0.28);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
-  }
-
-  .game-win-overlay__close span {
-    line-height: 1;
-  }
-
-  .game-win-overlay__body {
-    display: grid;
-    gap: 1rem;
-  }
-
-  .game-win-overlay__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    justify-content: center;
-  }
-
-  .game-win-overlay__actions button {
-    border-radius: 999px;
-    font-weight: 700;
-    padding: 0.75rem 1.9rem;
-    font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-  }
-
-  .game-win-overlay__actions button:focus-visible {
-    outline: 3px solid rgba(148, 197, 253, 0.75);
-    outline-offset: 4px;
-  }
-
-  .game-win-overlay__again {
-    background: var(--overlay-action-primary, #2563eb);
-    color: #ffffff;
-    box-shadow: 0 22px 45px rgba(37, 99, 235, 0.35);
-  }
-
-  .game-win-overlay__again:hover {
-    transform: translateY(-1px);
-  }
-
-  @keyframes overlayFade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .game-win-overlay {
-      backdrop-filter: none;
-    }
-    .game-win-overlay.is-active {
-      animation: none;
-    }
-    .game-win-overlay__actions button {
-      transition: none;
-    }
-    .game-win-overlay__close {
-      transition: none;
-    }
-  }
-</style>
+<link rel="stylesheet" href="/css/main.min.9f019ea9ff58918e920a00ab313b43b7399102ac058fba70d99c67e9a0bf8942.css" integrity="sha256-nwGeqf9YkY6SCgCrMTtDtzmRAqwFj7pw2Zxn6aC/iUI=" crossorigin="anonymous">
 
   
   <style>
-    :root {
-      --indigo: #6366f1;
-      --amber: #f59e0b;
-      --green: #22c55e;
-      --muted: #64748b;
-    }
     .game-speed-racer {
       color: #0f172a;
       background:
@@ -337,6 +41,23 @@
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #0f172a;
       --overlay-action-primary: #6366f1;
+      --letter-gap: 12px;
+      --letter-size: clamp(52px, 8vw, 72px);
+      --letter-min-size: clamp(52px, 8vw, 72px);
+      --letter-height: clamp(64px, 9vw, 84px);
+      --letter-radius: 20px;
+      --letter-border-color: rgba(99,102,241,0.25);
+      --letter-color: rgba(99,102,241,0.6);
+      --letter-filled-border-color: rgba(99,102,241,0.45);
+      --letter-filled-bg: rgba(224,231,255,0.95);
+      --letter-filled-color: #312e81;
+      --letter-current-border-color: rgba(99,102,241,0.85);
+      --letter-current-bg: linear-gradient(145deg, rgba(224,231,255,0.95), rgba(199,210,254,0.95));
+      --letter-current-color: #1e1b4b;
+      --letter-current-shadow: 0 16px 36px rgba(99,102,241,0.25);
+      --letter-error-border-color: rgba(248,113,113,0.6);
+      --letter-error-bg: rgba(254,226,226,0.92);
+      --letter-error-color: #b91c1c;
     }
     .game-speed-racer .status-badge {
       background: var(--status-badge-bg);
@@ -399,47 +120,7 @@
       display: flex;
       gap: 12px;
       justify-content: center;
-      flex-wrap: wrap;
-    }
-    .letter-box {
-      width: clamp(52px, 8vw, 72px);
-      height: clamp(64px, 9vw, 84px);
-      border-radius: 20px;
-      border: 2px dashed rgba(99,102,241,0.25);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: clamp(28px, 6vw, 40px);
-      color: rgba(99,102,241,0.6);
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    }
-    .letter-box.filled {
-      border-style: solid;
-      border-color: rgba(99,102,241,0.45);
-      background: rgba(224,231,255,0.95);
-      color: #312e81;
-      transform: translateY(-3px);
-    }
-    .letter-box.current {
-      border-style: solid;
-      border-color: rgba(99,102,241,0.85);
-      background: linear-gradient(145deg, rgba(224,231,255,0.95), rgba(199,210,254,0.95));
-      color: #1e1b4b;
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 16px 36px rgba(99,102,241,0.25);
-    }
-    .letter-box.wiggle { animation: wiggle 0.35s ease; border-color: rgba(248,113,113,0.6); background: rgba(254,226,226,0.92); color: #b91c1c; }
-    @keyframes wiggle {
-      0%, 100% { transform: translateY(0); }
-      20% { transform: translate(-4px, -2px); }
-      40% { transform: translate(4px, -6px); }
-      60% { transform: translate(-3px, -4px); }
-      80% { transform: translate(3px, -5px); }
-    }
-    .touch-input {
-      letter-spacing: 0.4em;
-      font-weight: 700;
-      text-transform: uppercase;
+      flex-wrap: nowrap;
     }
     .celebration {
       padding: 24px 20px;
@@ -449,11 +130,6 @@
       box-shadow: 0 30px 80px rgba(245,158,11,0.35);
       text-align: center;
       animation: bannerPop 0.6s ease;
-    }
-    @keyframes bannerPop {
-      0% { transform: scale(0.85) rotate(-2deg); opacity: 0; }
-      60% { transform: scale(1.05) rotate(1deg); opacity: 1; }
-      100% { transform: scale(1); rotate(0); opacity: 1; }
     }
   </style>
 
@@ -512,7 +188,7 @@
 
       <div class="space-y-4 text-center">
         <div class="game-section-title text-indigo-400">Current word</div>
-        <div id="wordBoxes" class="box-row"></div>
+        <div id="wordBoxes" class="box-row letter-row"></div>
       </div>
 
       <div class="space-y-3 text-center">
@@ -708,6 +384,7 @@
   })();
 </script>
 
+  <script src="/js/game/ui/fitLetters.js"></script>
   
   <script>
     const TOTAL_WORDS = 7;
@@ -819,6 +496,7 @@
         if(i === currentLetterIndex) box.classList.add('current');
         wordBoxes.appendChild(box);
       }
+      window.GameUI?.fitLettersFor?.(wordBoxes);
     }
 
     function updateCar(){
@@ -952,6 +630,7 @@
       car.style.left = '0%';
       raceWords = [];
       wordBoxes.innerHTML = '';
+      wordBoxes.style.transform = 'none';
       queue.innerHTML = '';
       celebrate.innerHTML = '';
       startBtn.style.display = 'inline-flex';

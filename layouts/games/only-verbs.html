@@ -1,11 +1,5 @@
 {{ define "styles" }}
   <style>
-    :root {
-      --indigo: #6366f1;
-      --accent: #5b8def;
-      --good: #22c55e;
-      --bad: #f87171;
-    }
     .game-only-verbs {
       color: #1f2937;
       background:
@@ -33,52 +27,21 @@
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #6366f1;
+      --letter-gap: clamp(10px, 4vw, 20px);
+      --letter-padding-inline: clamp(8px, 5vw, 24px);
+      --letter-overflow-x: auto;
+      --letter-size: clamp(44px, min(12vw, 74px), 88px);
+      --letter-height: clamp(60px, 9vw, 90px);
+      --letter-font-size: clamp(26px, 5vw, 38px);
+      --letter-current-shadow: 0 14px 32px rgba(99,102,241,0.25);
     }
-    .game-only-verbs .status-badge {
-      background: var(--status-badge-bg);
-      color: var(--status-badge-color);
+    .game-only-verbs .letter-row {
+      display: inline-flex;
+      width: auto;
+      max-width: 100%;
+      margin-inline: auto;
     }
-    .letter-box {
-      width: clamp(58px, 9vw, 80px);
-      height: clamp(64px, 10vw, 92px);
-      border-radius: 22px;
-      border: 2px dashed rgba(99,102,241,0.25);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: clamp(30px, 6vw, 44px);
-      color: rgba(99,102,241,0.55);
-      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    }
-    .letter-box.filled {
-      border-style: solid;
-      border-color: rgba(99,102,241,0.55);
-      background: rgba(224,231,255,0.95);
-      color: #1e1b4b;
-      transform: translateY(-4px);
-    }
-    .letter-box.current {
-      border-style: solid;
-      border-color: rgba(99,102,241,0.9);
-      background: linear-gradient(145deg, rgba(224,231,255,0.95), rgba(199,210,254,0.95));
-      color: #1e1b4b;
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 16px 38px rgba(99,102,241,0.25);
-    }
-    .letter-box.wiggle { animation: wiggle 0.35s ease; border-color: rgba(248,113,113,0.6); background: rgba(254,226,226,0.92); color: #b91c1c; }
-    @keyframes wiggle {
-      0%, 100% { transform: translateY(0); }
-      20% { transform: translate(-4px, -2px); }
-      40% { transform: translate(4px, -6px); }
-      60% { transform: translate(-3px, -4px); }
-      80% { transform: translate(3px, -5px); }
-    }
-    .touch-input {
-      letter-spacing: 0.4em;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .celebration {
+    .game-only-verbs .celebration {
       padding: 24px 20px;
       border-radius: 32px;
       border: 3px solid rgba(245,158,11,0.4);
@@ -90,16 +53,10 @@
       animation: bannerPop 0.6s ease;
       text-align: center;
     }
-    @keyframes bannerPop {
-      0% { transform: scale(0.85) rotate(-2deg); opacity: 0; }
-      60% { transform: scale(1.05) rotate(1deg); opacity: 1; }
-      100% { transform: scale(1); rotate(0); opacity: 1; }
-    }
   </style>
 {{ end }}
 
 {{ define "body_class" }}game-page game-only-verbs text-slate-800{{ end }}
-
 {{ define "main" }}
   <div class="game-shell text-slate-800">
     <header class="game-hero">
@@ -112,7 +69,7 @@
       </p>
     </header>
 
-    <section class="game-card" style="--card-shadow-current: 0 32px 110px rgba(16,185,129,0.18); --card-border-current: rgba(45,212,191,0.25);">
+    <section class="game-card space-y-8" style="--card-shadow-current: 0 32px 110px rgba(16,185,129,0.18); --card-border-current: rgba(45,212,191,0.25);">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
         <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
           Start
@@ -127,7 +84,7 @@
       </div>
     </section>
 
-    <section id="gameArea" class="game-card" style="display:none; --card-shadow-current: 0 36px 120px rgba(45,212,191,0.18); --card-border-current: rgba(45,212,191,0.2);" aria-live="polite">
+    <section id="gameArea" class="game-card space-y-8" style="display:none; --card-shadow-current: 0 36px 120px rgba(45,212,191,0.18); --card-border-current: rgba(45,212,191,0.2);" aria-live="polite">
       <div class="grid gap-4 sm:grid-cols-2">
         <div class="rounded-3xl bg-emerald-50 px-5 py-4 text-center text-sm font-semibold text-emerald-600 shadow-inner">
           <div class="uppercase tracking-[0.3em] text-xs text-emerald-400">Progress</div>
@@ -146,7 +103,7 @@
 
       <div class="space-y-4 text-center">
         <div class="game-section-title text-indigo-400">Current verb</div>
-        <div id="letterRow" class="flex flex-wrap justify-center gap-12 sm:gap-10"></div>
+        <div id="letterRow" class="letter-row"></div>
       </div>
 
       <div id="celebrate" class="celebrate" aria-live="polite"></div>
@@ -240,6 +197,7 @@
     function renderWord(){
       letterRow.innerHTML = '';
       const word = verbs[wordIndex] || '';
+      letterRow.style.setProperty('--letters', word.length);
       for(let i = 0; i < word.length; i++){
         const box = document.createElement('div');
         box.className = 'letter-box';
@@ -248,6 +206,10 @@
         if(i < letterIndex) box.classList.add('filled');
         if(i === letterIndex) box.classList.add('current');
         letterRow.appendChild(box);
+      }
+      window.GameUI?.fitLettersFor?.(letterRow);
+      if(typeof requestAnimationFrame === 'function'){
+        requestAnimationFrame(()=> window.GameUI?.fitLettersFor?.(letterRow));
       }
     }
 
@@ -370,6 +332,8 @@
       gameArea.style.display = 'none';
       celebrate.innerHTML = '';
       letterRow.innerHTML = '';
+      letterRow.style.transform = 'none';
+      letterRow.style.removeProperty('--letters');
       queue.innerHTML = '';
       progressCounter.textContent = `1 / ${TOTAL_VERBS}`;
       setStatus(null, 'Press Start to see your first verb.');

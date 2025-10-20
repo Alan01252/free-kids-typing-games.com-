@@ -1,11 +1,5 @@
 {{ define "styles" }}
   <style>
-    :root {
-      --indigo: #6366f1;
-      --amber: #fbbf24;
-      --green: #22c55e;
-      --bad: #f87171;
-    }
     .game-quick-fox {
       color: #1f2937;
       background:
@@ -114,22 +108,17 @@
       color: rgba(6,95,70,0.6);
     }
     .token.wiggle {
-      animation: wiggle 0.35s ease;
+      animation: quickFoxWiggle 0.35s ease;
       border-color: rgba(248,113,113,0.65);
       background: rgba(254,226,226,0.95);
       color: #b91c1c;
     }
-    @keyframes wiggle {
+    @keyframes quickFoxWiggle {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-6px); }
       40% { transform: translateX(6px); }
       60% { transform: translateX(-4px); }
       80% { transform: translateX(4px); }
-    }
-    .touch-input {
-      letter-spacing: 0.4em;
-      font-weight: 700;
-      text-transform: uppercase;
     }
     .progress-chip {
       display: inline-flex;
@@ -160,11 +149,6 @@
       animation: bannerPop 0.6s ease forwards;
       width: min(100%, 360px);
       margin: 0 auto;
-    }
-    @keyframes bannerPop {
-      0% { transform: scale(0.85) rotate(-2deg); opacity: 0; }
-      60% { transform: scale(1.05) rotate(1deg); opacity: 1; }
-      100% { transform: scale(1) rotate(0); opacity: 1; }
     }
     .win-emoji-line {
       display: flex;
@@ -412,7 +396,7 @@
       celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      if(!isTouchDevice && window.GameCelebration){
+      if(window.GameCelebration){
         window.GameCelebration.show({
           content: winMarkup,
           onPlayAgain: ()=>{

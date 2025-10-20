@@ -1,14 +1,11 @@
 {{ define "styles" }}
   <style>
-    :root {
+    .game-rocket-run {
       --sky-top: #020617;
       --sky-bottom: #0f172a;
       --accent: #60a5fa;
-      --accent-2: #f97316;
       --good: #22c55e;
       --bad: #f87171;
-    }
-    .game-rocket-run {
       background: radial-gradient(circle at 50% -20%, rgba(56,189,248,0.25), transparent 55%), linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
       color: #f8fafc;
       --card-bg: rgba(15,23,42,0.65);
@@ -30,9 +27,26 @@
       --overlay-panel-bg: rgba(15,23,42,0.94);
       --overlay-panel-color: #f8fafc;
       --overlay-action-primary: #3b82f6;
-    }
-    .game-rocket-run .game-card {
-      overflow: hidden;
+      --letter-gap: clamp(10px, 4vw, 20px);
+      --letter-padding-inline: clamp(6px, 5vw, 28px);
+      --letter-overflow-x: auto;
+      --letter-size: clamp(50px, min(12vw, 80px), 90px);
+      --letter-min-size: 50px;
+      --letter-height: clamp(64px, 9vw, 96px);
+      --letter-radius: 20px;
+      --letter-border-width: 2px;
+      --letter-border-style: dashed;
+      --letter-border-color: rgba(148,163,184,0.35);
+      --letter-color: rgba(191,219,254,0.6);
+      --letter-filled-border-color: rgba(96,165,250,0.6);
+      --letter-filled-bg: rgba(37,99,235,0.25);
+      --letter-filled-color: #e0f2fe;
+      --letter-current-border-color: rgba(251,191,36,0.7);
+      --letter-current-bg: rgba(251,191,36,0.2);
+      --letter-current-color: #fff7ed;
+      --letter-current-shadow: 0 20px 50px rgba(251,191,36,0.25);
+      --letter-error-bg: rgba(254,226,226,0.2);
+      --letter-error-color: #fecaca;
     }
     .launch-grid {
       position: relative;
@@ -141,49 +155,10 @@
       0% { transform: scale(0.5); opacity: 0.6; }
       100% { transform: scale(0.8); opacity: 1; }
     }
-    .letter-row {
-      --letters: 6;
-      display: flex;
-      gap: clamp(10px, 4vw, 20px);
-      justify-content: center;
-      flex-wrap: nowrap;
-      padding-inline: clamp(6px, 5vw, 28px);
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      -webkit-overflow-scrolling: touch;
+    .game-rocket-run .letter-box.wiggle {
+      animation: rocketRunWiggle 0.35s ease;
     }
-    .letter-row::-webkit-scrollbar { display: none; }
-    .letter-box {
-      flex: 0 0 clamp(50px, min(12vw, 80px), 90px);
-      width: clamp(50px, min(12vw, 80px), 90px);
-      min-width: 50px;
-      height: clamp(64px, 9vw, 96px);
-      border-radius: 20px;
-      border: 2px dashed rgba(148,163,184,0.35);
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: clamp(30px, 6vw, 44px);
-      color: rgba(191,219,254,0.6);
-      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-    }
-    .letter-box.filled {
-      border-style: solid;
-      border-color: rgba(96,165,250,0.6);
-      background: rgba(37,99,235,0.25);
-      color: #e0f2fe;
-      transform: translateY(-4px);
-    }
-    .letter-box.current {
-      border-style: solid;
-      border-color: rgba(251,191,36,0.7);
-      background: rgba(251,191,36,0.2);
-      color: #fff7ed;
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 20px 50px rgba(251,191,36,0.25);
-    }
-    .letter-box.wiggle { animation: wiggle 0.35s ease; border-color: rgba(248,113,113,0.6); background: rgba(254,226,226,0.2); color: #fecaca; }
-    @keyframes wiggle {
+    @keyframes rocketRunWiggle {
       0%, 100% { transform: translateY(0); }
       20% { transform: translate(-4px, -4px); }
       40% { transform: translate(4px, -8px); }
@@ -403,10 +378,12 @@
 
 {{ define "scripts" }}
   <script>
-    const WORD_BANK = [
-      'spark', 'rocket', 'ember', 'launch', 'flare', 'glow', 'fizz', 'crackle', 'flash', 'sparkle',
-      'ignite', 'burst', 'fusion', 'glitter', 'stream', 'blaze', 'dazzle', 'twinkle', 'shimmer', 'comet'
-    ];
+  const WORD_BANK = [
+    'zoom', 'blast', 'spark', 'twink', 'glow', 'whoosh', 'zappy',
+    'blink', 'rocket', 'comet', 'orbit', 'astro', 'cosmo',
+    'nova', 'flare', 'puff', 'flash', 'swoosh', 'zing', 'sparkle',
+    'shiny', 'lunar', 'solar', 'beam', 'shine'
+  ];
     const TOTAL_ROCKETS = 7;
 
     const startBtn = document.getElementById('startBtn');
@@ -436,6 +413,12 @@
     let keyboardVisible = false;
     let hideKeyboardTimeout = null;
     const keyFlashTimers = Object.create(null);
+    const scheduleFitLetters = (delay = 0) => {
+      if(!letterRow) return;
+      window.setTimeout(()=>{
+        window.GameUI?.fitLettersFor?.(letterRow);
+      }, delay);
+    };
 
     const isTouchDevice = (() => {
       if(typeof window === 'undefined') return false;
@@ -514,6 +497,7 @@
         if(i === letterIndex) box.classList.add('current');
         letterRow.appendChild(box);
       }
+      window.GameUI?.fitLettersFor?.(letterRow);
     }
 
     function resetRocketsState(){
@@ -574,9 +558,12 @@
           updateKeyboardOffset();
           setTimeout(updateKeyboardOffset, 200);
           setTimeout(ensureKeyboardViewport, 260);
+          scheduleFitLetters(0);
+          scheduleFitLetters(260);
         });
         window.addEventListener('resize', updateKeyboardOffset);
         window.addEventListener('resize', ensureKeyboardViewport);
+        scheduleFitLetters(0);
       } else {
         if(!keyboardVisible) return;
         keyboardVisible = false;
@@ -594,6 +581,7 @@
         if(keyboardWrapper){
           keyboardWrapper.querySelectorAll('.hg-button.is-flashing').forEach(btn=>btn.classList.remove('is-flashing'));
         }
+        scheduleFitLetters(0);
         hideKeyboardTimeout = setTimeout(()=>{
           touchControls.classList.add('hidden');
           touchControls.style.display = 'none';
@@ -604,6 +592,7 @@
           if(gameShell){
             gameShell.style.removeProperty('padding-bottom');
           }
+          scheduleFitLetters(0);
         }, 360);
       }
     }
@@ -750,7 +739,7 @@
       celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      if(!isTouchDevice && window.GameCelebration){
+      if(window.GameCelebration){
         window.GameCelebration.show({
           content: winMarkup,
           onPlayAgain: ()=>{

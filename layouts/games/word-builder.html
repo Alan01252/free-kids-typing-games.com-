@@ -148,11 +148,6 @@
       width: min(100%, 360px);
       margin: 0 auto;
     }
-    @keyframes bannerPop {
-      0% { transform: scale(0.85) rotate(-2deg); opacity: 0; }
-      60% { transform: scale(1.04) rotate(1deg); opacity: 1; }
-      100% { transform: scale(1); rotate(0); opacity: 1; }
-    }
     .win-emoji-line { display:flex; gap:12px; font-size:2rem; justify-content:center; align-items:center; }
     .win-burst { display:inline-block; animation: burstBounce 1.2s ease-in-out infinite; transform-origin: center; }
     @keyframes burstBounce { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(-8px) scale(1.15);} }
@@ -524,7 +519,7 @@
       celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0; soundWin.play();
       actionBtn.textContent = 'Play again';
-      if(!isTouchDevice && window.GameCelebration){
+      if(window.GameCelebration){
         window.GameCelebration.show({
           content: winMarkup,
           onPlayAgain: ()=>{
