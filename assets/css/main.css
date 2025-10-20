@@ -64,6 +64,12 @@
   body.game-has-overlay {
     overflow: hidden;
   }
+
+  body.game-has-overlay > :not(#gameWinOverlay) {
+    filter: blur(4px);
+    transition: filter 0.2s ease;
+    pointer-events: none;
+  }
 }
 
 @layer components {
@@ -414,19 +420,40 @@
 
   .game-win-overlay {
     position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     display: none;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     padding: clamp(1.5rem, 6vw, 3rem);
     background: rgba(15, 23, 42, 0.55);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 999;
   }
 
   .game-win-overlay.is-active {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     animation: overlayFade 0.24s ease;
+  }
+
+  .game-win-overlay.overlay-no-fixed {
+    display: block !important;
+  }
+
+  .game-win-overlay.overlay-no-fixed .game-win-overlay__panel {
+    margin: 0 auto;
   }
 
   .game-win-overlay__panel {

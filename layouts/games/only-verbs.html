@@ -287,7 +287,7 @@
       celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      if(!isTouchDevice && window.GameCelebration){
+      if(window.GameCelebration){
         window.GameCelebration.show({
           content: winMarkup,
           onPlayAgain: ()=>{
