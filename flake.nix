@@ -14,6 +14,11 @@
         buildInputs = [
           pkgs.hugo
           pkgs.nodejs
+          (pkgs.python313.withPackages (ps: with ps; [
+            google-cloud-texttospeech
+            google-genai
+          ]))
+          pkgs.google-cloud-sdk
         ];
         shellHook = ''
           export PATH=$PWD/node_modules/.bin:$PATH

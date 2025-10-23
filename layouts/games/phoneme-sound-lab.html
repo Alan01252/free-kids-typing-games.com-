@@ -1,0 +1,872 @@
+{{ define "styles" }}
+  <style>
+    .game-phoneme-sound-lab {
+      color: #0f172a;
+      background:
+        radial-gradient(1200px circle at 80% -360px, rgba(129, 140, 248, 0.38), transparent 60%),
+        radial-gradient(880px circle at 18% 120%, rgba(34, 197, 94, 0.34), transparent 58%),
+        linear-gradient(180deg, #eef2ff 0%, #ecfdf5 55%, #f8fafc 100%);
+      --card-bg: linear-gradient(155deg, rgba(255, 255, 255, 0.94), rgba(224, 242, 254, 0.72));
+      --card-border: rgba(99, 102, 241, 0.26);
+      --card-shadow: 0 34px 90px rgba(99, 102, 241, 0.22);
+      --status-border: rgba(99, 102, 241, 0.25);
+      --status-bg: rgba(129, 140, 248, 0.12);
+      --status-color: #1e3a8a;
+      --status-ok-bg: rgba(34, 197, 94, 0.18);
+      --status-ok-border: rgba(22, 163, 74, 0.32);
+      --status-ok-color: #047857;
+      --status-bad-bg: rgba(248, 113, 113, 0.18);
+      --status-bad-border: rgba(248, 113, 113, 0.35);
+      --status-bad-color: #b91c1c;
+      --status-badge-bg: rgba(129, 140, 248, 0.24);
+      --status-badge-color: #3730a3;
+      --status-ok-badge-bg: rgba(34, 197, 94, 0.9);
+      --status-ok-badge-color: #fff;
+      --status-bad-badge-bg: rgba(248, 113, 113, 0.9);
+      --status-bad-badge-color: #fff;
+      --overlay-panel-bg: rgba(255, 255, 255, 0.96);
+      --overlay-panel-color: #0f172a;
+      --overlay-action-primary: #6366f1;
+      --touch-panel-bg: linear-gradient(150deg, rgba(129, 140, 248, 0.95), rgba(59, 130, 246, 0.75));
+      --touch-panel-color: #eef2ff;
+      --touch-label-color: #c7d2fe;
+      --touch-key-bg: rgba(99, 102, 241, 0.26);
+      --touch-key-border: rgba(129, 140, 248, 0.5);
+      --touch-key-color: #f8fafc;
+      --touch-key-shadow: 0 16px 36px rgba(79, 70, 229, 0.35);
+      --touch-key-active-bg: rgba(59, 130, 246, 0.92);
+      --touch-key-active-color: #f8fafc;
+      --touch-key-highlight-bg: rgba(129, 140, 248, 0.96);
+      --touch-key-highlight-border: rgba(165, 180, 252, 0.55);
+    }
+
+    .game-phoneme-sound-lab .game-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phoneme-word {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(1.6rem, 6vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #312e81;
+    }
+
+    .phoneme-word span.word-emoji {
+      font-size: clamp(1.8rem, 7vw, 2.8rem);
+    }
+
+    .phoneme-board {
+      display: grid;
+      gap: 18px;
+    }
+
+    .phoneme-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(12px, 3vw, 20px);
+    }
+
+    .phoneme-segment {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      align-items: center;
+      padding: clamp(16px, 5vw, 22px);
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 2px solid rgba(129, 140, 248, 0.35);
+      box-shadow: 0 14px 40px rgba(99, 102, 241, 0.12);
+      min-width: clamp(120px, 28vw, 180px);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+
+    .phoneme-segment.active {
+      transform: translateY(-6px);
+      border-color: rgba(34, 197, 94, 0.45);
+      box-shadow: 0 20px 50px rgba(34, 197, 94, 0.2);
+    }
+
+    .phoneme-segment.complete {
+      background: linear-gradient(150deg, rgba(167, 243, 208, 0.45), rgba(191, 219, 254, 0.55));
+      border-color: rgba(34, 197, 94, 0.42);
+    }
+
+    .phoneme-segment.shake {
+      animation: phonemeShake 0.35s ease;
+    }
+
+    @keyframes phonemeShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+
+    .segment-letters {
+      display: flex;
+      justify-content: center;
+      gap: clamp(10px, 2.5vw, 14px);
+    }
+
+    .segment-letter {
+      display: grid;
+      place-items: center;
+      width: clamp(46px, 8vw, 64px);
+      height: clamp(52px, 9vw, 74px);
+      border-radius: 18px;
+      border: 2px dashed rgba(129, 140, 248, 0.35);
+      background: rgba(224, 231, 255, 0.38);
+      font-size: clamp(1.6rem, 5vw, 2.1rem);
+      font-weight: 800;
+      color: rgba(67, 56, 202, 0.85);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .segment-letter.filled {
+      border-style: solid;
+      border-color: rgba(34, 197, 94, 0.58);
+      background: rgba(187, 247, 208, 0.75);
+      color: #047857;
+      transform: scale(1.03);
+    }
+
+    .segment-letter.current {
+      border-color: rgba(59, 130, 246, 0.55);
+      background: rgba(191, 219, 254, 0.65);
+      color: #1d4ed8;
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(59, 130, 246, 0.22);
+    }
+
+    .segment-info {
+      display: grid;
+      gap: 6px;
+      justify-items: center;
+      text-align: center;
+      color: #1e3a8a;
+    }
+
+    .segment-label {
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .segment-ipa {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .segment-examples {
+      font-size: 0.78rem;
+      color: #334155;
+      max-width: 160px;
+    }
+
+    .phoneme-hint {
+      padding: clamp(14px, 4vw, 18px);
+      border-radius: 18px;
+      border: 2px solid rgba(59, 130, 246, 0.35);
+      background: rgba(219, 234, 254, 0.65);
+      color: #1e3a8a;
+      font-weight: 600;
+      text-align: center;
+      font-size: clamp(0.95rem, 3vw, 1.05rem);
+    }
+
+    .phoneme-hint strong {
+      color: #0f766e;
+    }
+
+    .phoneme-hint.ok {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(187, 247, 208, 0.7);
+      color: #065f46;
+    }
+
+    .phoneme-hint.bad {
+      border-color: rgba(248, 113, 113, 0.4);
+      background: rgba(254, 226, 226, 0.75);
+      color: #b91c1c;
+    }
+
+    .phoneme-progress {
+      display: grid;
+      gap: 12px;
+    }
+
+    .progress-card {
+      border-radius: 22px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 2px solid rgba(129, 140, 248, 0.28);
+      text-align: center;
+      box-shadow: inset 0 8px 18px rgba(99, 102, 241, 0.08);
+    }
+
+    .progress-card .label {
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.38em;
+      font-weight: 700;
+      color: rgba(79, 70, 229, 0.8);
+    }
+
+    .progress-card .value {
+      margin-top: 6px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #312e81;
+    }
+
+    .progress-card .queue-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .queue-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 2px solid rgba(129, 140, 248, 0.3);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: rgba(224, 231, 255, 0.65);
+      color: rgba(55, 48, 163, 0.85);
+    }
+
+    .phoneme-celebration {
+      display: none;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .phoneme-celebration .banner {
+      background: linear-gradient(145deg, rgba(224, 242, 254, 0.95), rgba(187, 247, 208, 0.92));
+      border: 3px solid rgba(59, 130, 246, 0.28);
+      border-radius: 28px;
+      padding: 22px 20px;
+      text-align: center;
+      display: grid;
+      gap: 10px;
+      box-shadow: 0 24px 60px rgba(79, 70, 229, 0.2);
+      animation: bannerPop 0.55s ease;
+    }
+
+    @keyframes bannerPop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 640px) {
+      .phoneme-segment {
+        min-width: min(100%, 220px);
+      }
+    }
+  </style>
+{{ end }}
+
+{{ define "body_class" }}game-page game-phoneme-sound-lab text-slate-800{{ end }}
+
+{{ define "main" }}
+  <div class="game-shell">
+    <header class="game-hero text-center space-y-3">
+      <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-600">🔊 Spot the sounds</span>
+      <h1 class="text-4xl font-extrabold tracking-tight text-slate-800 sm:text-5xl">
+        Phoneme Sound Lab
+      </h1>
+      <p class="mx-auto max-w-2xl text-sm text-slate-600 sm:text-base">
+        Type each word and listen as every phoneme chunk plays. Blends with more than one letter light up together so kids can hear how the sounds build the word.
+      </p>
+    </header>
+
+    <section class="game-card space-y-6">
+      <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-200">
+          Start listening
+        </button>
+        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-400 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200" style="display:none;">
+          Try again
+        </button>
+      </div>
+      <div id="status" class="status-banner" aria-live="polite">
+        <span class="status-badge" id="statusBadge">i</span>
+        <span id="statusText">Press Start to explore phoneme chunks.</span>
+      </div>
+    </section>
+
+    <section id="gameArea" class="game-card space-y-8" style="display:none;" aria-live="polite">
+      <div class="grid gap-4 sm:grid-cols-2 phoneme-progress">
+        <div class="progress-card">
+          <div class="label">Word</div>
+          <div id="progressCounter" class="value">1 / 6</div>
+        </div>
+        <div class="progress-card">
+          <div class="label">Next up</div>
+          <div id="queue" class="queue-list"></div>
+        </div>
+      </div>
+
+      <div class="text-center space-y-4">
+        <div class="phoneme-word" id="wordBanner" aria-live="polite"></div>
+        <div class="phoneme-board">
+          <div id="segmentRow" class="phoneme-row" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="phonemeHint" class="phoneme-hint" aria-live="assertive">
+        Focus on each chunk as you type to reveal its sound.
+      </div>
+
+      <div id="celebrate" class="phoneme-celebration" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/magic_chime.ogg"></audio>
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "game-footer.html" (dict "context" . "theme" (default "light" .Params.theme)) }}
+{{ end }}
+
+{{ define "scripts" }}
+  <script>
+    const AUDIO_BASE = {{ (printf "%q" (relURL "/audio/phonemes/")) | safeJS }};
+
+    const PHONEME_LIBRARY = {
+      "popular": {"ipa":"p","description":"as in 'popular'"},
+      "bubble": {"ipa":"b","description":"as in 'bubble'"},
+      "tinker": {"ipa":"t","description":"as in 'tinker'"},
+      "Dundee": {"ipa":"d","description":"as in 'Dundee'"},
+      "crown": {"ipa":"k","description":"as in 'crown'"},
+      "gravely": {"ipa":"ɡ","description":"as in 'gravely'"},
+      "mapping": {"ipa":"m","description":"as in 'mapping'"},
+      "nine": {"ipa":"n","description":"as in 'nine'"},
+      "bank": {"ipa":"ŋ","description":"as in 'bank'"},
+      "frog": {"ipa":"f","description":"as in 'frog'"},
+      "valve": {"ipa":"v","description":"as in 'valve'"},
+      "massage": {"ipa":"s","description":"as in 'massage'"},
+      "zoom": {"ipa":"z","description":"as in 'zoom'"},
+      "thigh": {"ipa":"θ","description":"as in 'thigh'"},
+      "mother": {"ipa":"ð","description":"as in 'mother'"},
+      "shopping": {"ipa":"ʃ","description":"as in 'shopping'"},
+      "leisure": {"ipa":"ʒ","description":"as in 'leisure'"},
+      "mahogany": {"ipa":"h","description":"as in 'mahogany'"},
+      "lately": {"ipa":"l","description":"as in 'lately'"},
+      "roaring": {"ipa":"ɹ","description":"as in 'roaring'"},
+      "changed": {"ipa":"ʧ","description":"as in 'changed'"},
+      "magenta": {"ipa":"ʤ","description":"as in 'magenta'"},
+      "younger": {"ipa":"j","description":"as in 'younger'"},
+      "whirlwind": {"ipa":"w","description":"as in 'whirlwind'"},
+      "cat": {"ipa":"æ","description":"as in 'cat'"},
+      "car": {"ipa":"ɑː","description":"as in 'car'"},
+      "again": {"ipa":"ə","description":"as in 'again'"},
+      "bed": {"ipa":"ɛ","description":"as in 'bed'"},
+      "kit": {"ipa":"ɪ","description":"as in 'kit'"},
+      "unique": {"ipa":"iː","description":"as in 'unique'"},
+      "yacht": {"ipa":"ɒ","description":"as in 'yacht'"},
+      "caught": {"ipa":"ɔː","description":"as in 'caught'"},
+      "could": {"ipa":"ʊ","description":"as in 'could'"},
+      "school": {"ipa":"uː","description":"as in 'school'"},
+      "pulse": {"ipa":"ʌ","description":"as in 'pulse'"},
+      "nurse": {"ipa":"ɜː","description":"as in 'nurse'"},
+      "price": {"ipa":"aɪ","description":"as in 'price'"},
+      "flower": {"ipa":"aʊ","description":"as in 'flower'"},
+      "shade": {"ipa":"eɪ","description":"as in 'shade'"},
+      "square": {"ipa":"eə","description":"as in 'square'"},
+      "near": {"ipa":"iə","description":"as in 'near'"},
+      "choice": {"ipa":"ɔɪ","description":"as in 'choice'"},
+      "boat": {"ipa":"əʊ","description":"as in 'boat'"},
+      "cure": {"ipa":"ʊə","description":"as in 'cure'"}
+    };
+
+    const WORD_BANK = [
+      {
+        label: 'Ship',
+        emoji: '🚢',
+        segments: [
+          { label: 'sh', letters: 'sh', phonemeKeys: ['shopping'] },
+          { label: 'i', letters: 'i', phonemeKeys: ['kit'] },
+          { label: 'p', letters: 'p', phonemeKeys: ['popular'] }
+        ]
+      },
+      {
+        label: 'Goat',
+        emoji: '🐐',
+        segments: [
+          { label: 'g', letters: 'g', phonemeKeys: ['gravely'] },
+          { label: 'oa', letters: 'oa', phonemeKeys: ['boat'] },
+          { label: 't', letters: 't', phonemeKeys: ['tinker'] }
+        ]
+      },
+      {
+        label: 'Chair',
+        emoji: '🪑',
+        segments: [
+          { label: 'ch', letters: 'ch', phonemeKeys: ['changed'] },
+          { label: 'air', letters: 'air', phonemeKeys: ['square'] }
+        ]
+      },
+      {
+        label: 'Spoon',
+        emoji: '🥄',
+        segments: [
+          { label: 'sp', letters: 'sp', phonemeKeys: ['massage', 'popular'] },
+          { label: 'oo', letters: 'oo', phonemeKeys: ['school'] },
+          { label: 'n', letters: 'n', phonemeKeys: ['nine'] }
+        ]
+      },
+      {
+        label: 'Thing',
+        emoji: '🧠',
+        segments: [
+          { label: 'th', letters: 'th', phonemeKeys: ['thigh'] },
+          { label: 'i', letters: 'i', phonemeKeys: ['kit'] },
+          { label: 'ng', letters: 'ng', phonemeKeys: ['bank'] }
+        ]
+      },
+      {
+        label: 'Juice',
+        emoji: '🧃',
+        segments: [
+          { label: 'j', letters: 'j', phonemeKeys: ['magenta'] },
+          { label: 'ui', letters: 'ui', phonemeKeys: ['school'] },
+          { label: 'ce', letters: 'ce', phonemeKeys: ['massage'] }
+        ]
+      }
+    ];
+
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status = document.getElementById('status');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusText = document.getElementById('statusText');
+    const gameArea = document.getElementById('gameArea');
+    const progressCounter = document.getElementById('progressCounter');
+    const queue = document.getElementById('queue');
+    const segmentRow = document.getElementById('segmentRow');
+    const phonemeHint = document.getElementById('phonemeHint');
+    const celebrate = document.getElementById('celebrate');
+    const wordBanner = document.getElementById('wordBanner');
+
+    const soundWrong = document.getElementById('soundWrong');
+    const soundWin = document.getElementById('soundWin');
+
+    const audioCache = new Map();
+
+    function getAudio(key){
+      if(!audioCache.has(key)){
+        const audio = new Audio(`${AUDIO_BASE}${key}.wav`);
+        audio.preload = 'auto';
+        audioCache.set(key, audio);
+      }
+      const audio = audioCache.get(key);
+      audio.pause();
+      audio.currentTime = 0;
+      audio.onended = null;
+      return audio;
+    }
+
+    const normalizedWords = WORD_BANK.map((word, index) => {
+      const segments = word.segments.map((segment, segIndex) => ({
+        ...segment,
+        id: `${index}-${segIndex}`,
+        letters: segment.letters.toLowerCase().split(''),
+        display: segment.letters.toUpperCase()
+      }));
+      const wordText = segments.map(seg => seg.letters.join('')).join('');
+      return {
+        ...word,
+        word: wordText,
+        segments,
+        totalLetters: segments.reduce((count, seg) => count + seg.letters.length, 0)
+      };
+    });
+
+    function shuffle(list){
+      const arr = [...list];
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'phoneme-sound-lab',
+      label: 'Tap letters to hear phoneme chunks',
+      getViewportTarget: () => segmentRow,
+      getPaddingTarget: () => document.querySelector('.game-shell'),
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true })
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
+
+    let gameActive = false;
+    let wordActive = false;
+    let words = [];
+    let wordIndex = 0;
+    let segmentIndex = 0;
+    let letterIndex = 0;
+    let segmentRefs = [];
+    let advanceTimer = null;
+
+    function setStatus(kind, message){
+      statusText.innerHTML = message;
+      status.classList.remove('ok', 'bad');
+      statusBadge.textContent = 'i';
+      if(kind === 'ok'){
+        status.classList.add('ok');
+        statusBadge.textContent = '✓';
+      } else if(kind === 'bad'){
+        status.classList.add('bad');
+        statusBadge.textContent = '×';
+      }
+      status.style.display = 'flex';
+    }
+
+    function setHint(kind, message){
+      phonemeHint.classList.remove('ok', 'bad');
+      if(kind === 'ok'){
+        phonemeHint.classList.add('ok');
+      } else if(kind === 'bad'){
+        phonemeHint.classList.add('bad');
+      }
+      phonemeHint.innerHTML = message;
+    }
+
+    function renderQueue(){
+      const upcoming = words.slice(wordIndex + 1);
+      if(upcoming.length === 0){
+        queue.innerHTML = '<span class="queue-chip">Last word!</span>';
+        return;
+      }
+      queue.innerHTML = upcoming.map(entry => `<span class="queue-chip">${entry.label.toUpperCase()}</span>`).join('');
+    }
+
+    function updateProgress(){
+      progressCounter.textContent = `${Math.min(wordIndex + 1, words.length)} / ${words.length}`;
+      renderQueue();
+    }
+
+    function describeSegment(segment){
+      const entries = segment.phonemeKeys.map(key => PHONEME_LIBRARY[key]).filter(Boolean);
+      const ipaChain = entries.map(entry => entry.ipa).filter(Boolean).join(' + ') || '';
+      const exampleChain = entries.map(entry => entry.description).filter(Boolean).join(' + ') || '';
+      return { ipaChain, exampleChain };
+    }
+
+    function renderWord(){
+      const word = words[wordIndex];
+      if(!word) return;
+      wordBanner.innerHTML = `
+        <span class="word-emoji" aria-hidden="true">${word.emoji ?? '🔤'}</span>
+        <span>${word.label}</span>
+      `;
+      segmentRow.innerHTML = '';
+      segmentRefs = [];
+      word.segments.forEach((segment, idx) => {
+        const segmentEl = document.createElement('div');
+        segmentEl.className = 'phoneme-segment';
+        segmentEl.dataset.segmentIndex = idx;
+
+        const lettersWrap = document.createElement('div');
+        lettersWrap.className = 'segment-letters';
+
+        const letterElements = segment.letters.map((letter, letterIdx) => {
+          const span = document.createElement('div');
+          span.className = 'segment-letter';
+          span.dataset.letterIndex = letterIdx;
+          span.textContent = letter.toUpperCase();
+          if(idx === 0 && letterIdx === 0){
+            span.classList.add('current');
+          }
+          lettersWrap.appendChild(span);
+          return span;
+        });
+
+        const infoWrap = document.createElement('div');
+        infoWrap.className = 'segment-info';
+
+        const label = document.createElement('span');
+        label.className = 'segment-label';
+        label.textContent = segment.label.toUpperCase();
+
+        const { ipaChain, exampleChain } = describeSegment(segment);
+        const ipa = document.createElement('span');
+        ipa.className = 'segment-ipa';
+        ipa.textContent = ipaChain ? `/${ipaChain}/` : 'Sound';
+
+        const example = document.createElement('span');
+        example.className = 'segment-examples';
+        example.textContent = exampleChain || 'Hear the chunk';
+
+        infoWrap.append(label, ipa, example);
+        segmentEl.append(lettersWrap, infoWrap);
+        segmentRow.appendChild(segmentEl);
+
+        segmentRefs.push({
+          segment,
+          element: segmentEl,
+          letters: letterElements,
+          ipaText: ipaChain,
+          exampleText: exampleChain
+        });
+      });
+      setActiveSegment(segmentIndex);
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(segmentRow);
+      }
+    }
+
+    function setActiveSegment(index){
+      segmentRefs.forEach((ref, idx) => {
+        ref.element.classList.toggle('active', idx === index);
+      });
+      const current = segmentRefs[index];
+      if(current){
+        const ipaDisplay = current.ipaText ? `/${current.ipaText}/` : current.segment.label.toUpperCase();
+        const exampleDisplay = current.exampleText || 'Listen for the chunk';
+        setHint(null, `Type <strong>${current.segment.label.toUpperCase()}</strong> to make the sound ${ipaDisplay} — ${exampleDisplay}.`);
+      }
+    }
+
+    function markCurrentLetter(){
+      segmentRefs.forEach((ref, segIdx) => {
+        ref.letters.forEach((letterEl, letterIdx) => {
+          letterEl.classList.toggle('current', segIdx === segmentIndex && letterIdx === letterIndex);
+        });
+      });
+    }
+
+    function playSegmentAudio(segment){
+      const keys = segment.phonemeKeys || [];
+      if(keys.length === 0) return;
+      let idx = 0;
+      const playNext = () => {
+        if(idx >= keys.length) return;
+        const key = keys[idx];
+        idx++;
+        const audio = getAudio(key);
+        audio.onended = () => {
+          audio.onended = null;
+          playNext();
+        };
+        audio.play().catch(() => {});
+      };
+      playNext();
+    }
+
+    function handleCorrectLetter(){
+      const ref = segmentRefs[segmentIndex];
+      if(!ref) return;
+      const letterEl = ref.letters[letterIndex];
+      if(letterEl){
+        letterEl.classList.remove('current');
+        letterEl.classList.add('filled');
+      }
+      letterIndex++;
+      if(letterIndex >= ref.segment.letters.length){
+        ref.element.classList.add('complete');
+        playSegmentAudio(ref.segment);
+        const ipaDisplay = ref.ipaText ? `/${ref.ipaText}/` : ref.segment.label.toUpperCase();
+        const exampleDisplay = ref.exampleText || '';
+        setHint('ok', `Great! <strong>${ref.segment.label.toUpperCase()}</strong> makes the sound ${ipaDisplay}${exampleDisplay ? ` (${exampleDisplay})` : ''}.`);
+        segmentIndex++;
+        letterIndex = 0;
+        markCurrentLetter();
+        if(segmentIndex >= segmentRefs.length){
+          completeWord();
+        } else {
+          setActiveSegment(segmentIndex);
+        }
+      } else {
+        markCurrentLetter();
+        setStatus('ok', `Nice! Keep going with <strong>${ref.segment.label.toUpperCase()}</strong>.`);
+      }
+    }
+
+    function handleWrongLetter(input){
+      soundWrong.currentTime = 0;
+      soundWrong.play().catch(() => {});
+      const ref = segmentRefs[segmentIndex];
+      if(!ref) return;
+      const expected = ref.segment.letters[letterIndex]?.toUpperCase() ?? '?';
+      setStatus('bad', `Almost! Need <strong>${expected}</strong> — you pressed <strong>${(input || '?').toUpperCase()}</strong>.`);
+      setHint('bad', `Try again: finish <strong>${ref.segment.label.toUpperCase()}</strong> to hear its sound.`);
+      ref.element.classList.remove('shake');
+      void ref.element.offsetWidth;
+      ref.element.classList.add('shake');
+      setTimeout(() => ref.element.classList.remove('shake'), 400);
+      if(isTouchDevice){
+        touchKeyboard?.ensureVisible(ref.element);
+      }
+    }
+
+    function handleKeyPress(key, opts = {}){
+      if(!gameActive || !wordActive) return;
+      if(!key || key.length !== 1) return;
+      if(!/[a-zA-Z]/.test(key)) return;
+      const lower = key.toLowerCase();
+      if(!opts.skipHighlight){
+        touchKeyboard?.flashKey?.(lower);
+      }
+      const ref = segmentRefs[segmentIndex];
+      if(!ref) return;
+      const expected = ref.segment.letters[letterIndex];
+      if(!expected) return;
+      if(lower === expected.toLowerCase()){
+        handleCorrectLetter();
+      } else {
+        handleWrongLetter(lower);
+      }
+    }
+
+    function completeWord(){
+      wordActive = false;
+      const finishedWord = words[wordIndex];
+      setStatus('ok', `Word complete! You built <strong>${finishedWord.label.toUpperCase()}</strong>.`);
+      celebrate.style.display = 'flex';
+      celebrate.innerHTML = `
+        <div class="banner">
+          <div class="text-sm font-semibold uppercase tracking-[0.4em] text-indigo-500">Word done</div>
+          <div class="text-2xl font-extrabold text-emerald-600">${finishedWord.label}</div>
+          <div class="text-sm text-slate-600">Get ready for the next set of sounds.</div>
+        </div>
+      `;
+      soundWin.currentTime = 0;
+      soundWin.play().catch(() => {});
+
+      if(wordIndex >= words.length - 1){
+        finishGame();
+      } else {
+        if(advanceTimer){
+          clearTimeout(advanceTimer);
+        }
+        advanceTimer = setTimeout(() => {
+          celebrate.style.display = 'none';
+          wordIndex++;
+          segmentIndex = 0;
+          letterIndex = 0;
+          renderWord();
+          updateProgress();
+          markCurrentLetter();
+          wordActive = true;
+          setStatus('ok', `Next word: <strong>${words[wordIndex].label.toUpperCase()}</strong>. Focus on the highlighted chunk.`);
+        }, 1400);
+      }
+    }
+
+    function finishGame(){
+      gameActive = false;
+      wordActive = false;
+      touchKeyboard?.hide();
+      setHint('ok', 'Amazing! You heard every phoneme chunk in the list.');
+      const markup = `
+        <div class="celebration">
+          <div class="text-sm font-semibold uppercase tracking-[0.38em] text-indigo-500">All phonemes!</div>
+          <div class="text-3xl font-extrabold text-emerald-600">Great listening</div>
+          <div class="text-base text-slate-600">Want to play again and hear the chunks in a new order?</div>
+        </div>
+      `;
+      if(window.GameCelebration){
+        window.GameCelebration.show({
+          content: markup,
+          onPlayAgain: () => {
+            resetGame();
+            startGame();
+          },
+          focusTarget: () => startBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        celebrate.innerHTML = markup;
+        celebrate.style.display = 'flex';
+        resetBtn.focus();
+      }
+    }
+
+    function resetGame(){
+      gameActive = false;
+      wordActive = false;
+      words = [];
+      wordIndex = 0;
+      segmentIndex = 0;
+      letterIndex = 0;
+      segmentRefs = [];
+      if(advanceTimer){
+        clearTimeout(advanceTimer);
+        advanceTimer = null;
+      }
+      startBtn.style.display = 'inline-flex';
+      resetBtn.style.display = 'none';
+      gameArea.style.display = 'none';
+      segmentRow.innerHTML = '';
+      wordBanner.innerHTML = '';
+      celebrate.style.display = 'none';
+      celebrate.innerHTML = '';
+      queue.innerHTML = '';
+      progressCounter.textContent = `1 / ${WORD_BANK.length}`;
+      setStatus(null, 'Press Start to explore phoneme chunks.');
+      setHint(null, 'Focus on each chunk as you type to reveal its sound.');
+      touchKeyboard?.hide();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startGame(){
+      words = shuffle(normalizedWords);
+      wordIndex = 0;
+      segmentIndex = 0;
+      letterIndex = 0;
+      gameActive = true;
+      wordActive = true;
+      celebrate.style.display = 'none';
+      celebrate.innerHTML = '';
+      startBtn.style.display = 'none';
+      resetBtn.style.display = 'inline-flex';
+      gameArea.style.display = 'block';
+      renderWord();
+      updateProgress();
+      setStatus('ok', `Go! First word: <strong>${words[wordIndex].label.toUpperCase()}</strong>.`);
+      markCurrentLetter();
+      if(isTouchDevice){
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(segmentRow);
+      }
+    }
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+
+    document.addEventListener('keydown', (event) => {
+      if(!gameActive) return;
+      if(event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target;
+      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      handleKeyPress(event.key);
+    });
+
+    window.addEventListener('pagehide', () => {
+      if(advanceTimer){
+        clearTimeout(advanceTimer);
+      }
+      touchKeyboard?.hide();
+    });
+
+    setStatus(null, 'Press Start to explore phoneme chunks.');
+  </script>
+{{ end }}

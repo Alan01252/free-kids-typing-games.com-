@@ -40,3 +40,9 @@
   badge_label: "Rocket launch"
   badge_emoji: "🚀"
   description: "Charge up seven rockets by typing each word correctly, then watch the sky explode in colour!"
+- slug: phoneme-sound-lab
+  title: "Phoneme Sound Lab"
+  emoji: "🔊"
+  badge_label: "Phonemes"
+  badge_emoji: "🔊"
+  description: "Type kid-friendly words chunk by chunk and hear each phoneme blend pop to life as you finish it."
