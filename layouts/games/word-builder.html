@@ -86,7 +86,7 @@
     }
     .boxes {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 12px;
       padding: 12px 6px 6px;
       min-height: 86px;
@@ -159,7 +159,7 @@
       width: min(100%, 360px);
       margin: 0 auto;
     }
-    .win-emoji-line { display:flex; gap:12px; font-size:2rem; justify-content:center; align-items:center; }
+    .win-emoji-line { gap:12px; font-size:2rem; justify-content:center; align-items:center; }
     .win-burst { display:inline-block; animation: burstBounce 1.2s ease-in-out infinite; transform-origin: center; }
     @keyframes burstBounce { 0%,100%{ transform: translateY(0) scale(1);} 50%{ transform: translateY(-8px) scale(1.15);} }
     .win-text {
@@ -256,6 +256,7 @@
     </section>
 
     <section id="gameArea" class="game-card" style="display:none;" aria-live="polite">
+      <div style="flex">
       <div class="space-y-3">
         <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
           <span class="inline-block h-2 w-2 rounded-full bg-indigo-400"></span>
@@ -273,6 +274,7 @@
       </div>
 
       <div id="celebrate" class="celebrate min-h-[52px]" aria-live="polite"></div>
+      </div>
     </section>
   </div>
 
@@ -391,7 +393,7 @@
       gameArea.classList.remove('victory');
       celebrate.innerHTML = '';
       makeBoxes(target);
-      gameArea.style.display = '';
+      gameArea.style.display = 'block';
       // hide setup controls during play, put Restart where Start was
       wordInput.disabled = true;
       startBtn.style.display = 'none';
