@@ -1,0 +1,516 @@
+{{ define "styles" }}
+  <style>
+    .game-vampire-vowels {
+      background:
+        radial-gradient(820px circle at 10% 120%, rgba(251, 191, 36, 0.25), transparent 55%),
+        radial-gradient(740px circle at 85% -160px, rgba(248, 113, 113, 0.35), transparent 65%),
+        linear-gradient(180deg, #0f172a, #1f2937 70%, #991b1b);
+      color: #f8fafc;
+      --card-bg: rgba(15, 23, 42, 0.82);
+      --card-border: rgba(248, 113, 113, 0.28);
+      --card-shadow: 0 32px 110px rgba(220, 38, 38, 0.35);
+      --status-border: rgba(248, 113, 113, 0.4);
+      --status-bg: rgba(148, 163, 184, 0.18);
+      --status-color: #f8fafc;
+      --status-ok-bg: rgba(34, 197, 94, 0.2);
+      --status-ok-border: rgba(34, 197, 94, 0.4);
+      --status-ok-color: #bbf7d0;
+      --status-bad-bg: rgba(248, 113, 113, 0.2);
+      --status-bad-border: rgba(248, 113, 113, 0.45);
+      --status-bad-color: #fecaca;
+      --status-badge-bg: rgba(244, 63, 94, 0.65);
+      --status-badge-color: #fff;
+      --status-ok-badge-bg: rgba(34, 197, 94, 0.9);
+      --status-ok-badge-color: #062e0f;
+      --status-bad-badge-bg: rgba(248, 113, 113, 0.85);
+      --status-bad-badge-color: #fff;
+      --letter-gap: clamp(12px, 5vw, 28px);
+      --letter-padding-inline: clamp(16px, 5vw, 32px);
+      --letter-overflow-x: visible;
+      --letter-size: clamp(58px, min(14vw, 92px), 110px);
+      --letter-min-size: clamp(52px, min(12vw, 88px), 108px);
+      --letter-height: clamp(72px, min(16vw, 116px), 130px);
+      --letter-radius: clamp(20px, 5vw, 30px);
+      --letter-border-width: 3px;
+      --letter-border-color: rgba(248, 113, 113, 0.5);
+      --letter-bg: rgba(15, 23, 42, 0.8);
+      --letter-color: rgba(248, 113, 113, 0.65);
+      --letter-filled-border-color: rgba(251, 191, 36, 0.8);
+      --letter-filled-bg: linear-gradient(160deg, rgba(251, 191, 36, 0.3), rgba(248, 113, 113, 0.35));
+      --letter-filled-color: #fef9c3;
+      --letter-current-border-color: rgba(248, 113, 113, 0.9);
+      --letter-current-bg: linear-gradient(145deg, rgba(248, 113, 113, 0.4), rgba(248, 113, 113, 0.2));
+      --letter-current-color: #fee2e2;
+      --letter-current-shadow: 0 20px 60px rgba(248, 113, 113, 0.35);
+      --letter-error-border-color: rgba(248, 113, 113, 0.8);
+      --letter-error-bg: rgba(220, 38, 38, 0.2);
+      --letter-error-color: #fecaca;
+      --overlay-panel-bg: rgba(15, 23, 42, 0.94);
+      --overlay-panel-color: #f8fafc;
+      --overlay-action-primary: #f97316;
+      --touch-panel-bg: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(220, 38, 38, 0.82));
+      --touch-panel-color: #fee2e2;
+      --touch-label-color: #fecaca;
+      --touch-key-bg: rgba(248, 113, 113, 0.35);
+      --touch-key-border: rgba(248, 113, 113, 0.45);
+      --touch-key-color: #ffe4e6;
+      --touch-key-shadow: 0 18px 36px rgba(220, 38, 38, 0.35);
+      --touch-key-active-bg: rgba(244, 63, 94, 0.9);
+      --touch-key-active-color: #fff5f5;
+      --touch-key-highlight-bg: rgba(248, 113, 113, 0.96);
+      --touch-key-highlight-border: rgba(254, 215, 170, 0.6);
+    }
+
+    .game-vampire-vowels .game-card--controls {
+      --card-bg-current: linear-gradient(150deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.82));
+      --card-border-current: rgba(248, 113, 113, 0.35);
+      --card-shadow-current: 0 36px 120px rgba(220, 38, 38, 0.4);
+    }
+
+    .game-vampire-vowels .game-card--play {
+      --card-bg-current: linear-gradient(150deg, rgba(15, 23, 42, 0.9), rgba(76, 29, 149, 0.35));
+      --card-border-current: rgba(248, 113, 113, 0.3);
+      --card-shadow-current: 0 40px 140px rgba(76, 29, 149, 0.4);
+    }
+
+    .chalice-shelf {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(10px, 3vw, 18px);
+      padding: 16px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.85));
+      border: 2px solid rgba(248, 113, 113, 0.45);
+      box-shadow: inset 0 0 30px rgba(248, 113, 113, 0.18);
+    }
+
+    .chalice {
+      position: relative;
+      display: grid;
+      place-items: center;
+      padding: 18px 12px 12px;
+      border-radius: 24px;
+      background: rgba(30, 41, 59, 0.75);
+      border: 2px solid rgba(148, 163, 184, 0.3);
+      color: rgba(248, 250, 252, 0.7);
+      font-size: clamp(0.75rem, 2vw, 0.9rem);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      min-height: 108px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .chalice::before {
+      content: "🩸";
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      filter: drop-shadow(0 8px 18px rgba(248, 113, 113, 0.45));
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .chalice.current {
+      border-color: rgba(248, 113, 113, 0.8);
+      box-shadow: 0 20px 50px rgba(248, 113, 113, 0.35);
+      transform: translateY(-6px);
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.85), rgba(248, 113, 113, 0.35));
+      color: #fee2e2;
+    }
+
+    .chalice.completed {
+      border-color: rgba(34, 197, 94, 0.6);
+      background: linear-gradient(145deg, rgba(30, 64, 175, 0.35), rgba(34, 197, 94, 0.25));
+      box-shadow: 0 22px 55px rgba(34, 197, 94, 0.32);
+      color: #bbf7d0;
+    }
+
+    .chalice.completed::before {
+      content: "✨";
+      filter: drop-shadow(0 8px 20px rgba(134, 239, 172, 0.6));
+    }
+
+    .round-card {
+      border-radius: 26px;
+      padding: 18px 20px;
+      background: rgba(30, 41, 59, 0.75);
+      border: 2px solid rgba(248, 113, 113, 0.35);
+      text-align: center;
+      display: grid;
+      gap: 4px;
+      color: #f8fafc;
+      box-shadow: inset 0 0 22px rgba(148, 163, 184, 0.15);
+    }
+
+    .round-card .label {
+      text-transform: uppercase;
+      letter-spacing: 0.32em;
+      font-size: 0.68rem;
+      color: rgba(248, 113, 113, 0.7);
+    }
+
+    .round-card .value {
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4.6vw, 2.6rem);
+      letter-spacing: 0.12em;
+    }
+
+    .round-hint {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(248, 113, 113, 0.18);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      color: rgba(248, 250, 252, 0.85);
+    }
+
+    .game-vampire-vowels .celebration {
+      padding: 28px 24px;
+      border-radius: 32px;
+      border: 3px solid rgba(248, 113, 113, 0.45);
+      background: linear-gradient(155deg, rgba(248, 113, 113, 0.35), rgba(30, 64, 175, 0.28));
+      box-shadow: 0 32px 90px rgba(248, 113, 113, 0.35);
+      text-align: center;
+      animation: vampireCelebrate 0.6s ease;
+    }
+
+    @keyframes vampireCelebrate {
+      0% { opacity: 0; transform: scale(0.9) translateY(18px); }
+      50% { opacity: 1; transform: scale(1.02) translateY(-6px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
+{{ end }}
+
+{{ define "body_class" }}game-page game-vampire-vowels text-slate-100{{ end }}
+
+{{ define "main" }}
+  <div class="game-shell text-slate-100">
+    <header class="game-hero">
+      <h1 class="flex items-center justify-center gap-2 text-3xl font-extrabold tracking-tight text-slate-100 sm:text-5xl">
+        <span aria-hidden="true">🧛</span>
+        <span>Vampire Vowels</span>
+      </h1>
+      <p class="text-sm text-slate-200 sm:text-base">Help Count Vowcula sip every glowing vowel. Five rounds, five mixed-up servings of A, E, I, O, and U!</p>
+    </header>
+
+    <section class="game-card game-card--controls space-y-6">
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-rose-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-rose-900/50 transition hover:bg-rose-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-300">Start the tasting</button>
+        <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-amber-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-amber-900/50 transition hover:bg-amber-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300" style="display:none;">Start over</button>
+      </div>
+      <div id="status" class="status-banner" aria-live="polite">
+        <span class="status-badge" id="statusBadge">i</span>
+        <span id="statusText">Press “Start the tasting” to pour the first round of vowels.</span>
+      </div>
+    </section>
+
+    <section id="gameArea" class="game-card game-card--play space-y-8" style="display:none;" aria-live="polite">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="round-card">
+          <span class="label">Rounds served</span>
+          <span id="roundCounter" class="value">0 / 5</span>
+        </div>
+        <div class="round-card">
+          <span class="label">Next vowel order</span>
+          <span id="nextHint" class="value text-amber-200 tracking-[0.35em] text-xs">A E I O U</span>
+        </div>
+      </div>
+
+      <div class="chalice-shelf" aria-live="polite">
+        <div class="chalice" data-index="0">Round 1</div>
+        <div class="chalice" data-index="1">Round 2</div>
+        <div class="chalice" data-index="2">Round 3</div>
+        <div class="chalice" data-index="3">Round 4</div>
+        <div class="chalice" data-index="4">Round 5</div>
+      </div>
+
+      <div class="space-y-4 text-center">
+        <span class="round-hint">Type the glowing vowels</span>
+        <div id="letterRow" class="letter-row"></div>
+      </div>
+
+      <div id="celebrate" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+  <audio id="soundWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="soundWin" src="https://actions.google.com/sounds/v1/cartoon/magic_chime.ogg"></audio>
+{{ end }}
+
+{{ define "footer" }}
+  {{ partial "game-footer.html" (dict "context" . "tip" .Params.tip "theme" (default "light" .Params.theme)) }}
+{{ end }}
+
+{{ define "scripts" }}
+  <script>
+    const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+    const TOTAL_ROUNDS = 5;
+
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const status = document.getElementById('status');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusText = document.getElementById('statusText');
+    const gameArea = document.getElementById('gameArea');
+    const letterRow = document.getElementById('letterRow');
+    const roundCounter = document.getElementById('roundCounter');
+    const nextHint = document.getElementById('nextHint');
+    const chalices = Array.from(document.querySelectorAll('.chalice'));
+    const celebrate = document.getElementById('celebrate');
+
+    const soundCorrect = document.getElementById('soundCorrect');
+    const soundWrong = document.getElementById('soundWrong');
+    const soundWin = document.getElementById('soundWin');
+
+    let rounds = [];
+    let currentRound = 0;
+    let letterIndex = 0;
+    let active = false;
+
+    const touchKeyboard = window.GameTouchKeyboard?.attach({
+      id: 'vampire-vowels',
+      label: 'Tap vowels for the vampire',
+      onKeyPress: (char) => handleKeyPress(char, { skipHighlight: true }),
+      getViewportTarget: () => letterRow,
+      getPaddingTarget: () => document.querySelector('.game-shell')
+    });
+    const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
+
+    function setStatus(kind, message) {
+      statusText.innerHTML = message;
+      status.classList.remove('ok', 'bad');
+      statusBadge.textContent = 'i';
+      if (kind === 'ok') {
+        status.classList.add('ok');
+        statusBadge.textContent = '✓';
+      } else if (kind === 'bad') {
+        status.classList.add('bad');
+        statusBadge.textContent = '×';
+      }
+      status.style.display = 'flex';
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function createRounds() {
+      rounds = [];
+      for (let i = 0; i < TOTAL_ROUNDS; i += 1) {
+        let order = shuffle(VOWELS);
+        if (i > 0) {
+          const previous = rounds[i - 1].letters.join('');
+          let attempts = 0;
+          while (order.join('') === previous && attempts < 5) {
+            order = shuffle(VOWELS);
+            attempts += 1;
+          }
+        }
+        rounds.push({ letters: order });
+      }
+    }
+
+    function renderLetters() {
+      letterRow.innerHTML = '';
+      const round = rounds[currentRound];
+      if (!round) return;
+      round.letters.forEach((letter, index) => {
+        const box = document.createElement('div');
+        box.className = 'letter-box';
+        box.dataset.index = index;
+        box.textContent = letter.toUpperCase();
+        if (index < letterIndex) box.classList.add('filled');
+        if (index === letterIndex) box.classList.add('current');
+        letterRow.appendChild(box);
+      });
+      window.GameUI?.fitLettersFor?.(letterRow);
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => window.GameUI?.fitLettersFor?.(letterRow));
+      }
+      if (isTouchDevice) {
+        touchKeyboard?.ensureVisible(letterRow);
+      }
+    }
+
+    function updateRoundCounter() {
+      roundCounter.textContent = `${currentRound} / ${TOTAL_ROUNDS}`;
+    }
+
+    function updateHint() {
+      const nextRound = rounds[currentRound];
+      if (!nextRound) {
+        nextHint.textContent = 'A E I O U';
+        return;
+      }
+      nextHint.textContent = nextRound.letters.map(letter => letter.toUpperCase()).join(' ');
+    }
+
+    function updateChalices() {
+      chalices.forEach((chalice, index) => {
+        chalice.classList.remove('current', 'completed');
+        if (index < currentRound) {
+          chalice.classList.add('completed');
+        } else if (index === currentRound) {
+          chalice.classList.add('current');
+        }
+      });
+    }
+
+    function handleCorrect() {
+      const round = rounds[currentRound];
+      if (!round) return;
+      const letters = round.letters;
+      letterIndex += 1;
+      soundCorrect.currentTime = 0;
+      soundCorrect.play();
+      if (letterIndex >= letters.length) {
+        // round complete
+        currentRound += 1;
+        letterIndex = 0;
+        updateRoundCounter();
+        updateChalices();
+        if (currentRound >= TOTAL_ROUNDS) {
+          finishGame();
+          return;
+        }
+        renderLetters();
+        updateHint();
+        const orderMarkup = rounds[currentRound].letters.map(letter => `<strong>${letter.toUpperCase()}</strong>`).join(' ');
+        setStatus('ok', `Round complete! New order: ${orderMarkup}.`);
+        return;
+      }
+      renderLetters();
+      const nextLetter = round.letters[letterIndex].toUpperCase();
+      setStatus('ok', `Nice sip! Next letter: <strong>${nextLetter}</strong>.`);
+    }
+
+    function handleWrong(key) {
+      soundWrong.currentTime = 0;
+      soundWrong.play();
+      const expected = rounds[currentRound]?.letters[letterIndex]?.toUpperCase() ?? '';
+      const shown = (key || '?').toUpperCase();
+      setStatus('bad', `Not that letter yet! We need <strong>${expected}</strong>, not <strong>${shown}</strong>.`);
+      const box = letterRow.querySelector(`.letter-box[data-index="${letterIndex}"]`);
+      if (box) {
+        box.classList.remove('wiggle');
+        void box.offsetWidth;
+        box.classList.add('wiggle');
+      }
+      if (isTouchDevice) {
+        touchKeyboard?.ensureVisible(letterRow);
+      }
+    }
+
+    function handleKeyPress(key, opts = {}) {
+      if (!active) return;
+      if (!key || key.length !== 1) return;
+      if (!/[a-zA-Z]/.test(key)) return;
+      if (!opts.skipHighlight) {
+        touchKeyboard?.flashKey(key);
+      }
+      const expected = rounds[currentRound]?.letters[letterIndex];
+      if (!expected) return;
+      if (key.toLowerCase() === expected) {
+        handleCorrect();
+      } else {
+        handleWrong(key);
+      }
+    }
+
+    function finishGame() {
+      active = false;
+      letterRow.innerHTML = '';
+      letterRow.style.removeProperty('--letters');
+      renderLetters();
+      updateHint();
+      setStatus('ok', 'You typed every tasty vowel! Count Vowcula is impressed.');
+      celebrate.innerHTML = `
+        <div class="celebration">
+          <div class="text-2xl font-extrabold uppercase tracking-[0.3em] text-rose-200">Vowel victory</div>
+          <div class="mt-2 text-lg text-slate-200">Five glowing rounds, five perfect servings. Thanks for keeping the vowels fresh!</div>
+          <div class="mt-4 text-4xl leading-none">🧛‍♂️ 🩸 A E I O U 🩸</div>
+        </div>
+      `;
+      soundWin.currentTime = 0;
+      soundWin.play();
+      resetBtn.style.display = 'inline-flex';
+      startBtn.style.display = 'none';
+      if (window.GameCelebration) {
+        window.GameCelebration.show({
+          content: celebrate.innerHTML,
+          onPlayAgain: () => {
+            resetGame();
+            startGame();
+          },
+          focusTarget: resetBtn,
+          initialFocus: 'playAgain'
+        });
+      } else {
+        resetBtn.focus();
+      }
+      touchKeyboard?.hide();
+    }
+
+    function startGame() {
+      createRounds();
+      currentRound = 0;
+      letterIndex = 0;
+      celebrate.innerHTML = '';
+      active = true;
+      updateRoundCounter();
+      updateHint();
+      updateChalices();
+      renderLetters();
+      setStatus('ok', `Begin with: <strong>${rounds[0].letters[0].toUpperCase()}</strong>. Type every vowel to finish the round.`);
+      startBtn.style.display = 'none';
+      resetBtn.style.display = 'inline-flex';
+      gameArea.style.display = 'grid';
+      if (isTouchDevice) {
+        touchKeyboard?.show();
+        touchKeyboard?.ensureVisible(letterRow);
+      }
+    }
+
+    function resetGame() {
+      active = false;
+      rounds = [];
+      currentRound = 0;
+      letterIndex = 0;
+      celebrate.innerHTML = '';
+      letterRow.innerHTML = '';
+      updateRoundCounter();
+      nextHint.textContent = 'A E I O U';
+      chalices.forEach(chalice => chalice.classList.remove('current', 'completed'));
+      setStatus(null, 'Press “Start the tasting” to pour the first round of vowels.');
+      status.style.display = 'flex';
+      startBtn.style.display = 'inline-flex';
+      resetBtn.style.display = 'none';
+      gameArea.style.display = 'none';
+      touchKeyboard?.hide();
+    }
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+
+    document.addEventListener('keydown', (event) => {
+      if (!active) return;
+      const target = event.target;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      handleKeyPress(event.key);
+    });
+
+    setStatus(null, 'Press “Start the tasting” to pour the first round of vowels.');
+    status.style.display = 'flex';
+    updateHint();
+  </script>
+{{ end }}

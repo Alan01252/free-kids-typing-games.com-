@@ -34,6 +34,12 @@
   badge_label: "Spooky"
   badge_emoji: "👻"
   description: "Light candles and chase friendly ghosts by typing each haunted word. Three rooms, three spooky wins!"
+- slug: vampire-vowels
+  title: "Vampire Vowels"
+  emoji: "🧛"
+  badge_label: "Vowels"
+  badge_emoji: "🧛"
+  description: "Help a friendly vampire sip glowing vowels. Type all five mixed-up vowels each round to finish five spooky sips."
 - slug: emotion-journey
   title: "Emotion Journey"
   emoji: "🙂"
