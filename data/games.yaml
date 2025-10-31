@@ -34,6 +34,12 @@
   badge_label: "Spooky"
   badge_emoji: "👻"
   description: "Light candles and chase friendly ghosts by typing each haunted word. Three rooms, three spooky wins!"
+- slug: emotion-journey
+  title: "Emotion Journey"
+  emoji: "🙂"
+  badge_label: "Feelings"
+  badge_emoji: "🙂"
+  description: "Travel from neutral to surprised by typing each emotion word. Watch faces transform as you name how you feel."
 - slug: rocket-run
   title: "Rocket Run"
   emoji: "🚀"
