@@ -1,12 +1,5 @@
 {{ define "styles" }}
   <style>
-    :root {
-      --feelings-sky: #bae6fd;
-      --feelings-horizon: #fecdd3;
-      --feelings-ground: #fef9c3;
-      --good: #22c55e;
-      --bad: #f87171;
-    }
     .game-emotion-journey {
       background:
         radial-gradient(680px circle at 85% -120px, rgba(125,211,252,0.45), transparent 60%),
@@ -14,23 +7,46 @@
         linear-gradient(180deg, rgba(190,242,100,0.4), rgba(125,211,252,0.45), rgba(252,231,243,0.8), rgba(255,255,255,0.95));
       color: #1f2937;
       --card-bg: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(224,247,255,0.75));
-      --card-border: rgba(99,102,241,0.16);
-      --card-shadow: 0 36px 110px rgba(14,116,144,0.15);
+      --card-border: rgba(148,163,184,0.25);
+      --card-shadow: 0 32px 110px rgba(14,116,144,0.22);
       --status-border: rgba(59,130,246,0.18);
       --status-bg: rgba(59,130,246,0.08);
       --status-color: #1f2937;
+      --status-badge-size: 36px;
+      --status-badge-bg: rgba(59,130,246,0.18);
+      --status-badge-color: #1d4ed8;
       --status-ok-bg: rgba(34,197,94,0.16);
       --status-ok-border: rgba(34,197,94,0.28);
       --status-ok-color: #047857;
+      --status-ok-badge-bg: rgba(34,197,94,0.85);
+      --status-ok-badge-color: #ffffff;
       --status-bad-bg: rgba(248,113,113,0.14);
       --status-bad-border: rgba(248,113,113,0.3);
       --status-bad-color: #b91c1c;
-      --status-badge-bg: rgba(59,130,246,0.18);
-      --status-badge-color: #1d4ed8;
-      --status-ok-badge-bg: rgba(34,197,94,0.85);
-      --status-ok-badge-color: #fff;
-      --status-bad-badge-bg: rgba(248,113,113,0.9);
-      --status-bad-badge-color: #fff;
+      --status-bad-badge-bg: rgba(248,113,113,0.85);
+      --status-bad-badge-color: #ffffff;
+      --letter-gap: clamp(12px, 5vw, 28px);
+      --letter-padding-inline: clamp(12px, 6vw, 32px);
+      --letter-overflow-x: visible;
+      --letter-size: clamp(54px, min(14vw, 96px), 110px);
+      --letter-min-size: clamp(50px, min(12vw, 90px), 108px);
+      --letter-height: clamp(68px, min(16vw, 112px), 128px);
+      --letter-radius: clamp(18px, 4vw, 28px);
+      --letter-border-width: 3px;
+      --letter-border-style: dashed;
+      --letter-border-color: rgba(96,165,250,0.45);
+      --letter-bg: rgba(255,255,255,0.75);
+      --letter-color: rgba(30,64,175,0.6);
+      --letter-filled-border-color: rgba(34,197,94,0.45);
+      --letter-filled-bg: rgba(134,239,172,0.32);
+      --letter-filled-color: #047857;
+      --letter-current-border-color: rgba(251,191,36,0.55);
+      --letter-current-bg: rgba(253,230,138,0.45);
+      --letter-current-color: #92400e;
+      --letter-current-shadow: 0 20px 50px rgba(251,191,36,0.25);
+      --letter-error-border-color: rgba(248,113,113,0.7);
+      --letter-error-bg: rgba(254,226,226,0.92);
+      --letter-error-color: #b91c1c;
       --overlay-panel-bg: rgba(255,255,255,0.96);
       --overlay-panel-color: #1f2937;
       --overlay-action-primary: #2563eb;
@@ -41,59 +57,39 @@
       --touch-key-border: rgba(147,197,253,0.55);
       --touch-key-color: #eff6ff;
       --touch-key-shadow: 0 16px 34px rgba(30,64,175,0.28);
-      --touch-key-active-bg: rgba(37,99,235,0.9);
+      --touch-key-active-bg: rgba(37,99,235,0.88);
       --touch-key-active-color: #eff6ff;
       --touch-key-highlight-bg: rgba(59,130,246,0.96);
       --touch-key-highlight-border: rgba(191,219,254,0.55);
     }
-    .game-emotion-journey .status-badge {
-      background: var(--status-badge-bg);
-      color: var(--status-badge-color);
+
+    .game-emotion-journey .game-card--controls {
+      --card-bg-current: linear-gradient(160deg, rgba(255,255,255,0.95), rgba(224,247,255,0.7));
+      --card-border-current: rgba(59,130,246,0.2);
     }
-    body.emotion-journey-active #resetBtn {
-      position: fixed;
-      right: clamp(16px, 4vw, 32px);
-      bottom: clamp(18px, 6vw, 36px);
-      min-width: clamp(160px, 40vw, 220px);
-      border-radius: 999px;
-      padding-inline: clamp(18px, 6vw, 26px);
-      padding-block: 14px;
-      font-size: clamp(0.95rem, 2.6vw, 1.05rem);
-      box-shadow: 0 28px 65px rgba(56,189,248,0.35);
-      z-index: 60;
+
+    .game-emotion-journey .game-card--play {
+      --card-bg-current: linear-gradient(160deg, rgba(255,255,255,0.92), rgba(191,219,254,0.4));
+      --card-border-current: rgba(96,165,250,0.2);
     }
-    body.emotion-journey-active #resetBtn::after {
-      content: '↻';
-      margin-left: 8px;
-      font-size: 1.1em;
-      opacity: 0.9;
-    }
-    body.emotion-journey-active .game-card {
-      padding-bottom: clamp(56px, 10vw, 72px);
-    }
-    @media (max-width: 640px) {
-      body.emotion-journey-active #resetBtn {
-        right: clamp(12px, 5vw, 20px);
-        bottom: clamp(12px, 8vw, 28px);
-        padding-block: 12px;
-        font-size: 0.95rem;
-      }
-    }
+
     .feelings-stage {
       display: grid;
-      gap: 24px;
+      gap: clamp(18px, 5vw, 32px);
       align-items: center;
-      padding: clamp(22px, 5vw, 38px);
+      padding: clamp(22px, 5vw, 36px);
       border-radius: 40px;
-      background: linear-gradient(160deg, rgba(255,255,255,0.82), rgba(191,219,254,0.34));
-      border: 3px solid rgba(59,130,246,0.18);
-      box-shadow: 0 28px 80px rgba(56,189,248,0.25);
+      background: linear-gradient(150deg, rgba(255,255,255,0.86), rgba(191,219,254,0.36));
+      border: 3px solid rgba(59,130,246,0.2);
+      box-shadow: 0 28px 80px rgba(56,189,248,0.22);
     }
+
     @media (min-width: 768px) {
       .feelings-stage {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       }
     }
+
     .feelings-visual {
       position: relative;
       display: flex;
@@ -106,6 +102,7 @@
       min-height: clamp(220px, 45vw, 320px);
       overflow: hidden;
     }
+
     .feelings-visual img {
       max-width: clamp(180px, 40vw, 260px);
       width: 100%;
@@ -113,77 +110,113 @@
       filter: drop-shadow(0 22px 38px rgba(59,130,246,0.35));
       transition: transform 0.35s ease, opacity 0.35s ease;
     }
+
     .feelings-visual img.fade-out {
       opacity: 0;
       transform: translateY(-12px) scale(0.96);
     }
+
     .feelings-visual img.fade-in {
       opacity: 0;
       transform: translateY(12px) scale(1.04);
     }
+
     .feelings-visual img.fade-in.is-ready {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
+
     .feelings-info {
       display: grid;
       gap: 12px;
       text-align: left;
     }
+
     .feelings-info h2 {
+      margin: 0;
       font-size: clamp(1.8rem, 5vw, 2.7rem);
       font-weight: 800;
       letter-spacing: 0.04em;
       color: #1f2937;
     }
+
     .feelings-info p {
+      margin: 0;
       color: #1f2937;
       font-size: clamp(1rem, 2.3vw, 1.25rem);
       line-height: 1.6;
     }
+
+    .feelings-info .cta-intro {
+      display: block;
+      font-weight: 700;
+      font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+      letter-spacing: 0.04em;
+      color: #1f2937;
+    }
+
+    .feelings-info .cta-line {
+      display: block;
+      margin-top: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+      color: rgba(37, 99, 235, 0.95);
+    }
+
+    .feelings-info .cta-line strong {
+      color: #1d4ed8;
+    }
+
     .feelings-info .stage-note {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
       border-radius: 9999px;
-      background: rgba(34,197,94,0.15);
+      background: rgba(34,197,94,0.18);
       color: #047857;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.18em;
       font-size: 0.75rem;
     }
+
     .feelings-progress-card {
       border-radius: 28px;
       padding: 18px 20px;
       display: grid;
       gap: 6px;
-      background: rgba(255,255,255,0.76);
+      background: rgba(255,255,255,0.78);
       border: 2px solid rgba(96,165,250,0.25);
       text-align: center;
       font-weight: 600;
       color: #1f2937;
-      box-shadow: 0 20px 50px rgba(15,118,110,0.15);
+      box-shadow: 0 20px 50px rgba(15,118,110,0.16);
     }
+
     .feelings-progress-card .label {
       text-transform: uppercase;
       letter-spacing: 0.3em;
       font-size: 0.7rem;
       color: rgba(30,64,175,0.7);
     }
+
     .feelings-progress-card .value {
       font-size: clamp(2rem, 5vw, 2.6rem);
       font-weight: 800;
     }
+
     .feelings-queue {
       border-radius: 28px;
       padding: 18px 20px;
-      background: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.72);
       border: 2px solid rgba(251,191,36,0.25);
       box-shadow: 0 16px 45px rgba(251,191,36,0.2);
       min-height: 108px;
     }
+
     .feelings-queue-title {
       text-transform: uppercase;
       letter-spacing: 0.32em;
@@ -191,12 +224,14 @@
       color: rgba(245,158,11,0.7);
       font-weight: 700;
     }
+
     .feelings-queue-items {
       margin-top: 10px;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
+
     .feelings-queue-items span {
       display: inline-flex;
       align-items: center;
@@ -210,115 +245,66 @@
       letter-spacing: 0.32em;
       text-transform: uppercase;
     }
-    .game-emotion-journey .letter-row {
-      --letters: 6;
-      display: flex;
-      gap: clamp(8px, 3vw, 16px);
-      justify-content: center;
-      flex-wrap: nowrap;
-      padding: clamp(10px, 2vw, 20px) 4px;
-    }
-    .game-emotion-journey .letter-box {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: clamp(42px, calc((min(100%, 640px) - (var(--letters) - 1) * clamp(8px, 3vw, 16px)) / var(--letters)), 88px);
-      height: clamp(56px, 12vw, 96px);
-      border-radius: clamp(18px, 4vw, 28px);
-      border: 3px dashed rgba(96,165,250,0.45);
-      background: rgba(255,255,255,0.7);
-      color: rgba(30,64,175,0.6);
-      font-weight: 800;
-      font-size: clamp(1.6rem, 7vw, 2.4rem);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-    }
-    .game-emotion-journey .letter-box.filled {
-      background: rgba(134,239,172,0.35);
-      border-style: solid;
-      border-color: rgba(34,197,94,0.45);
-      color: #047857;
-      box-shadow: 0 18px 45px rgba(34,197,94,0.25);
-      transform: translateY(-4px);
-    }
-    .game-emotion-journey .letter-box.current {
-      border-style: solid;
-      border-color: rgba(251,191,36,0.6);
-      background: rgba(253,230,138,0.45);
-      color: #92400e;
-      box-shadow: 0 20px 55px rgba(251,191,36,0.25);
-      transform: translateY(-6px) scale(1.04);
-    }
-    .game-emotion-journey .letter-box.wiggle {
-      animation: feelingsWiggle 0.35s ease;
-      border-color: rgba(248,113,113,0.7);
-      color: #b91c1c;
-    }
-    @keyframes feelingsWiggle {
-      0%, 100% { transform: translateY(0); }
-      20% { transform: translate(-6px, -4px); }
-      40% { transform: translate(6px, -8px); }
-      60% { transform: translate(-4px, -5px); }
-      80% { transform: translate(4px, -7px); }
-    }
+
     .emotion-track {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
       gap: clamp(12px, 3vw, 18px);
     }
+
     .emotion-card {
       position: relative;
       border-radius: 24px;
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.88);
       border: 2px solid rgba(96,165,250,0.25);
       padding: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 120px;
-      box-shadow: 0 16px 45px rgba(59,130,246,0.18);
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-      text-align: center;
+      gap: 10px;
+      box-shadow: 0 14px 40px rgba(59,130,246,0.18);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
-    .emotion-card.is-current {
-      border-color: rgba(59,130,246,0.6);
-      box-shadow: 0 24px 60px rgba(59,130,246,0.25);
-      transform: translateY(-6px) scale(1.03);
-    }
-    .emotion-card.up-next {
-      border-color: rgba(251,191,36,0.6);
-    }
-    .emotion-card.completed {
-      background: rgba(134,239,172,0.35);
-      border-color: rgba(34,197,94,0.45);
-      box-shadow: 0 18px 48px rgba(34,197,94,0.25);
-    }
+
     .emotion-card img {
-      max-width: 90px;
-      width: 100%;
-      height: auto;
-      filter: drop-shadow(0 12px 24px rgba(14,116,144,0.2));
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      width: clamp(58px, 14vw, 88px);
+      height: clamp(58px, 14vw, 88px);
+      object-fit: contain;
+      border-radius: 20px;
+      background: rgba(191,219,254,0.26);
+      padding: 10px;
+      filter: drop-shadow(0 12px 24px rgba(96,165,250,0.25));
     }
-    .emotion-card.completed img {
-      opacity: 0.18;
-      transform: scale(0.95);
-    }
+
     .emotion-card__word {
-      display: none;
+      font-size: 0.75rem;
       font-weight: 800;
-      font-size: 0.95rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: #047857;
+      color: rgba(30,64,175,0.7);
     }
+
+    .emotion-card.completed {
+      border-color: rgba(34,197,94,0.4);
+      box-shadow: 0 20px 55px rgba(34,197,94,0.28);
+    }
+
     .emotion-card.completed .emotion-card__word {
-      display: inline-flex;
+      color: rgba(34,197,94,0.8);
     }
-    .celebration {
+
+    .emotion-card.is-current {
+      border-color: rgba(59,130,246,0.45);
+      transform: translateY(-6px);
+    }
+
+    .emotion-card.up-next {
+      border-color: rgba(251,191,36,0.45);
+      box-shadow: 0 20px 55px rgba(251,191,36,0.22);
+    }
+
+    .game-emotion-journey .celebration {
       margin-top: 18px;
       padding: 28px 24px;
       border-radius: 32px;
@@ -328,10 +314,20 @@
       text-align: center;
       animation: feelingsCelebrate 0.6s ease;
     }
+
     @keyframes feelingsCelebrate {
-      0% { opacity: 0; transform: scale(0.9) translateY(12px); }
-      50% { opacity: 1; transform: scale(1.02) translateY(-4px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
+      0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(12px);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.02) translateY(-4px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
   </style>
 {{ end }}
@@ -348,7 +344,7 @@
       <p class="text-sm text-slate-700 sm:text-base">Start from a calm face and unlock every feeling by typing its word. The more you type, the more feelings you discover.</p>
     </header>
 
-    <section class="game-card space-y-5 border border-slate-200/80 bg-white/80 shadow-2xl shadow-sky-200/60 backdrop-blur-sm">
+    <section class="game-card game-card--controls space-y-6">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
         <button id="startBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-blue-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-blue-500/50 transition hover:bg-blue-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-300">Start your feelings journey</button>
         <button id="resetBtn" class="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-4 py-3 text-base font-semibold text-white shadow-lg shadow-sky-500/40 transition hover:bg-sky-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-200" style="display:none;">Play again</button>
@@ -359,7 +355,7 @@
       </div>
     </section>
 
-    <section id="gameArea" class="space-y-8" style="display:none;" aria-live="polite">
+    <section id="gameArea" class="game-card game-card--play space-y-8" style="display:none;" aria-live="polite">
       <div class="grid gap-3 sm:grid-cols-2">
         <div class="feelings-progress-card">
           <span class="label">Feelings explored</span>
@@ -394,7 +390,6 @@
 
       <div id="celebrate" aria-live="polite"></div>
     </section>
-
   </div>
 
   <audio id="soundCorrect" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
@@ -445,7 +440,7 @@
     let typingIndex = 1;
     let letterIndex = 0;
     let exploredCount = 0;
-    let exploredStates = EMOTIONS.map(()=>false);
+    let exploredStates = EMOTIONS.map(() => false);
     let active = false;
 
     const touchKeyboard = window.GameTouchKeyboard?.attach({
@@ -457,72 +452,81 @@
     });
     const isTouchDevice = touchKeyboard?.isTouchDevice?.() ?? false;
 
-    function setStatus(kind, message){
+    function setStatus(kind, message) {
       statusText.innerHTML = message;
-      status.classList.remove('ok','bad');
+      status.classList.remove('ok', 'bad');
       statusBadge.textContent = 'i';
-      if(kind === 'ok'){
+      if (kind === 'ok') {
         status.classList.add('ok');
         statusBadge.textContent = '✓';
-      } else if(kind === 'bad'){
+      } else if (kind === 'bad') {
         status.classList.add('bad');
         statusBadge.textContent = '×';
       }
       status.style.display = 'flex';
     }
 
-    function animateStageImage(src, alt){
-      if(!stageImage) return;
-      if(stageImage.getAttribute('src') === src){
+    function animateStageImage(src, alt) {
+      if (!stageImage) return;
+      if (stageImage.getAttribute('src') === src) {
         stageImage.alt = alt;
         return;
       }
-      stageImage.classList.remove('fade-in','fade-out','is-ready');
+      stageImage.classList.remove('fade-in', 'fade-out', 'is-ready');
       void stageImage.offsetWidth;
       stageImage.classList.add('fade-out');
-      setTimeout(()=>{
+      setTimeout(() => {
         stageImage.src = src;
         stageImage.alt = alt;
         stageImage.classList.remove('fade-out');
         stageImage.classList.add('fade-in');
-        requestAnimationFrame(()=>{
+        requestAnimationFrame(() => {
           stageImage.classList.add('is-ready');
-          setTimeout(()=>{
-            stageImage.classList.remove('fade-in','is-ready');
+          setTimeout(() => {
+            stageImage.classList.remove('fade-in', 'is-ready');
           }, 400);
         });
-      }, 160);
+      }, 150);
     }
 
-    function updateStage(){
+    function updateStage() {
       const emotion = EMOTIONS[currentIndex] || EMOTIONS[0];
       const nextEmotion = EMOTIONS[typingIndex];
       animateStageImage(emotion.image, `${emotion.label} face`);
       stageLabel.textContent = emotion.label;
       let description = emotion.description;
-      if(currentIndex === 0){
-        description = nextEmotion && nextEmotion.word
-          ? `Take a calm breath. Begin by typing ${nextEmotion.word.toUpperCase()} to meet ${nextEmotion.label}.`
-          : 'Take a calm breath. You begin at neutral, where every feeling journey starts.';
-      } else if(nextEmotion && nextEmotion.word){
-        description = `You just named ${emotion.label.toUpperCase()}! Next feeling: type ${nextEmotion.word.toUpperCase()} to explore ${nextEmotion.label}.`;
+      let useHtml = false;
+      if (currentIndex === 0) {
+        if (nextEmotion && nextEmotion.word) {
+          useHtml = true;
+          description = `<span class="cta-intro">Take a calm breath.</span><span class="cta-line">Type <strong>${nextEmotion.word.toUpperCase()}</strong> to meet ${nextEmotion.label}.</span>`;
+        } else {
+          description = 'Take a calm breath. You begin at neutral, where every feeling journey starts.';
+        }
+      } else if (nextEmotion && nextEmotion.word) {
+        useHtml = true;
+        description = `<span class="cta-intro">You just typed ${emotion.label.toUpperCase()}!</span><span class="cta-line">Type <strong>${nextEmotion.word.toUpperCase()}</strong> to meet ${nextEmotion.label}.</span>`;
       } else {
-        description = `You just named ${emotion.label.toUpperCase()}! Every feeling is now unlocked.`;
+        description = `You just typed ${emotion.label.toUpperCase()}! Every feeling is now unlocked.`;
       }
-      stageDescription.textContent = description;
-      if(stageNote){
+      if (useHtml) {
+        stageDescription.innerHTML = description;
+      } else {
+        stageDescription.textContent = description;
+      }
+      if (stageNote) {
         stageNote.textContent = currentIndex === 0 ? 'Start here' : 'Now feeling';
       }
     }
 
-    function renderTrack(){
+    function renderTrack() {
       emotionTrack.innerHTML = '';
       EMOTIONS.forEach((emotion, index) => {
         const card = document.createElement('div');
         card.className = 'emotion-card';
-        if(exploredStates[index]) card.classList.add('completed');
-        if(index === currentIndex) card.classList.add('is-current');
-        if(index === typingIndex && typingIndex < EMOTIONS.length && (EMOTIONS[typingIndex]?.word)){
+        if (exploredStates[index]) card.classList.add('completed');
+        if (index === currentIndex) card.classList.add('is-current');
+        if (index === typingIndex && EMOTIONS[typingIndex]?.word) {
           card.classList.add('up-next');
         }
         const img = document.createElement('img');
@@ -538,62 +542,62 @@
       });
     }
 
-    function renderLetters(){
+    function renderLetters() {
       letterRow.innerHTML = '';
       const emotion = EMOTIONS[typingIndex];
       const word = emotion?.word;
-      if(!emotion || !word){
+      if (!emotion || !word) {
         letterRow.style.removeProperty('--letters');
         return;
       }
       letterRow.style.setProperty('--letters', word.length);
-      for(let i = 0; i < word.length; i++){
+      for (let i = 0; i < word.length; i += 1) {
         const box = document.createElement('div');
         box.className = 'letter-box';
         box.dataset.index = i;
         box.textContent = word[i].toUpperCase();
-        if(i < letterIndex) box.classList.add('filled');
-        if(i === letterIndex) box.classList.add('current');
+        if (i < letterIndex) box.classList.add('filled');
+        if (i === letterIndex) box.classList.add('current');
         letterRow.appendChild(box);
       }
       window.GameUI?.fitLettersFor?.(letterRow);
-      if(typeof requestAnimationFrame === 'function'){
-        requestAnimationFrame(()=>window.GameUI?.fitLettersFor?.(letterRow));
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => window.GameUI?.fitLettersFor?.(letterRow));
       }
-      if(isTouchDevice){
+      if (isTouchDevice) {
         touchKeyboard?.ensureVisible(letterRow);
       }
     }
 
-    function updateQueue(){
+    function updateQueue() {
       const upcoming = EMOTIONS.slice(typingIndex).filter(emotion => emotion.word);
-      if(upcoming.length === 0){
+      if (upcoming.length === 0) {
         queue.innerHTML = '<span class="px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400/80">Journey complete</span>';
         return;
       }
       queue.innerHTML = upcoming.map(emotion => `<span>${emotion.word.toUpperCase()}</span>`).join('');
     }
 
-    function setProgress(){
+    function setProgress() {
       progressCounter.textContent = `${exploredCount} / ${TOTAL_FEELINGS}`;
     }
 
-    function handleCorrect(){
+    function handleCorrect() {
       const emotion = EMOTIONS[typingIndex];
-      if(!emotion || !emotion.word) return;
+      if (!emotion || !emotion.word) return;
       const word = emotion.word;
-      letterIndex++;
-      if(letterIndex >= word.length){
+      letterIndex += 1;
+      if (letterIndex >= word.length) {
         exploredStates[typingIndex] = true;
-        exploredCount++;
+        exploredCount += 1;
         currentIndex = typingIndex;
         letterIndex = 0;
-        typingIndex++;
+        typingIndex += 1;
         renderTrack();
         updateStage();
         setProgress();
         updateQueue();
-        if(typingIndex >= EMOTIONS.length){
+        if (typingIndex >= EMOTIONS.length) {
           soundCorrect.currentTime = 0;
           soundCorrect.play();
           finishJourney();
@@ -601,80 +605,80 @@
         }
         renderLetters();
         const nextEmotion = EMOTIONS[typingIndex];
-        if(nextEmotion && nextEmotion.word){
+        if (nextEmotion && nextEmotion.word) {
           setStatus('ok', `Great! Next feeling: <strong>${nextEmotion.word.toUpperCase()}</strong>.`);
         } else {
-          setStatus('ok', `Great! You named <strong>${emotion.label.toUpperCase()}</strong>.`);
+          setStatus('ok', `Great! You typed <strong>${emotion.label.toUpperCase()}</strong>.`);
         }
       } else {
         renderLetters();
         setStatus('ok', `Nice! Next letter: <strong>${word[letterIndex].toUpperCase()}</strong>.`);
       }
-      if(isTouchDevice){
+      if (isTouchDevice) {
         touchKeyboard?.ensureVisible(letterRow);
       }
       soundCorrect.currentTime = 0;
       soundCorrect.play();
     }
 
-    function handleWrong(key){
+    function handleWrong(key) {
       soundWrong.currentTime = 0;
       soundWrong.play();
       const emotion = EMOTIONS[typingIndex];
-      if(!emotion || !emotion.word) return;
+      if (!emotion || !emotion.word) return;
       const expected = emotion.word[letterIndex]?.toUpperCase() || '';
       const shown = (key || '?').toUpperCase();
       setStatus('bad', `Almost! We need <strong>${expected}</strong> — you pressed <strong>${shown}</strong>.`);
       const box = letterRow.querySelector(`.letter-box[data-index="${letterIndex}"]`);
-      if(box){
+      if (box) {
         box.classList.remove('wiggle');
         void box.offsetWidth;
         box.classList.add('wiggle');
       }
-      if(isTouchDevice){
+      if (isTouchDevice) {
         touchKeyboard?.ensureVisible(letterRow);
       }
     }
 
-    function handleKeyPress(key, opts = {}){
-      if(!active) return;
-      if(!key || key.length !== 1) return;
-      if(!/[a-zA-Z]/.test(key)) return;
-      if(!opts.skipHighlight){
+    function handleKeyPress(key, opts = {}) {
+      if (!active) return;
+      if (!key || key.length !== 1) return;
+      if (!/[a-zA-Z]/.test(key)) return;
+      if (!opts.skipHighlight) {
         touchKeyboard?.flashKey(key);
       }
       const emotion = EMOTIONS[typingIndex];
-      if(!emotion || !emotion.word) return;
+      if (!emotion || !emotion.word) return;
       const expected = emotion.word[letterIndex];
-      if(!expected) return;
-      if(key.toLowerCase() === expected.toLowerCase()){
+      if (!expected) return;
+      if (key.toLowerCase() === expected.toLowerCase()) {
         handleCorrect();
       } else {
         handleWrong(key);
       }
     }
 
-    function finishJourney(){
+    function finishJourney() {
       active = false;
       renderTrack();
       letterRow.innerHTML = '';
       letterRow.style.removeProperty('--letters');
       touchKeyboard?.hide();
-      setStatus('ok', 'You named every feeling! Take a proud breath and celebrate your words.');
+      setStatus('ok', 'You typed every feeling! Take a proud breath and celebrate your words.');
       const winMarkup = `
         <div class="celebration">
-          <div class="text-2xl font-extrabold text-blue-700 uppercase tracking-[0.25em]">feelings named</div>
-          <div class="text-lg font-semibold text-slate-700">You explored each emotion from neutral to surprised. Great job using your voice!</div>
+          <div class="text-2xl font-extrabold text-blue-700 uppercase tracking-[0.25em]">feelings typed</div>
+          <div class="text-lg font-semibold text-slate-700">You met each emotion from neutral to surprised. Great job using your voice!</div>
           <div class="text-4xl leading-none">🙂 😄 😢 😡 😨 😖 😲</div>
         </div>
       `;
       celebrate.innerHTML = winMarkup;
       soundWin.currentTime = 0;
       soundWin.play();
-      if(window.GameCelebration){
+      if (window.GameCelebration) {
         window.GameCelebration.show({
           content: winMarkup,
-          onPlayAgain: ()=>{
+          onPlayAgain: () => {
             resetJourney();
             startJourney();
           },
@@ -687,42 +691,41 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function startJourney(){
+    function startJourney() {
       currentIndex = 0;
       typingIndex = 1;
       letterIndex = 0;
       exploredCount = 0;
-      exploredStates = EMOTIONS.map(()=>false);
+      exploredStates = EMOTIONS.map(() => false);
       celebrate.innerHTML = '';
       startBtn.style.display = 'none';
       resetBtn.style.display = 'inline-flex';
       gameArea.style.display = 'block';
       active = true;
-      document.body.classList.add('emotion-journey-active');
       renderTrack();
       updateStage();
       setProgress();
       updateQueue();
       renderLetters();
       const firstEmotion = EMOTIONS[typingIndex];
-      if(firstEmotion && firstEmotion.word){
+      if (firstEmotion && firstEmotion.word) {
         setStatus('ok', `Type <strong>${firstEmotion.word.toUpperCase()}</strong> to visit <strong>${firstEmotion.label}</strong>.`);
       } else {
         setStatus('ok', 'Type the letters to explore the next feeling.');
       }
-      if(isTouchDevice){
+      if (isTouchDevice) {
         touchKeyboard?.show();
         touchKeyboard?.ensureVisible(letterRow);
       }
     }
 
-    function resetJourney(){
+    function resetJourney() {
       active = false;
       currentIndex = 0;
       typingIndex = 1;
       letterIndex = 0;
       exploredCount = 0;
-      exploredStates = EMOTIONS.map(()=>false);
+      exploredStates = EMOTIONS.map(() => false);
       celebrate.innerHTML = '';
       startBtn.style.display = 'inline-flex';
       resetBtn.style.display = 'none';
@@ -730,26 +733,22 @@
       letterRow.innerHTML = '';
       letterRow.style.removeProperty('--letters');
       queue.innerHTML = '';
-      setProgress();
       renderTrack();
-      stageImage.src = EMOTIONS[0].image;
-      stageImage.alt = `${EMOTIONS[0].label} face`;
-      stageImage.classList.remove('fade-in','fade-out','is-ready');
       updateStage();
+      setProgress();
       setStatus(null, 'Press “Start your feelings journey” to meet the first feeling word.');
       status.style.display = 'flex';
       touchKeyboard?.hide();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.body.classList.remove('emotion-journey-active');
     }
 
     startBtn.addEventListener('click', startJourney);
     resetBtn.addEventListener('click', resetJourney);
 
-    document.addEventListener('keydown', event=>{
-      if(!active) return;
+    document.addEventListener('keydown', (event) => {
+      if (!active) return;
       const target = event.target;
-      if(target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
       handleKeyPress(event.key);
     });
 
@@ -757,5 +756,6 @@
     status.style.display = 'flex';
     renderTrack();
     setProgress();
+    updateQueue();
   </script>
 {{ end }}
