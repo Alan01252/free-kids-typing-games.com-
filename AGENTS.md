@@ -75,3 +75,46 @@ https://actions.google.com/sounds/v1/cartoon/xylophone_tip_toe_scale_up.ogg
 ## Terms Reminder
 - Library is hosted by Google; URLs plug directly into `<audio>` tags.
 - Usage must comply with Actions on Google Terms—only embed in project experiences, no redistribution.
+
+## Adding a New Game (Hugo workflow)
+1. **Create content entry**  
+   - Add `content/games/<slug>.md` with front matter:  
+     ```yaml
+     ---
+     title: "My Game"
+     layout: "<slug>"
+     tip: "Tip: Helpful one-liner for the footer."
+     theme: "light" # or "dark" for inverted footer styling
+     ---
+     ```
+   - The `layout` value must match the new template filename in `layouts/games/`.
+
+2. **Build the layout template**  
+   - Copy an existing game file from `layouts/games/` as a starting point.  
+   - Keep the structure:  
+     - `{{ define "styles" }}` block for per-game CSS.  
+     - `{{ define "body_class" }}` for body modifiers.  
+     - `{{ define "main" }}` for the HTML shell.  
+     - `{{ define "footer" }}` should call `{{ partial "game-footer.html" … }}` so the navigation stays in sync.  
+     - `{{ define "scripts" }}` for game-specific JavaScript.  
+   - Use assets under `static/` (e.g. `static/images/…`) so Hugo copies them automatically.
+
+3. **Register the game in navigation**  
+   - Update `data/games.yaml` with `slug`, `title`, `emoji`, and description details; this feeds menus and the footer partial.  
+   - Order matters: keep the list alphabetical unless there’s a deliberate grouping.
+
+4. **Run Hugo to regenerate `public/`**  
+   - For local development: `hugo server` (auto-rebuilds)  
+   - For a one-off build: `hugo` (writes to `public/`).  
+   - Never hand-edit files under `public/`; they are generated output and will be overwritten.
+
+5. **Audio and overlays**  
+   - Shared celebration overlay is in `layouts/partials/game-win-overlay.html`; invoke it via `window.GameCelebration.show({ … })`.  
+   - Default sound effects:  
+     - Correct: `wood_plank_flicks.ogg`  
+     - Wrong: `clang_and_wobble.ogg`  
+     - Use additional sounds from the Google Actions library list above if needed.
+
+6. **Transparency check for new art**  
+   - Run `sips -g hasAlpha static/images/*.png` (macOS) or alternative tooling to confirm PNGs have transparent backgrounds before committing.  
+   - Kids’ UI expects transparent faces so background gradients show through.
