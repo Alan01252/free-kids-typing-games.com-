@@ -2,28 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>/games/az/</loc>
+    <loc>//localhost:1313/games/az/</loc>
   </url><url>
-    <loc>/categories/</loc>
+    <loc>//localhost:1313/categories/</loc>
   </url><url>
-    <loc>/</loc>
+    <loc>//localhost:1313/</loc>
   </url><url>
-    <loc>/games/</loc>
+    <loc>//localhost:1313/games/</loc>
   </url><url>
-    <loc>/games/ghostly-word-hunt/</loc>
+    <loc>//localhost:1313/games/ghostly-word-hunt/</loc>
   </url><url>
-    <loc>/games/only-verbs/</loc>
+    <loc>//localhost:1313/games/only-verbs/</loc>
   </url><url>
-    <loc>/games/phoneme-sound-lab/</loc>
+    <loc>//localhost:1313/games/phoneme-sound-lab/</loc>
   </url><url>
-    <loc>/games/quick-fox/</loc>
+    <loc>//localhost:1313/games/quick-fox/</loc>
   </url><url>
-    <loc>/games/rocket-run/</loc>
+    <loc>//localhost:1313/games/rocket-run/</loc>
   </url><url>
-    <loc>/games/speed-racer/</loc>
+    <loc>//localhost:1313/games/speed-racer/</loc>
   </url><url>
-    <loc>/tags/</loc>
+    <loc>//localhost:1313/tags/</loc>
   </url><url>
-    <loc>/games/word-builder/</loc>
+    <loc>//localhost:1313/games/word-builder/</loc>
   </url>
 </urlset>
